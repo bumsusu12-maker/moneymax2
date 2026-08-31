@@ -1,0 +1,14 @@
+{
+  "name": "moneymax-ver1",
+  "version": "16.8.5",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "node --check src/worker.js",
+    "dev:cloudflare": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.20.0"
+  }
+}
