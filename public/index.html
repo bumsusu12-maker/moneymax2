@@ -1,0 +1,3178 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<title>머니박스 지점별 환율 비교</title>
+<style>
+:root{
+  --bg:#f4f7fb;--surface:#fff;--surface2:#f8fbff;--text:#111827;--muted:#6b7280;
+  --line:#dfe8f2;--blue:#0878ff;--blue2:#005bd7;--cyan:#13aeb8;--cyan-bg:#e0f8fa;
+  --coral:#ff6b57;--coral-bg:#ffe9e4;--green:#10a66a;--shadow:0 12px 30px rgba(15,23,42,.08);
+  --sidebar:260px;
+}
+html[data-theme="dark"]{
+  --bg:#0b1220;--surface:#111827;--surface2:#0f172a;--text:#e5edf7;--muted:#94a3b8;
+  --line:#263245;--blue:#3b82f6;--blue2:#1d4ed8;--cyan:#22c7c9;--cyan-bg:rgba(34,199,201,.16);
+  --coral:#ff7a68;--coral-bg:rgba(255,122,104,.16);--green:#22c55e;--shadow:0 18px 36px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+.app{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-right:1px solid var(--line);padding:20px 16px;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{width:132px;height:92px;background:var(--surface2);border:1px solid var(--line);border-radius:18px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:18px;box-shadow:var(--shadow)}
+.logo img{max-width:118px;max-height:82px;object-fit:contain}.logo-fallback{color:#0878ff;font-weight:950;line-height:.9;text-align:center;font-size:21px}
+.side-title{font-size:12px;color:var(--muted);font-weight:950;margin:16px 0 10px}
+.search{width:100%;height:38px;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:12px;padding:0 12px;margin-bottom:10px}
+.side-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+button,select,input{font-family:inherit}
+button{height:38px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);font-weight:850;cursor:pointer;padding:0 12px}
+button.primary{background:var(--blue);border-color:var(--blue);color:white}
+.branch-list{display:flex;flex-direction:column;gap:6px}
+.branch-item{display:grid;grid-template-columns:22px 1fr 24px;align-items:center;gap:8px;padding:9px 8px;border:1px solid transparent;border-radius:12px;background:var(--surface2);font-size:13px;font-weight:850;cursor:pointer;opacity:.72;transition:.15s ease}
+.branch-item input{width:16px;height:16px;accent-color:var(--blue)}.branch-item.on{border-color:rgba(8,120,255,.45);background:rgba(8,120,255,.07);opacity:1}
+.star{color:#cbd5e1;font-size:15px;text-align:center;cursor:pointer}.star.on{color:#f6b817}
+.external-tag{font-size:10px;color:var(--coral);font-weight:950;margin-left:4px}
+.side-foot{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-top:12px;margin-top:14px}
+.selected-count{font-size:13px;color:var(--muted);margin-bottom:8px}
+.main{padding:20px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px}
+.title h1{margin:0;font-size:26px;letter-spacing:-.055em}.updated{color:var(--muted);font-size:13px;margin-top:7px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.controls select,.controls button{height:40px}
+.group-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{height:40px;padding:0 18px;border:1px solid var(--line);background:var(--surface);border-radius:999px;color:var(--text);font-weight:950}.tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.alertbar{display:none;margin-bottom:14px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:16px;padding:12px 14px;color:var(--muted);font-size:13px}
+.alertbar.show{display:flex;align-items:center;justify-content:space-between;gap:12px}.alertbar b{color:var(--coral)}
+.error{display:none;margin-bottom:14px;background:var(--coral-bg);border:1px solid var(--coral);color:var(--coral);border-radius:14px;padding:12px;font-size:12px;white-space:pre-wrap}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:17px 18px 10px}
+.cur{display:flex;align-items:center;gap:10px;min-width:0}.flag{width:46px;height:32px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:0 0 auto}
+.flag img{width:100%;height:100%;object-fit:cover;display:block}.cur-name{font-weight:950;font-size:18px;letter-spacing:-.035em}.cur-sub{color:var(--muted);font-size:12px;margin-top:3px}
+.base{color:var(--muted);font-size:12px;text-align:right;line-height:1.45;white-space:nowrap}
+.best{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 18px 12px}.best-box{border-radius:17px;padding:13px;min-height:94px;border:1px solid var(--line)}
+.best-box.buy{background:var(--cyan-bg);border-color:var(--cyan)}.best-box.sell{background:var(--coral-bg);border-color:var(--coral)}
+.best-label{font-size:12px;font-weight:900;color:var(--muted);margin-bottom:6px}.best-value{font-size:23px;font-weight:950;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.buy .best-value{color:var(--cyan)}.sell .best-value{color:var(--coral)}.best-branch{margin-top:5px;font-size:13px;font-weight:900}
+.rank-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 13px}.rank-box{background:var(--surface2);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.rank-title{display:flex;align-items:center;justify-content:space-between;padding:10px 11px;color:var(--muted);font-size:12px;font-weight:900;border-bottom:1px solid var(--line)}
+.row{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:7px;padding:8px 10px;font-size:12px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}.no{width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#e5e7eb;color:#64748b;font-weight:950}
+html[data-theme="dark"] .no{background:#273244;color:#94a3b8}.row:first-child.buy-row{background:var(--cyan-bg)}.row:first-child.sell-row{background:var(--coral-bg)}
+.row:first-child.buy-row .no{background:var(--cyan);color:white}.row:first-child.sell-row .no{background:var(--coral);color:white}
+.branch{font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.price{font-weight:950;font-variant-numeric:tabular-nums}.buy-price{color:var(--cyan)}.sell-price{color:var(--coral)}
+.focus-row{outline:2px solid var(--blue);outline-offset:-2px;background:rgba(8,120,255,.10)!important}.focus-row .branch{color:var(--blue);font-weight:950}
+.info-line{display:flex;gap:7px;flex-wrap:wrap;padding:0 18px 16px}.badge{font-size:11px;font-weight:900;padding:6px 8px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);color:var(--muted)}
+.badge.green{color:var(--green);border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.10)}.badge.external{color:var(--coral);border-color:rgba(255,107,87,.35);background:rgba(255,107,87,.08)}
+.detail-btn{margin-left:auto;border:1px solid var(--line);background:var(--surface2);height:28px;font-size:11px;padding:0 10px}
+.expanded{border-top:1px solid var(--line);padding:0 18px 16px;display:none}.card.open .expanded{display:block}.full-title{color:var(--muted);font-size:12px;font-weight:900;margin:12px 0 8px}
+.full-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full-list{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface2)}
+.table-section{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}.table-section.hide{display:none}
+.table-head{display:flex;justify-content:space-between;align-items:center;padding:15px 18px;background:var(--surface2);border-bottom:1px solid var(--line)}
+.table-wrap{overflow:auto;max-height:460px}table{width:100%;min-width:1080px;border-collapse:collapse}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+th{position:sticky;top:0;background:var(--surface2);color:var(--muted);z-index:1}th:first-child,th:nth-child(2),th:nth-child(3),td:first-child,td:nth-child(2),td:nth-child(3){text-align:left}
+.tag{display:inline-flex;min-width:54px;justify-content:center;border-radius:999px;padding:5px 8px;color:var(--blue);background:var(--surface2);border:1px solid var(--line);font-weight:950}.focus-cell{color:var(--blue);font-weight:950}
+@media(max-width:1180px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.main{padding:14px}.top{align-items:flex-start;flex-direction:column}.controls{width:100%}.controls select,.controls button{flex:1}.board{grid-template-columns:1fr}.best,.rank-wrap,.full-grid{grid-template-columns:1fr}}
+
+/* V8/V9/V10 additions */
+.market-panel{
+  margin: 0 0 16px;
+}
+.market-mini{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:10px;
+}
+.market-tile{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:14px 16px;
+  min-height:92px;
+}
+.market-title{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:950;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.market-value{
+  margin-top:7px;
+  font-size:24px;
+  font-weight:950;
+  letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;
+}
+.market-sub{
+  margin-top:4px;
+  font-size:12px;
+  font-weight:850;
+  color:var(--muted);
+}
+.market-red{color:#ff4d4f!important}
+.market-blue{color:#1677ff!important}
+.market-neutral{color:var(--text)!important}
+.chart-toggle-wrap{
+  display:flex;
+  justify-content:flex-end;
+  margin:4px 0 10px;
+}
+.chart-toggle{
+  height:36px;
+  border-radius:12px;
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+.chart-panel{
+  display:none;
+  grid-template-columns:1fr;
+  gap:12px;
+  margin-bottom:16px;
+}
+.chart-panel.show{
+  display:grid;
+}
+.chart-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.chart-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.chart-card.full{
+  grid-column:1 / -1;
+}
+.chart-head{
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+  font-weight:950;
+}
+.chart-frame{
+  width:100%;
+  height:420px;
+  border:0;
+  display:block;
+  background:var(--surface2);
+}
+.kimchi-detail{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  padding:14px;
+}
+.kimchi-box{
+  background:var(--surface2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+}
+.kimchi-label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:950;
+}
+.kimchi-number{
+  margin-top:6px;
+  font-size:17px;
+  font-weight:950;
+  font-variant-numeric:tabular-nums;
+}
+.logo img.theme-logo{
+  max-width:118px;
+  max-height:82px;
+  object-fit:contain;
+}
+@media(max-width:1180px){
+  .market-mini{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chart-row{grid-template-columns:1fr}
+  .kimchi-detail{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .market-mini,.kimchi-detail{grid-template-columns:1fr}
+  .chart-frame{height:320px}
+}
+
+
+/* V11 indicator selector */
+.indicator-settings{display:flex;justify-content:flex-end;margin:0 0 10px;position:relative}
+.indicator-btn{height:36px;border-radius:12px;background:var(--surface);border:1px solid var(--line);color:var(--text);font-weight:950;padding:0 14px}
+.indicator-menu{display:none;position:absolute;right:0;top:44px;z-index:99;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:12px;min-width:220px}
+.indicator-menu.show{display:grid;gap:8px}
+.indicator-menu label{display:flex;align-items:center;gap:8px;color:var(--text);font-size:13px;font-weight:850}
+.indicator-menu input{accent-color:var(--blue)}
+
+
+/* V12 sidebar dropdown */
+.side-section{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.side-section-head{width:100%;display:flex;align-items:center;justify-content:space-between;height:38px;border:0;background:transparent;color:var(--text);font-size:13px;font-weight:950;padding:0;cursor:pointer}
+.side-section.collapsed .side-section-body{display:none}
+.side-section.collapsed .arrow{transform:rotate(-90deg)}
+.arrow{transition:.15s;color:var(--muted)}
+.side-section-body{display:block}
+.sidebar-mini-list,.chart-check-list{display:grid;gap:6px}
+.sidebar-option{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:center;padding:9px 8px;border-radius:12px;background:var(--surface2);font-size:13px;font-weight:850}
+.sidebar-option input{width:16px;height:16px;accent-color:var(--blue)}
+.priority-note{color:var(--muted);font-size:11px;margin:6px 0 8px}
+.chart-frame-wrap{display:none}
+.chart-frame-wrap.on{display:block}
+
+
+/* V13 alert + realtime polish */
+.market-tile.flash-up{animation:flashUp .9s ease}
+.market-tile.flash-down{animation:flashDown .9s ease}
+.market-tile.warning{outline:2px solid #ff4d4f;animation:shake .35s ease}
+@keyframes flashUp{0%{background:rgba(255,77,79,.22)}100%{background:var(--surface)}}
+@keyframes flashDown{0%{background:rgba(22,119,255,.22)}100%{background:var(--surface)}}
+@keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-2px)}100%{transform:translateX(0)}}
+.market-source{font-size:10px;color:var(--muted);margin-top:4px}
+
+
+/* V13.1 dark polish */
+html[data-theme="dark"] select,
+html[data-theme="dark"] button,
+html[data-theme="dark"] input{
+  background:#0f172a;
+  color:#e5edf7;
+  border-color:#263245;
+}
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .side-foot,
+html[data-theme="dark"] .logo,
+html[data-theme="dark"] .branch-item,
+html[data-theme="dark"] .sidebar-option,
+html[data-theme="dark"] .search,
+html[data-theme="dark"] .tab,
+html[data-theme="dark"] .detail-btn,
+html[data-theme="dark"] .indicator-menu{
+  background:#0f172a;
+  color:#e5edf7;
+  border-color:#263245;
+}
+html[data-theme="dark"] .tab.active,
+html[data-theme="dark"] button.primary,
+html[data-theme="dark"] .chart-toggle{
+  background:#0878ff;
+  border-color:#0878ff;
+  color:#fff;
+}
+html[data-theme="dark"] .branch-item.on{
+  background:#10284f;
+  border-color:#2563eb;
+}
+html[data-theme="dark"] .branch-item input,
+html[data-theme="dark"] .sidebar-option input{
+  accent-color:#3b82f6;
+}
+.fx-reference{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  padding:14px;
+}
+.fx-ref-box{
+  background:var(--surface2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+}
+.fx-ref-label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:950;
+}
+.fx-ref-number{
+  margin-top:6px;
+  font-size:19px;
+  font-weight:950;
+  font-variant-numeric:tabular-nums;
+}
+@media(max-width:1180px){
+  .fx-reference{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .fx-reference{grid-template-columns:1fr}
+}
+
+
+.live-note{
+font-size:11px;
+opacity:.6;
+margin-top:6px;
+}
+
+
+/* V13.6 dark logo polish */
+html[data-theme="dark"] .logo{
+  background:#08111f;
+}
+html[data-theme="dark"] .logo img.theme-logo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:18px;
+}
+html[data-theme="dark"] .logo{
+  padding:0;
+  overflow:hidden;
+}
+
+
+/* V13.7 reference collapse */
+.reference-panel.collapsed .fx-reference{
+  display:none;
+}
+.reference-toggle{
+  margin-left:auto;
+  height:30px;
+  border-radius:10px;
+  padding:0 12px;
+  font-size:12px;
+  font-weight:900;
+  background:var(--surface2);
+  border:1px solid var(--line);
+  color:var(--text);
+  cursor:pointer;
+}
+.reference-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+
+/* V13.9 reference change */
+.fx-ref-change{
+  margin-top:5px;
+  font-size:12px;
+  font-weight:950;
+}
+.fx-ref-source{
+  margin-top:3px;
+  font-size:10px;
+  color:var(--muted);
+  font-weight:850;
+}
+.fx-ref-up{color:#ff4d4f}
+.fx-ref-down{color:#1677ff}
+.fx-ref-flat{color:var(--muted)}
+.fx-ref-box.flash-up{animation:flashUp .9s ease}
+.fx-ref-box.flash-down{animation:flashDown .9s ease}
+
+
+/* V14 admin settings */
+.admin-settings-btn{
+  height:36px;
+  border-radius:12px;
+  padding:0 14px;
+  font-size:13px;
+  font-weight:950;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--text);
+  cursor:pointer;
+}
+.admin-modal-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  background:rgba(0,0,0,.45);
+}
+.admin-modal-backdrop.show{
+  display:block;
+}
+.admin-modal{
+  position:fixed;
+  right:18px;
+  top:64px;
+  z-index:9999;
+  width:420px;
+  max-width:calc(100vw - 32px);
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  padding:18px;
+  display:none;
+}
+.admin-modal.show{
+  display:block;
+}
+.admin-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+.admin-title h3{
+  margin:0;
+  font-size:18px;
+}
+.admin-close{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--surface2);
+  color:var(--text);
+}
+.admin-row{
+  border-top:1px solid var(--line);
+  padding:14px 0;
+}
+.admin-row:first-of-type{
+  border-top:0;
+}
+.admin-label{
+  font-size:13px;
+  color:var(--muted);
+  font-weight:950;
+  margin-bottom:8px;
+}
+.admin-options{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.admin-pill{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 10px;
+  border-radius:999px;
+  background:var(--surface2);
+  border:1px solid var(--line);
+  font-size:12px;
+  font-weight:900;
+}
+.admin-pill input{
+  accent-color:var(--blue);
+}
+.admin-actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+.admin-actions button{
+  flex:1;
+  height:38px;
+  border-radius:12px;
+  font-weight:950;
+}
+.ad-slot{
+  display:none;
+  margin:12px 0 16px;
+  padding:14px;
+  border:1px dashed var(--line);
+  border-radius:16px;
+  background:var(--surface);
+  color:var(--muted);
+  text-align:center;
+  font-size:12px;
+  font-weight:900;
+}
+.ad-slot.show{
+  display:block;
+}
+html[data-theme="dark"] .admin-modal,
+html[data-theme="dark"] .admin-settings-btn,
+html[data-theme="dark"] .admin-close,
+html[data-theme="dark"] .admin-pill,
+html[data-theme="dark"] .ad-slot{
+  background:#0f172a;
+  color:#e5edf7;
+  border-color:#263245;
+}
+@media(max-width:760px){
+  .admin-modal{
+    left:12px;
+    right:12px;
+    top:64px;
+    width:auto;
+  }
+}
+
+
+/* V14.1 header polish */
+.admin-settings-btn{
+  background:#0d7cff;
+  border-color:#0d7cff;
+  color:#fff;
+}
+html[data-theme="dark"] .admin-settings-btn{
+  background:#0d7cff;
+  border-color:#0d7cff;
+  color:#fff;
+}
+.header-actions,
+.top-actions,
+.actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.header-actions button,
+.top-actions button,
+.actions button,
+.header-actions select,
+.top-actions select,
+.actions select{
+  height:36px;
+}
+@media(max-width:760px){
+  .header-actions,
+  .top-actions,
+  .actions{
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+}
+
+
+/* V14.2 polish: dark scrollbar + stronger realtime feedback */
+html[data-theme="dark"] ::-webkit-scrollbar{width:10px;height:10px}
+html[data-theme="dark"] ::-webkit-scrollbar-track{background:#08111f}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#1f2a44;border-radius:999px;border:2px solid #08111f}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover{background:#2f436d}
+html[data-theme="dark"]{scrollbar-color:#1f2a44 #08111f;scrollbar-width:thin}
+.market-value.value-bump,.fx-ref-number.value-bump{animation:valueBump .55s ease}
+@keyframes valueBump{0%{transform:scale(1);filter:brightness(1)}35%{transform:scale(1.045);filter:brightness(1.35)}100%{transform:scale(1);filter:brightness(1)}}
+.market-tile.flash-up,.fx-ref-box.flash-up{box-shadow:0 0 0 2px rgba(255,77,79,.22),0 0 24px rgba(255,77,79,.16)}
+.market-tile.flash-down,.fx-ref-box.flash-down{box-shadow:0 0 0 2px rgba(22,119,255,.22),0 0 24px rgba(22,119,255,.16)}
+.market-sub.bad-data{color:#f59e0b!important}
+.fx-ref-change{margin-top:5px;font-size:12px;font-weight:950}
+.fx-ref-source{margin-top:3px;font-size:10px;color:var(--muted);font-weight:850}
+.fx-ref-up{color:#ff4d4f}
+.fx-ref-down{color:#1677ff}
+.fx-ref-flat{color:var(--muted)}
+
+
+/* V14.3 ops fix */
+.blocked-badge{display:inline-flex;align-items:center;justify-content:center;padding:4px 8px;border-radius:999px;background:rgba(255,77,79,.14);color:#ff4d4f;border:1px solid rgba(255,77,79,.35);font-size:11px;font-weight:950}
+.blocked-row{opacity:.62;filter:saturate(.75)}
+.blocked-text{color:#ff4d4f;font-weight:950}
+.unit-note{font-size:10px;color:var(--muted);font-weight:850;margin-left:4px}
+
+
+/* V14.5 source mode + readability */
+.source-status-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:950;margin:4px 0 8px}
+.overview-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:8px 0 12px}
+.overview-mini{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 14px;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+.overview-mini-label{font-size:11px;color:var(--muted);font-weight:950}
+.overview-mini-value{margin-top:5px;font-size:22px;font-weight:1000;font-variant-numeric:tabular-nums}
+.overview-mini-sub{margin-top:3px;font-size:11px;font-weight:950}
+html[data-theme="dark"] .source-status-pill,html[data-theme="dark"] .overview-mini{background:#0f172a;border-color:#263245}
+@media(max-width:1180px){.overview-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.overview-strip{grid-template-columns:1fr}}
+
+
+/* V14.6 clean overview */
+.market-panel .market-mini{display:none!important}
+.source-status-pill{width:max-content}
+.side-section .side-section-body{display:none}
+.side-section.open .side-section-body{display:block!important}
+.side-section.open .arrow{transform:rotate(0deg)}
+.side-section:not(.open) .arrow{transform:rotate(-90deg)}
+.currency-card .pill,.card-footer .pill,.spread-badge,.branch-count-badge,.external-badge,.meta-badge,.card-badges{display:none!important}
+.card-footer,.currency-card footer{min-height:0!important;padding-top:0!important}
+.overview-strip{margin-top:10px}
+.overview-mini{min-height:76px}
+
+
+/* V14.7 clean fix */
+.market-panel .market-mini{display:none!important}
+.source-status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:11px;
+  font-weight:950;
+  width:max-content;
+}
+.overview-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:8px 0 10px}
+.overview-mini{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 14px;min-height:78px}
+.overview-mini-label{font-size:11px;color:var(--muted);font-weight:950}
+.overview-mini-value{margin-top:5px;font-size:22px;font-weight:1000;font-variant-numeric:tabular-nums}
+.overview-mini-sub{margin-top:3px;font-size:11px;font-weight:950}
+.overview-mini-time{margin-top:2px;font-size:10px;color:var(--muted);font-weight:850}
+.detail-btn,.mini-view-btn{
+  width:30px!important;
+  height:30px!important;
+  padding:0!important;
+  border-radius:999px!important;
+  font-size:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.detail-btn::after,.mini-view-btn::after{
+  content:"▽";
+  font-size:14px;
+  font-weight:1000;
+}
+.currency-card .pill,
+.card-footer .pill,
+.spread-badge,
+.branch-count-badge,
+.external-badge,
+.meta-badge,
+.card-badges,
+.noisy-badge{
+  display:none!important;
+}
+.card-footer,.currency-card footer{
+  min-height:0!important;
+  padding-top:0!important;
+}
+html[data-theme="dark"] .source-status-pill,
+html[data-theme="dark"] .overview-mini{
+  background:#0f172a;
+  border-color:#263245;
+}
+@media(max-width:1180px){.overview-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.overview-strip{grid-template-columns:1fr}}
+
+
+/* V15.5 minimal restore */
+#currencyFilter,
+#tableBtn{
+  display:none!important;
+}
+#topBranchBtn{
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--text);
+  height:40px;
+  border-radius:12px;
+  padding:0 13px;
+  font-weight:950;
+}
+.source-status-pill{
+  display:block!important;
+  width:max-content!important;
+  padding:0!important;
+  margin:4px 0 12px!important;
+  border:0!important;
+  background:transparent!important;
+  color:var(--muted)!important;
+  font-size:12px!important;
+  font-weight:900!important;
+}
+.overview-mini-time{
+  display:none!important;
+}
+.overview-mini{
+  min-height:76px!important;
+}
+.card{
+  cursor:pointer;
+  transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+.card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(13,124,255,.30);
+  box-shadow:0 16px 34px rgba(15,23,42,.12);
+}
+.card::after{
+  content:"↗";
+  position:absolute;
+  right:14px;
+  top:14px;
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:1000;
+  color:var(--muted);
+  background:var(--surface2);
+  border:1px solid var(--line);
+  opacity:0;
+  transition:opacity .14s ease;
+}
+.card:hover::after{
+  opacity:1;
+}
+.info-line{
+  display:none!important;
+}
+.detail-btn,
+.mini-view-btn,
+.badge,
+.external,
+.external-tag{
+  display:none!important;
+}
+html[data-theme="dark"] .card:hover{
+  box-shadow:0 16px 34px rgba(0,0,0,.35);
+  border-color:rgba(59,130,246,.38);
+}
+html[data-theme="dark"] .card::after,
+html[data-theme="dark"] #topBranchBtn{
+  background:#0f172a;
+  border-color:#263245;
+}
+
+
+/* V15.6 rank compact */
+.fav-rank-divider{
+  padding:7px 10px;
+  font-size:11px;
+  font-weight:950;
+  color:var(--muted);
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.rank-note{
+  font-size:10px;
+  color:var(--muted);
+  font-weight:850;
+  margin-left:4px;
+}
+
+
+
+/* V15.8 final sidebar clean */
+
+/* 왼쪽 사이드바는 유지, 지점 선택 섹션만 제거 */
+.side-section[data-section="branches"]{
+  display:none!important;
+}
+
+/* 지점 선택 버튼: 우측 상단에서만 사용 */
+#topBranchBtn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:40px!important;
+  border-radius:12px!important;
+  padding:0 14px!important;
+  font-size:13px!important;
+  font-weight:950!important;
+  background:var(--surface)!important;
+  border:1px solid var(--line)!important;
+  color:var(--text)!important;
+  cursor:pointer!important;
+  pointer-events:auto!important;
+}
+
+/* 기존 지점 선택 모달 디자인 유지 */
+.branch-modal-backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  background:rgba(15,23,42,.38);
+  backdrop-filter:blur(3px);
+}
+.branch-modal-backdrop.show{
+  display:block;
+}
+.branch-modal{
+  display:none;
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:9999;
+  width:min(1180px, calc(100vw - 52px));
+  max-height:calc(100vh - 64px);
+  overflow:auto;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:0 24px 80px rgba(15,23,42,.22);
+  padding:0;
+}
+.branch-modal.show{
+  display:block;
+}
+.branch-modal-title{
+  position:sticky;
+  top:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:22px 24px;
+  border-bottom:1px solid var(--line);
+  background:var(--surface);
+}
+.branch-modal-title h3{
+  margin:0;
+  font-size:21px;
+  font-weight:1000;
+}
+.branch-modal-close{
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--surface2);
+  color:var(--text);
+  font-size:18px;
+  font-weight:1000;
+}
+#branchModalMount{
+  padding:18px 24px 24px;
+}
+#branchModal .side-section-body,
+#branchModalMount .side-section-body{
+  display:block!important;
+}
+#branchModalMount .branch-list{
+  max-height:none!important;
+  overflow:visible!important;
+}
+
+/* 지점 모달 내부를 기존 3열 카드형 디자인으로 유지/강화 */
+#branchModalMount .branch-region-grid{
+  display:grid!important;
+  grid-template-columns:1.6fr 1fr 1fr;
+  gap:14px;
+}
+#branchModalMount .branch-region-card{
+  border:1px solid rgba(13,124,255,.35);
+  border-radius:18px;
+  overflow:hidden;
+  background:var(--surface);
+}
+#branchModalMount .branch-region-title{
+  padding:14px 16px;
+  text-align:center;
+  color:var(--blue);
+  font-size:24px;
+  font-weight:1000;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(13,124,255,.06), transparent);
+}
+#branchModalMount .branch-item{
+  border:0!important;
+  border-bottom:1px solid var(--line)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  padding:12px 16px!important;
+}
+#branchModalMount .branch-item:last-child{
+  border-bottom:0!important;
+}
+
+/* 혹시 V15.7에서 생긴 상세 라벨이 남아있으면 완전 제거 */
+.detail-hint{
+  display:none!important;
+}
+
+/* 카드 클릭 가능 느낌은 UI 텍스트 없이 hover로만 */
+.card,
+.currency-card{
+  cursor:pointer;
+  position:relative;
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+}
+.card:hover,
+.currency-card:hover{
+  transform:translateY(-2px);
+  border-color:rgba(13,124,255,.35)!important;
+  box-shadow:0 18px 36px rgba(15,23,42,.13)!important;
+}
+.card:active,
+.currency-card:active{
+  transform:translateY(0);
+}
+.card::after,
+.currency-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  box-shadow:inset 0 0 0 0 rgba(13,124,255,0);
+  transition:box-shadow .16s ease;
+}
+.card:hover::after,
+.currency-card:hover::after{
+  box-shadow:inset 0 0 0 1px rgba(13,124,255,.22);
+}
+
+/* 기준율 겹침 완화 */
+.card-head,
+.currency-head,
+.currency-card .card-head{
+  align-items:flex-start!important;
+  gap:16px!important;
+}
+.base,
+.base-rate,
+.currency-base,
+.card-base{
+  min-width:88px!important;
+  max-width:120px!important;
+  text-align:right!important;
+  line-height:1.35!important;
+  word-break:keep-all!important;
+  white-space:normal!important;
+  opacity:.85;
+}
+
+/* 핵심 4개는 상단 요약에만, 나머지 보조지표는 선택 시 표시 */
+.market-panel .market-mini{
+  display:grid!important;
+}
+[data-indicator-card="usdkrw"],
+[data-indicator-card="jpykrw"],
+[data-indicator-card="usdjpy"],
+[data-indicator-card="usdt"]{
+  display:none!important;
+}
+
+/* 숫자 변경 애니메이션 */
+.market-value.value-bump,
+.overview-mini-value.value-bump,
+.fx-ref-number.value-bump,
+.price.value-bump{
+  animation:v158ValueBump .55s ease;
+}
+@keyframes v158ValueBump{
+  0%{transform:scale(1);filter:brightness(1)}
+  35%{transform:scale(1.04);filter:brightness(1.28)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+html[data-theme="dark"] #topBranchBtn,
+html[data-theme="dark"] .branch-modal,
+html[data-theme="dark"] .branch-modal-title,
+html[data-theme="dark"] .branch-modal-close,
+html[data-theme="dark"] #branchModalMount .branch-region-card{
+  background:#0f172a!important;
+  border-color:#263245!important;
+  color:#e5edf7!important;
+}
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .currency-card:hover{
+  box-shadow:0 18px 36px rgba(0,0,0,.38)!important;
+  border-color:rgba(59,130,246,.40)!important;
+}
+
+@media(max-width:900px){
+  .main{padding:18px!important}
+  .branch-modal{
+    width:calc(100vw - 24px);
+    max-height:calc(100vh - 24px);
+  }
+  #branchModalMount .branch-region-grid{
+    grid-template-columns:1fr!important;
+  }
+}
+
+
+/* V15.8.1 branch-only clean correction */
+/* 사이드바 전체는 다시 표시 */
+.sidebar{
+  display:block!important;
+}
+.app{
+  display:grid!important;
+}
+.main{
+  width:auto!important;
+  max-width:none!important;
+}
+/* 왼쪽 사이드바 안에서는 지점 선택 섹션만 제거 */
+.side-section[data-section="branches"]{
+  display:none!important;
+}
+/* 모달 안으로 옮겨진 지점 선택 UI는 정상 표시 */
+#branchModal .side-section[data-section="branches"],
+#branchModalMount .side-section[data-section="branches"],
+#branchModal .side-section-body,
+#branchModalMount .side-section-body{
+  display:block!important;
+}
+
+
+/* V15.8.2 settings theme */
+#themeBtn,
+button[onclick="toggleTheme()"]{
+  display:none!important;
+}
+.settings-theme-group{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.settings-theme-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--surface2);
+  font-size:12px;
+  font-weight:950;
+  cursor:pointer;
+}
+.settings-theme-pill input{
+  accent-color:var(--blue);
+}
+html[data-theme="dark"] .settings-theme-pill{
+  background:#0f172a;
+  border-color:#263245;
+}
+
+
+/* V15.8.3 hover polish */
+
+/* 좌상단 유령 동그라미 제거 */
+.card::before,
+.currency-card::before{
+  display:none!important;
+  content:none!important;
+}
+
+/* hover 효과 강화 */
+.card,
+.currency-card{
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease,
+    background .18s ease,
+    filter .18s ease!important;
+}
+
+.card:hover,
+.currency-card:hover{
+  transform:translateY(-4px) scale(1.008)!important;
+  border-color:rgba(13,124,255,.42)!important;
+  box-shadow:
+    0 26px 52px rgba(15,23,42,.16),
+    0 0 0 1px rgba(13,124,255,.18)!important;
+  filter:brightness(1.01);
+}
+
+.card:active,
+.currency-card:active{
+  transform:translateY(-1px) scale(1.002)!important;
+}
+
+/* hover 시 살짝 내부 glow */
+.card::after,
+.currency-card::after{
+  transition:
+    box-shadow .18s ease,
+    opacity .18s ease!important;
+  opacity:.0;
+}
+
+.card:hover::after,
+.currency-card:hover::after{
+  opacity:1;
+  box-shadow:
+    inset 0 0 0 1px rgba(13,124,255,.24),
+    inset 0 0 28px rgba(13,124,255,.04)!important;
+}
+
+/* 다크모드 hover */
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .currency-card:hover{
+  box-shadow:
+    0 28px 56px rgba(0,0,0,.42),
+    0 0 0 1px rgba(59,130,246,.24)!important;
+  border-color:rgba(59,130,246,.48)!important;
+}
+
+
+/* V15.8.4 ghost layer hard fix */
+
+/* 좌상단 유령 동그라미 원인인 가상 레이어 전체 제거 */
+.card::before,
+.card::after,
+.currency-card::before,
+.currency-card::after{
+  content:none!important;
+  display:none!important;
+  opacity:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  border:0!important;
+}
+
+/* hover 효과는 카드 본체에만 적용 */
+.card,
+.currency-card{
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease,
+    filter .18s ease!important;
+  will-change:transform, box-shadow;
+}
+
+.card:hover,
+.currency-card:hover{
+  transform:translateY(-4px) scale(1.006)!important;
+  border-color:rgba(13,124,255,.46)!important;
+  box-shadow:
+    0 26px 52px rgba(15,23,42,.17),
+    0 0 0 1px rgba(13,124,255,.20)!important;
+  filter:brightness(1.01);
+}
+
+.card:active,
+.currency-card:active{
+  transform:translateY(-1px) scale(1.002)!important;
+}
+
+html[data-theme="dark"] .card:hover,
+html[data-theme="dark"] .currency-card:hover{
+  box-shadow:
+    0 28px 56px rgba(0,0,0,.44),
+    0 0 0 1px rgba(59,130,246,.26)!important;
+  border-color:rgba(59,130,246,.50)!important;
+}
+
+
+/* V15.9 branch profiles */
+.profile-selector-wrap{position:relative;display:inline-flex;align-items:center}
+#profileSelectorBtn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;height:40px!important;border-radius:12px!important;padding:0 14px!important;font-size:13px!important;font-weight:950!important;background:var(--surface)!important;border:1px solid var(--line)!important;color:var(--text)!important;cursor:pointer!important}
+.profile-menu{display:none;position:absolute;right:0;top:46px;z-index:9997;width:240px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}.profile-menu.show{display:block}
+.profile-menu-section{padding:8px;border-bottom:1px solid var(--line)}.profile-menu-label{font-size:11px;color:var(--muted);font-weight:950;padding:6px 8px}
+.profile-option{width:100%;height:38px;border:0;background:transparent;display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-radius:10px;font-size:13px;font-weight:950;color:var(--text)}.profile-option:hover{background:var(--surface2)}.profile-option.active{color:var(--blue);background:rgba(13,124,255,.08)}
+.profile-action{width:100%;height:40px;border:0;background:transparent;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:13px;font-weight:950;color:var(--text)}.profile-action:hover{background:var(--surface2)}
+.profile-manage-modal-bg{display:none;position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.38);backdrop-filter:blur(3px)}.profile-manage-modal-bg.show{display:block}
+.profile-manage-modal{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10001;width:430px;max-width:calc(100vw - 32px);background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 80px rgba(15,23,42,.22);overflow:hidden}.profile-manage-modal.show{display:block}
+.profile-manage-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line)}.profile-manage-head h3{margin:0;font-size:18px;font-weight:1000}.profile-manage-body{padding:16px 20px}.profile-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.profile-list-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;min-height:42px;padding:8px 10px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;font-weight:950}.profile-list-row small{display:block;color:var(--muted);font-weight:800;margin-top:2px}
+.profile-icon-btn{width:32px;height:32px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}.profile-add-row{display:grid;grid-template-columns:1fr auto;gap:8px}#profileNameInput{height:40px;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:12px;padding:0 12px;font-weight:900}.profile-close-btn{width:34px;height:34px;border-radius:999px}
+html[data-theme="dark"] #profileSelectorBtn,html[data-theme="dark"] .profile-menu,html[data-theme="dark"] .profile-manage-modal,html[data-theme="dark"] .profile-list-row,html[data-theme="dark"] #profileNameInput,html[data-theme="dark"] .profile-icon-btn{background:#0f172a!important;border-color:#263245!important;color:#e5edf7!important}html[data-theme="dark"] .profile-option:hover,html[data-theme="dark"] .profile-action:hover{background:#111c30}
+
+
+/* V15.9.1 profile favorite/delete fix */
+#branchModal .star,
+#branchModalMount .star,
+.branch-modal .star{
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  user-select:none!important;
+}
+#branchModal .branch-item,
+#branchModalMount .branch-item{
+  pointer-events:auto!important;
+}
+.profile-icon-btn:not(:disabled){
+  cursor:pointer!important;
+}
+.profile-icon-btn:disabled{
+  opacity:.35;
+  cursor:not-allowed!important;
+}
+
+
+/* V15.9.2 favorite logic fix */
+/* 파란 강조/별표는 진짜 즐겨찾기만 */
+.focus-row:not(.favorite-row){
+  background:transparent!important;
+  outline:none!important;
+  border-color:var(--line)!important;
+}
+.focus-row:not(.favorite-row) .branch span,
+.focus-row:not(.favorite-row) .branch .star-inline{
+  display:none!important;
+}
+.favorite-row{
+  background:rgba(13,124,255,.08)!important;
+  outline:2px solid rgba(13,124,255,.85)!important;
+  outline-offset:-2px;
+}
+.favorite-row .star-inline{
+  color:var(--blue)!important;
+  font-size:10px;
+  font-weight:950;
+  margin-left:3px;
+}
+
+
+/* V15.9.3 logo + settings modal fix */
+
+/* 관리자 설정 하단 잘림 방지 */
+.admin-modal,
+.settings-modal,
+#adminSettingsModal,
+#settingsModal{
+  max-height:calc(100vh - 48px)!important;
+  overflow-y:auto!important;
+  padding-bottom:24px!important;
+}
+
+.admin-modal-body,
+.settings-modal-body,
+.admin-body,
+.settings-body{
+  padding-bottom:28px!important;
+}
+
+.admin-row:last-child,
+.setting-row:last-child{
+  margin-bottom:18px!important;
+}
+
+/* 설정 모달 버튼 영역이 잘리지 않게 */
+.admin-actions,
+.settings-actions,
+.admin-footer,
+.settings-footer{
+  position:sticky;
+  bottom:0;
+  background:var(--surface);
+  padding-top:12px!important;
+  padding-bottom:12px!important;
+  border-top:1px solid var(--line);
+}
+
+/* 로고 박스 테두리/배경 제거 */
+.logo,
+.logo-box,
+.sidebar-logo,
+.brand-logo{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+
+/* 로고 이미지 자체만 깔끔하게 */
+.logo img,
+.logo-box img,
+.sidebar-logo img,
+.brand-logo img{
+  object-fit:contain!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+}
+
+/* 다크모드에서 모달 footer 배경 */
+html[data-theme="dark"] .admin-actions,
+html[data-theme="dark"] .settings-actions,
+html[data-theme="dark"] .admin-footer,
+html[data-theme="dark"] .settings-footer{
+  background:#0f172a!important;
+  border-color:#263245!important;
+}
+
+
+/* V15.9.4 theme save + logo center fix */
+
+/* 로고 중앙 정렬 */
+.logo,
+.logo-box,
+.sidebar-logo,
+.brand-logo{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+.logo img,
+.logo-box img,
+.sidebar-logo img,
+.brand-logo img{
+  display:block!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  max-width:92px!important;
+  width:92px!important;
+  height:auto!important;
+  object-fit:contain!important;
+}
+
+/* 관리자 설정 저장 버튼 클릭 가능 영역 보정 */
+.admin-modal,
+.settings-modal,
+#adminSettingsModal,
+#settingsModal{
+  max-height:calc(100vh - 48px)!important;
+  overflow-y:auto!important;
+}
+
+.admin-actions,
+.settings-actions,
+.admin-footer,
+.settings-footer{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:5!important;
+  background:var(--surface)!important;
+  padding:12px 0!important;
+}
+
+html[data-theme="dark"] .admin-actions,
+html[data-theme="dark"] .settings-actions,
+html[data-theme="dark"] .admin-footer,
+html[data-theme="dark"] .settings-footer{
+  background:#0f172a!important;
+}
+
+
+/* V15.9.5 profile favorite + branch group fix */
+#branchModal .side-actions,
+#branchModalMount .side-actions,
+.branch-modal .side-actions,
+#branchModal button[onclick*="selectAll"],
+#branchModal button[onclick*="clearAll"],
+#branchModalMount button[onclick*="selectAll"],
+#branchModalMount button[onclick*="clearAll"]{
+  display:none!important;
+}
+#branchModal .star,
+#branchModalMount .star,
+.branch-modal .star{
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  user-select:none!important;
+  position:relative;
+  z-index:5;
+}
+.favorite-row{
+  background:rgba(13,124,255,.08)!important;
+  outline:2px solid rgba(13,124,255,.85)!important;
+  outline-offset:-2px;
+}
+.star-inline{
+  color:var(--blue)!important;
+  font-size:10px;
+  font-weight:950;
+  margin-left:3px;
+}
+
+
+/* V15.9.6 profile/theme hardfix */
+.profile-icon-btn,[data-delete-profile],[data-rename-profile]{
+  pointer-events:auto!important;cursor:pointer!important;position:relative;z-index:10;
+}
+.profile-icon-btn:disabled{opacity:.35!important;cursor:not-allowed!important}
+html[data-theme="dark"] body{background:var(--bg)!important}
+
+
+/* V15.9.7 profile delete + usd source fix */
+.profile-icon-btn,[data-delete-profile],[data-v1597-delete],[data-rename-profile]{
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  position:relative;
+  z-index:50;
+}
+.profile-icon-btn:disabled{opacity:.35!important;cursor:not-allowed!important}
+
+
+/* V16.5.1 rollback stable + TOP3 default only */
+body.moneymax-top3-default .full-ranking,
+body.moneymax-top3-default .rank-full,
+body.moneymax-top3-default .all-ranking,
+body.moneymax-top3-default [data-full-ranking]{
+  display:none!important;
+}
+body.moneymax-top3-default .top3,
+body.moneymax-top3-default .top3-list,
+body.moneymax-top3-default .rank-list,
+body.moneymax-top3-default [data-top3]{
+  display:block!important;
+}
+
+
+/* V16.5.2 profile dropdown fix */
+#profileSelectorWrap,
+.profile-selector-wrap{
+  position:relative!important;
+  z-index:5000!important;
+  pointer-events:auto!important;
+}
+
+#profileSelectorBtn{
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  position:relative!important;
+  z-index:5001!important;
+}
+
+#profileMenu,
+.profile-menu{
+  position:absolute!important;
+  right:0!important;
+  top:46px!important;
+  z-index:9000!important;
+  min-width:220px!important;
+  background:var(--surface)!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  box-shadow:var(--shadow)!important;
+  overflow:hidden!important;
+  display:none;
+}
+
+#profileMenu.show,
+.profile-menu.show{
+  display:block!important;
+}
+
+.profile-option,
+.profile-action{
+  width:100%!important;
+  height:38px!important;
+  border:0!important;
+  background:transparent!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  padding:0 12px!important;
+  font-size:13px!important;
+  font-weight:950!important;
+  color:var(--text)!important;
+  cursor:pointer!important;
+}
+
+.profile-option:hover,
+.profile-action:hover{
+  background:var(--surface2)!important;
+}
+
+.profile-option.active{
+  color:var(--blue)!important;
+  background:rgba(13,124,255,.08)!important;
+}
+
+
+/* V16.6.3 branch/profile stablefix */
+#profileSelectorWrap,.profile-selector-wrap{position:relative!important;z-index:8000!important;pointer-events:auto!important}
+#profileSelectorBtn{pointer-events:auto!important;cursor:pointer!important}
+#profileMenu,.profile-menu{z-index:9000!important;pointer-events:auto!important}
+#profileMenu.show,.profile-menu.show{display:block!important}
+#branchModal,#branchModalMount,.branch-modal,#branchModal *,#branchModalMount *,.branch-modal *{pointer-events:auto!important}
+.branch-item,.branch-item *{pointer-events:auto!important}
+.branch-item input[type=checkbox]{cursor:pointer!important}
+.branch-item .star{cursor:pointer!important;pointer-events:auto!important;position:relative!important;z-index:30!important}
+.favorite-row{background:rgba(13,124,255,.08)!important;outline:2px solid rgba(13,124,255,.85)!important;outline-offset:-2px}
+.star-inline{color:var(--blue)!important;font-size:10px!important;font-weight:950!important;margin-left:3px!important}
+
+
+/* V16.6.6 TOP10 interaction performance */
+.card .expanded{
+  content-visibility:auto;
+  contain:layout paint style;
+}
+.card:not(.open) .expanded{
+  content-visibility:hidden;
+}
+
+
+/* V16.7 API diagnostics + refresh optimization */
+.admin-status-row{display:block!important}
+.branch-status-note{font-size:11px;line-height:1.45;color:var(--muted);margin:6px 0 10px}
+.branch-status-panel{
+  max-height:240px;
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface2);
+}
+.branch-status-row{
+  display:grid;
+  grid-template-columns:8px minmax(80px,1fr) minmax(105px,1.35fr) minmax(80px,1fr);
+  gap:8px;
+  align-items:center;
+  padding:8px 10px;
+  border-bottom:1px solid var(--line);
+  font-size:11px;
+}
+.branch-status-row:last-child{border-bottom:0}
+.branch-status-dot{width:7px;height:7px;border-radius:999px;background:#22c55e}
+.branch-status-row.fail .branch-status-dot{background:#ef4444}
+.branch-status-mode{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.branch-status-detail{color:var(--muted);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.branch-status-row.fail .branch-status-detail{color:#ef4444}
+.branch-status-empty{padding:14px;color:var(--muted);font-size:12px;text-align:center}
+html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#263245}
+
+
+/* V16.8.1 indicator visibility + MONEYMAX refresh backflip */
+#mainLogo{
+  transform-origin:50% 50%;
+  backface-visibility:visible;
+  will-change:transform;
+}
+#mainLogo.moneymax-backflip{
+  animation:moneymaxBackflip .78s cubic-bezier(.22,.75,.24,1);
+}
+@keyframes moneymaxBackflip{
+  0%{transform:perspective(500px) rotateX(0deg) translateY(0)}
+  25%{transform:perspective(500px) rotateX(-90deg) translateY(-5px)}
+  50%{transform:perspective(500px) rotateX(-180deg) translateY(-9px)}
+  75%{transform:perspective(500px) rotateX(-270deg) translateY(-5px)}
+  100%{transform:perspective(500px) rotateX(-360deg) translateY(0)}
+}
+@media (prefers-reduced-motion: reduce){
+  #mainLogo.moneymax-backflip{animation:none}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <img id="mainLogo" class="theme-logo" src="./logo-light.png" onerror="this.style.display='none';">
+      <div class="logo-fallback" style="display:none">MONEY<br>MAX</div>
+    </div>
+
+    <div class="side-section" data-section="branches">
+      <button class="side-section-head" onclick="toggleSideSection('branches')"><span>지점 선택</span><span class="arrow">▼</span></button>
+      <div class="side-section-body">
+        <input id="branchSearch" class="search" placeholder="지점 검색">
+        <div class="side-actions">
+          <button class="primary" onclick="selectAllBranches()">전체 선택</button>
+          <button onclick="clearBranches()">전체 해제</button>
+        </div>
+        <label class="branch-item" style="margin-bottom:8px">
+          <input type="checkbox" id="favoriteOnly" onchange="renderBranchList(); render();">
+          <span>즐겨찾기만 보기</span>
+          <span class="star on">★</span>
+        </label>
+        <div class="branch-list" id="branchList"></div>
+        <div class="selected-count" id="branchSummary">-</div>
+      </div>
+    </div>
+
+    <div class="side-section" data-section="indicators">
+      <button class="side-section-head" onclick="toggleSideSection('indicators')"><span>보조지표</span><span class="arrow">▼</span></button>
+      <div class="side-section-body">
+        <div class="priority-note">원달러 · 원엔 · 달러엔 · 테더 우선</div>
+        <div class="sidebar-mini-list" id="indicatorSideList">
+          <label class="sidebar-option"><input type="checkbox" checked data-indicator="usdkrw"> 원달러</label>
+          <label class="sidebar-option"><input type="checkbox" checked data-indicator="jpykrw"> 원엔</label>
+          <label class="sidebar-option"><input type="checkbox" checked data-indicator="usdjpy"> 달러엔</label>
+          <label class="sidebar-option"><input type="checkbox" checked data-indicator="usdt"> 테더</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="kimchi"> 김프</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="wti"> WTI</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="dxy"> 달러인덱스</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="kospi"> 코스피</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="vix"> VIX</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="nasdaq"> 나스닥</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="sp500"> S&P500</label>
+          <label class="sidebar-option"><input type="checkbox" data-indicator="us10y"> 미국10년물</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-section" data-section="charts">
+      <button class="side-section-head" onclick="toggleSideSection('charts')"><span>외환차트</span><span class="arrow">▼</span></button>
+      <div class="side-section-body">
+        <div class="priority-note">원달러 · 원엔 기본</div>
+        <div class="chart-check-list" id="chartSideList">
+          <label class="sidebar-option"><input type="checkbox" checked data-chart="usdkrw"> 원달러</label>
+          <label class="sidebar-option"><input type="checkbox" checked data-chart="jpykrw"> 원엔</label>
+          <label class="sidebar-option"><input type="checkbox" data-chart="usdjpy"> 달러엔</label>
+          <label class="sidebar-option"><input type="checkbox" data-chart="wti"> WTI</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-foot">
+      <button style="width:100%" onclick="resetAllSettings()">설정 초기화</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div class="title">
+        <h1>머니박스 지점별 환율 비교</h1>
+        <div class="updated" id="updated">업데이트 확인 중...</div>
+      </div>
+      <div class="controls">
+        <select id="currencyFilter"><option value="ALL">전체 통화</option></select>
+        <button onclick="toggleTable()" id="tableBtn">표 보기</button>
+        
+<div class="profile-selector-wrap" id="profileSelectorWrap">
+  <button id="profileSelectorBtn" type="button">🏢 프로필 <span>▾</span></button>
+  <div class="profile-menu" id="profileMenu"></div>
+</div>
+        <button id="topBranchBtn" type="button" >지점 선택</button>
+        <button onclick="toggleTheme()" id="themeBtn">다크모드</button>
+        <button class="primary" onclick="loadRates()">새로고침</button>
+      <button class="admin-settings-btn" id="adminSettingsBtn" onclick="openAdminSettings()">설정</button>
+      </div>
+    </header>
+
+    <div class="group-tabs">
+      <button class="tab active" data-group="all" onclick="setGroup('all')">전체 통화</button>
+      <button class="tab" data-group="major" onclick="setGroup('major')">주요 통화</button>
+      <button class="tab" data-group="asia" onclick="setGroup('asia')">동남아</button>
+      <button class="tab" data-group="etc" onclick="setGroup('etc')">기타통화</button>
+    </div>
+<div class="source-status-pill" id="sourceStatusPill">기준 소스: -</div>
+    <div class="overview-strip" id="overviewStrip">
+      <div class="overview-mini" data-overview-indicator="usdkrw"><div class="overview-mini-label">USD/KRW 원달러</div><div class="overview-mini-value" id="ov-usdkrw">-</div><div class="overview-mini-sub" id="ov-usdkrw-sub">-</div><div class="overview-mini-time" id="ov-usdkrw-time">-</div></div>
+      <div class="overview-mini" data-overview-indicator="jpykrw"><div class="overview-mini-label">JPY/KRW 원엔</div><div class="overview-mini-value" id="ov-jpykrw">-</div><div class="overview-mini-sub" id="ov-jpykrw-sub">-</div><div class="overview-mini-time" id="ov-jpykrw-time">-</div></div>
+      <div class="overview-mini" data-overview-indicator="usdjpy"><div class="overview-mini-label">USD/JPY 달러엔</div><div class="overview-mini-value" id="ov-usdjpy">-</div><div class="overview-mini-sub" id="ov-usdjpy-sub">-</div><div class="overview-mini-time" id="ov-usdjpy-time">-</div></div>
+      <div class="overview-mini" data-overview-indicator="usdt"><div class="overview-mini-label">USDT/KRW 테더</div><div class="overview-mini-value" id="ov-usdt">-</div><div class="overview-mini-sub" id="ov-usdt-sub">-</div><div class="overview-mini-time" id="ov-usdt-time">-</div></div>
+    </div>
+    <section class="market-panel">
+      <div class="ad-slot" id="topAdSlot">Google AdSense 광고 영역</div>
+      <div class="market-mini">
+        <div class="market-tile" data-indicator-card="usdkrw"><div class="market-title">🇰🇷🇺🇸 원달러</div><div class="market-value" id="m-usdkrw">-</div><div class="market-sub" id="m-usdkrw-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="jpykrw"><div class="market-title">🇰🇷🇯🇵 원엔</div><div class="market-value" id="m-jpykrw">-</div><div class="market-sub" id="m-jpykrw-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="usdjpy"><div class="market-title">🇺🇸🇯🇵 달러엔</div><div class="market-value" id="m-usdjpy">-</div><div class="market-sub" id="m-usdjpy-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="usdt"><div class="market-title">₮ 테더</div><div class="market-value" id="m-usdt">-</div><div class="market-sub" id="m-usdt-sub">업비트</div><div class="market-source">UPBIT: KRW-USDT</div></div>
+        <div class="market-tile" data-indicator-card="kimchi"><div class="market-title">₿ 김프</div><div class="market-value" id="m-kimchi">-</div><div class="market-sub" id="m-kimchi-sub">업비트 / 바이낸스</div><div class="market-source">계산값</div></div>
+        <div class="market-tile" data-indicator-card="wti"><div class="market-title">🛢 WTI</div><div class="market-value" id="m-wti">-</div><div class="market-sub" id="m-wti-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="dxy"><div class="market-title">💵 달러인덱스</div><div class="market-value" id="m-dxy">-</div><div class="market-sub" id="m-dxy-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="kospi"><div class="market-title">🇰🇷 코스피</div><div class="market-value" id="m-kospi">-</div><div class="market-sub" id="m-kospi-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="vix"><div class="market-title">⚠️ VIX</div><div class="market-value" id="m-vix">-</div><div class="market-sub" id="m-vix-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="nasdaq"><div class="market-title">🇺🇸 나스닥</div><div class="market-value" id="m-nasdaq">-</div><div class="market-sub" id="m-nasdaq-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="sp500"><div class="market-title">🇺🇸 S&P500</div><div class="market-value" id="m-sp500">-</div><div class="market-sub" id="m-sp500-sub">TradingView</div></div>
+        <div class="market-tile" data-indicator-card="us10y"><div class="market-title">🏦 미국10년물</div><div class="market-value" id="m-us10y">-</div><div class="market-sub" id="m-us10y-sub">TradingView</div></div>
+      </div>
+
+      <div class="chart-toggle-wrap">
+        <button class="chart-toggle" onclick="toggleCharts()" id="chartToggleBtn">경제 차트 보기</button>
+      </div>
+
+      <div class="chart-panel" id="chartPanel">
+        <div class="chart-row">
+          <div class="chart-card chart-frame-wrap" data-chart-card="usdkrw"><div class="chart-head">USD/KRW 원달러</div><iframe class="chart-frame" src="https://s.tradingview.com/widgetembed/?symbol=FX_IDC:USDKRW&interval=60&theme=dark" loading="lazy"></iframe></div>
+          <div class="chart-card chart-frame-wrap" data-chart-card="jpykrw"><div class="chart-head">JPY/KRW 원엔(1엔 차트)</div><iframe class="chart-frame" src="https://s.tradingview.com/widgetembed/?symbol=FX_IDC:JPYKRW&interval=60&theme=dark" loading="lazy"></iframe></div>
+          <div class="chart-card chart-frame-wrap" data-chart-card="usdjpy"><div class="chart-head">USD/JPY 달러엔</div><iframe class="chart-frame" src="https://s.tradingview.com/widgetembed/?symbol=FX:USDJPY&interval=60&theme=dark" loading="lazy"></iframe></div>
+          <div class="chart-card chart-frame-wrap" data-chart-card="wti"><div class="chart-head">WTI</div><iframe class="chart-frame" src="https://s.tradingview.com/widgetembed/?symbol=TVC:USOIL&interval=60&theme=dark" loading="lazy"></iframe></div>
+        </div>
+        <div class="chart-card full reference-panel collapsed" id="referencePanel">
+          <div class="chart-head reference-head"><span>참고 환율</span><button class="reference-toggle" onclick="toggleReferencePanel()" id="referenceToggleBtn">펼치기</button></div>
+          <div class="fx-reference">
+            <div class="fx-ref-box" data-ref-card="eurkrw">
+              <div class="fx-ref-label">EUR/KRW 원유로</div>
+              <div class="fx-ref-number" id="r-eurkrw">-</div>
+              <div class="fx-ref-change" id="r-eurkrw-change">-</div>
+              <div class="fx-ref-source" id="r-eurkrw-source">-</div>
+            </div>
+            <div class="fx-ref-box" data-ref-card="cnykrw">
+              <div class="fx-ref-label">CNY/KRW 원위안</div>
+              <div class="fx-ref-number" id="r-cnykrw">-</div>
+              <div class="fx-ref-change" id="r-cnykrw-change">-</div>
+              <div class="fx-ref-source" id="r-cnykrw-source">-</div>
+            </div>
+            <div class="fx-ref-box" data-ref-card="twdkrw">
+              <div class="fx-ref-label">TWD/KRW 원대만</div>
+              <div class="fx-ref-number" id="r-twdkrw">-</div>
+              <div class="fx-ref-change" id="r-twdkrw-change">-</div>
+              <div class="fx-ref-source" id="r-twdkrw-source">-</div>
+            </div>
+            <div class="fx-ref-box" data-ref-card="hkdkrw">
+              <div class="fx-ref-label">HKD/KRW 원홍콩</div>
+              <div class="fx-ref-number" id="r-hkdkrw">-</div>
+              <div class="fx-ref-change" id="r-hkdkrw-change">-</div>
+              <div class="fx-ref-source" id="r-hkdkrw-source">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <div class="alertbar" id="alertbar"><span id="alertText"></span><button onclick="toggleErrorDetail()">자세히</button></div>
+    <div class="error" id="errorBox"></div>
+
+    <section class="board" id="board"></section>
+
+    <section class="table-section hide" id="tableSection">
+      <div class="table-head"><b>상세 데이터</b><span class="updated">별표 지점 강조 적용</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>지점</th><th>지역</th><th>통화</th><th>살 때</th><th>팔 때</th>
+              <th>스프레드</th><th>기준율</th><th>살 때-기준</th><th>팔 때-기준</th><th>날짜</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+
+const BRANCH_PRIORITY = ["머니박스 명동","머니박스 남대문","머니박스 명동2","제일환전","머니박스 강남"];
+function saveJson(key,value){localStorage.setItem(key,JSON.stringify(value));}
+function loadJson(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback;}catch(e){return fallback;}}
+function toggleSideSection(name){const s=document.querySelector(`.side-section[data-section="${name}"]`);if(!s)return;s.classList.toggle("collapsed");saveJson("moneymaxCollapsedSections",[...document.querySelectorAll(".side-section.collapsed")].map(x=>x.dataset.section));}
+function restoreSideSections(){loadJson("moneymaxCollapsedSections",[]).forEach(name=>{const s=document.querySelector(`.side-section[data-section="${name}"]`);if(s)s.classList.add("collapsed");});}
+function saveSelectedBranches(){saveJson("moneymaxSelectedBranches",[...selectedBranches]);}
+function restoreSelectedBranches(){const saved=loadJson("moneymaxSelectedBranches",null);if(Array.isArray(saved)){selectedBranches.clear();saved.forEach(v=>selectedBranches.add(v));}}
+function saveIndicatorSettings(){const o={};document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>o[i.dataset.indicator]=i.checked);saveJson("moneymaxIndicators",o);}
+function restoreIndicatorSettings(){const saved=loadJson("moneymaxIndicators",null);if(!saved)return;document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>{if(Object.prototype.hasOwnProperty.call(saved,i.dataset.indicator))i.checked=!!saved[i.dataset.indicator];});}
+function applyIndicatorVisibility(){document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>{const c=document.querySelector(`[data-indicator-card="${i.dataset.indicator}"]`);if(c)c.style.display=i.checked?"":"none";});}
+function saveChartSettings(){const o={};document.querySelectorAll("#chartSideList input[data-chart]").forEach(i=>o[i.dataset.chart]=i.checked);saveJson("moneymaxCharts",o);}
+function restoreChartSettings(){const saved=loadJson("moneymaxCharts",null);if(!saved)return;document.querySelectorAll("#chartSideList input[data-chart]").forEach(i=>{if(Object.prototype.hasOwnProperty.call(saved,i.dataset.chart))i.checked=!!saved[i.dataset.chart];});}
+function applyChartVisibility(){document.querySelectorAll("#chartSideList input[data-chart]").forEach(i=>{const c=document.querySelector(`[data-chart-card="${i.dataset.chart}"]`);if(c)c.classList.toggle("on",i.checked);});}
+function resetAllSettings(){["moneymaxCollapsedSections","moneymaxSelectedBranches","moneymaxIndicators","moneymaxCharts","moneyboxFavorites"].forEach(k=>localStorage.removeItem(k));location.reload();}
+function initV12Settings(){restoreSelectedBranches();restoreSideSections();restoreIndicatorSettings();applyIndicatorVisibility();restoreChartSettings();applyChartVisibility();document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>i.addEventListener("change",()=>{saveIndicatorSettings();applyIndicatorVisibility();}));document.querySelectorAll("#chartSideList input[data-chart]").forEach(i=>i.addEventListener("change",()=>{saveChartSettings();applyChartVisibility();}));}
+
+let rows = [];
+let latestErrors = [];
+let latestBranchStatus = [];
+let lastRatesSignature = "";
+let activeGroup = "all";
+const openCards = new Set();
+const selectedBranches = new Set();
+let favoriteBranches = new Set(JSON.parse(localStorage.getItem("moneyboxFavorites") || "[]"));
+
+const groups = {
+  all:["USD","JPY","CNY","TWD","HKD","EUR","AUD","SGD","CAD","GBP","THB","PHP","MYR","VND","IDR","CHF","NZD","AED","RUB"],
+  major:["USD","JPY","CNY","TWD","HKD","EUR"],
+  asia:["SGD","THB","PHP","MYR","VND","IDR"],
+  etc:["AUD","CAD","GBP","CHF","NZD","AED","RUB"]
+};
+const preferred = groups.all;
+const names = {
+  USD:["us","미국 달러"], JPY:["jp","일본 엔"], CNY:["cn","중국 위안"], TWD:["tw","대만 달러"], HKD:["hk","홍콩 달러"],
+  EUR:["eu","유로"], AUD:["au","호주 달러"], SGD:["sg","싱가포르 달러"], CAD:["ca","캐나다 달러"], GBP:["gb","영국 파운드"],
+  THB:["th","태국 바트"], PHP:["ph","필리핀 페소"], MYR:["my","말레이시아 링깃"], VND:["vn","베트남 동"], IDR:["id","인도네시아 루피아"],
+  CHF:["ch","스위스 프랑"], NZD:["nz","뉴질랜드 달러"], AED:["ae","UAE 디르함"], RUB:["ru","러시아 루블"]
+};
+const fmt = n => n == null || Number.isNaN(Number(n)) ? "-" : Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
+const clean = n => String(n).replace("머니박스 ","");
+function flagUrl(cur){ return `https://flagcdn.com/w80/${names[cur]?.[0] || "un"}.png`; }
+function allBranches(){
+  const branches=[...new Set(rows.map(r=>r.branch))];
+  return branches.sort((a,b)=>{
+    const ai=BRANCH_PRIORITY.indexOf(a), bi=BRANCH_PRIORITY.indexOf(b);
+    if(ai!==-1||bi!==-1){if(ai===-1)return 1;if(bi===-1)return -1;return ai-bi;}
+    return clean(a).localeCompare(clean(b),"ko");
+  });
+}
+function currentCurrencies(){ return groups[activeGroup].filter(c => rows.some(r => r.currency === c)); }
+function selectedBranchOk(branch){ if(selectedBranches.has("__NONE__")) return false; return selectedBranches.size === 0 || selectedBranches.has(branch); }
+function isFocused(branch){ return favoriteBranches.has(branch); }
+function activeRows(){
+  const c = document.getElementById("currencyFilter").value;
+  return rows.filter(r => {
+    const groupOk = groups[activeGroup].includes(r.currency);
+    const currencyOk = c === "ALL" || r.currency === c;
+    return groupOk && currencyOk && selectedBranchOk(r.branch);
+  });
+}
+function updateCurrencyFilter(){
+  const cf = document.getElementById("currencyFilter");
+  const old = cf.value;
+  const cs = currentCurrencies();
+  cf.innerHTML = '<option value="ALL">전체 통화</option>' + cs.map(c=>`<option value="${c}">${c}</option>`).join("");
+  cf.value = cs.includes(old) ? old : "ALL";
+}
+function renderBranchList(){
+  const list = document.getElementById("branchList");
+  const query = document.getElementById("branchSearch").value.trim();
+  const favOnly = document.getElementById("favoriteOnly").checked;
+  let branches = allBranches();
+  if(query) branches = branches.filter(b => clean(b).includes(query));
+  if(favOnly) branches = branches.filter(b => favoriteBranches.has(b));
+  list.innerHTML = branches.map(branch => {
+    const checked = !selectedBranches.has("__NONE__") && (selectedBranches.size === 0 || selectedBranches.has(branch));
+    const fav = favoriteBranches.has(branch);
+    const type = rows.find(r=>r.branch===branch)?.type;
+    return `<label class="branch-item ${checked ? 'on':''}">
+      <input type="checkbox" value="${branch}" ${checked ? 'checked':''} onchange="onBranchToggle()">
+      <span>${clean(branch)}${type === "external" ? '<span class="external-tag">외부</span>' : ''}</span>
+      <span class="star ${fav ? 'on':''}" onclick="toggleFavorite(event,'${branch}')">★</span>
+    </label>`;
+  }).join("");
+  updateBranchSummary();
+}
+function onBranchToggle(){
+  selectedBranches.delete("__NONE__");
+  const all = allBranches();
+  const checks = [...document.querySelectorAll("#branchList input[type=checkbox]")];
+  if(selectedBranches.size === 0){ selectedBranches.clear(); all.forEach(b => selectedBranches.add(b)); }
+  checks.forEach(input => { if(input.checked) selectedBranches.add(input.value); else selectedBranches.delete(input.value); });
+  if(selectedBranches.size === all.length) selectedBranches.clear();
+  saveSelectedBranches(); renderBranchList(); render();
+}
+function selectAllBranches(){ selectedBranches.clear(); saveSelectedBranches(); renderBranchList(); render(); }
+function clearBranches(){ selectedBranches.clear(); selectedBranches.add("__NONE__"); saveSelectedBranches(); document.querySelectorAll("#branchList input").forEach(i=>i.checked=false); updateBranchSummary(); render(); }
+function updateBranchSummary(){
+  const total = allBranches().length;
+  const count = selectedBranches.has("__NONE__") ? 0 : (selectedBranches.size === 0 ? total : selectedBranches.size);
+  document.getElementById("branchSummary").textContent = `선택 지점 ${count} / ${total}`;
+}
+function toggleFavorite(e, branch){
+  e.preventDefault(); e.stopPropagation();
+  if(favoriteBranches.has(branch)) favoriteBranches.delete(branch); else favoriteBranches.add(branch);
+  localStorage.setItem("moneyboxFavorites", JSON.stringify([...favoriteBranches]));
+  renderBranchList();
+  render();
+}
+function resetFavorites(){ favoriteBranches.clear(); localStorage.removeItem("moneyboxFavorites"); renderBranchList(); render(); }
+function setGroup(group){
+  activeGroup = group;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.group===group));
+  updateCurrencyFilter(); render();
+}
+function bestFor(cur){
+  const list = activeRows().filter(r=>r.currency===cur);
+  const buy = [...list].filter(r=>Number.isFinite(Number(r.buy)) && Number(r.buy)>0).sort((a,b)=>a.buy-b.buy);
+  const sell = [...list].filter(r=>Number.isFinite(Number(r.sell)) && Number(r.sell)>0).sort((a,b)=>b.sell-a.sell);
+  const spread = [...list].filter(r=>r.spread>0).sort((a,b)=>a.spread-b.spread);
+  return {buy,sell,spread,list};
+}
+function rowTemplate(r,i,type,rankOverride=null){
+  const value = type === "buy" ? r.buy : r.sell;
+  const focus = typeof getProfileFavoriteSetV1595 === "function" ? getProfileFavoriteSetV1595().has(r.branch) : false;
+  const rank = rankOverride ?? (i+1);
+  return `<div class="row ${type === "buy" ? "buy-row":"sell-row"} ${focus ? "focus-row favorite-row" : ""}">
+    <div class="no">${rank}</div>
+    <div class="branch">${clean(r.branch)}${focus ? ' <span class="star-inline">★</span>' : ''}</div>
+    <div class="price ${type === "buy" ? "buy-price":"sell-price"}">${fmt(value)}</div>
+  </div>`;
+}
+
+function fullRankRows(list,type){
+  const top10 = list.slice(0,10);
+  const topKeys = new Set(top10.map(r=>`${r.branch}__${r.currency}`));
+  const favOutside = list
+    .map((r,i)=>({r,rank:i+1}))
+    .filter(x=>isFocused(x.r.branch) && !topKeys.has(`${x.r.branch}__${x.r.currency}`));
+
+  const main = top10.map((r,i)=>rowTemplate(r,i,type)).join("");
+  if(!favOutside.length) return main;
+
+  return main
+    + `<div class="fav-rank-divider">★ 즐겨찾기 순위</div>`
+    + favOutside.map(x=>rowTemplate(x.r,x.rank-1,type,x.rank)).join("");
+}
+function renderBoard(){
+  const board = document.getElementById("board");
+  const cFilter = document.getElementById("currencyFilter").value;
+  const cs = cFilter === "ALL" ? currentCurrencies().filter(c=>activeRows().some(r=>r.currency===c)) : [cFilter];
+  board.innerHTML = cs.map(cur => {
+    const data = bestFor(cur);
+    const [flag,label] = names[cur] || ["",cur];
+    const b = data.buy[0], s = data.sell[0], sp = data.spread[0];
+    const sample = rows.find(r=>r.currency===cur);
+    const open = openCards.has(cur);
+    return `<article class="card ${open ? 'open':''}" onclick="toggleCard(\'${cur}\')">
+      <div class="card-head">
+        <div class="cur"><div class="flag"><img src="${flagUrl(cur)}"></div><div><div class="cur-name">${cur}</div><div class="cur-sub">${label}</div></div></div>
+        <div class="base">기준 ${fmt(sample?.base)}<br>${sample?.date || "-"}</div>
+      </div>
+      <div class="best">
+        <div class="best-box buy"><div class="best-label">살 때 BEST</div><div class="best-value">${b?fmt(b.buy):"-"}</div><div class="best-branch">${b?clean(b.branch):"-"}</div></div>
+        <div class="best-box sell"><div class="best-label">팔 때 BEST</div><div class="best-value">${s?fmt(s.sell):"-"}</div><div class="best-branch">${s?clean(s.branch):"-"}</div></div>
+      </div>
+      <div class="rank-wrap">
+        <div class="rank-box"><div class="rank-title"><span>살 때 TOP3</span><span>↓</span></div>${data.buy.slice(0,3).map((r,i)=>rowTemplate(r,i,"buy")).join("")}</div>
+        <div class="rank-box"><div class="rank-title"><span>팔 때 TOP3</span><span>↑</span></div>${data.sell.slice(0,3).map((r,i)=>rowTemplate(r,i,"sell")).join("")}</div>
+      </div>
+      <div class="expanded">
+        <div class="full-title">${cur} 전체 지점 순위</div>
+        <div class="full-grid">
+          <div class="full-list">${fullRankRows(data.buy,"buy")}</div>
+          <div class="full-list">${fullRankRows(data.sell,"sell")}</div>
+        </div>
+      </div>
+    </article>`;
+  }).join("");
+}
+function renderTable(){
+  const data = activeRows().sort((a,b)=>preferred.indexOf(a.currency)-preferred.indexOf(b.currency)||a.branch.localeCompare(b.branch,"ko"));
+  document.getElementById("tbody").innerHTML = data.map(r=>{
+    const focus = typeof getProfileFavoriteSetV1595 === "function" ? getProfileFavoriteSetV1595().has(r.branch) : false;
+    return `<tr class="${focus ? 'focus-row' : ''}">
+    <td><b class="${focus ? 'focus-cell' : ''}">${r.branch}${focus ? ' · ★' : ''}</b></td><td>${r.area}</td><td><span class="tag">${r.currency}</span></td>
+    <td>${fmt(r.buy)}</td><td>${r.sell?fmt(r.sell):"-"}</td><td>${fmt(r.spread)}</td><td>${fmt(r.base)}</td><td>${fmt(r.buyDiff)}</td><td>${fmt(r.sellDiff)}</td><td>${r.date}</td>
+  </tr>`}).join("");
+}
+function render(){ renderBoard(); renderTable(); updateBranchSummary(); }
+
+function ratesSignature(list){
+  return JSON.stringify(
+    (list || []).map(r => [
+      r.branch, r.currency,
+      r.buy == null ? null : Number(r.buy),
+      r.sell == null ? null : Number(r.sell),
+      r.status || ""
+    ]).sort((a,b) => (a[0]+a[1]).localeCompare(b[0]+b[1],"ko"))
+  );
+}
+
+function renderBranchStatusPanel(){
+  const root = document.getElementById("branchStatusPanel");
+  if(!root) return;
+  const items = latestBranchStatus || [];
+  if(!items.length){
+    root.innerHTML = '<div class="branch-status-empty">수집 상태 정보 없음</div>';
+    return;
+  }
+  const order = {NEW_API:0, LEGACY:1, EXTERNAL:2};
+  const sorted = [...items].sort((a,b)=>
+    Number(b.ok)-Number(a.ok) ||
+    (order[a.mode]??9)-(order[b.mode]??9) ||
+    String(a.name).localeCompare(String(b.name),"ko")
+  );
+  root.innerHTML = sorted.map(s=>{
+    const clean = String(s.name||"").replace("머니박스 ","");
+    const mode = s.mode === "NEW_API" ? "새 API" : s.mode === "LEGACY" ? "기존" : "외부";
+    const cls = s.ok ? "ok" : "fail";
+    const detail = s.ok ? `${s.rowCount||0}개 통화` : (s.error || s.status || "실패");
+    const code = s.apiCode ? ` · ${s.apiCode}` : "";
+    return `<div class="branch-status-row ${cls}">
+      <span class="branch-status-dot"></span>
+      <b>${clean}</b>
+      <span class="branch-status-mode">${mode}${code}</span>
+      <span class="branch-status-detail">${detail}</span>
+    </div>`;
+  }).join("");
+}
+
+function playMoneymaxBackflip(){
+  const logo=document.getElementById("mainLogo");
+  if(!logo) return;
+  logo.classList.remove("moneymax-backflip");
+  void logo.offsetWidth;
+  logo.classList.add("moneymax-backflip");
+}
+
+
+async function moneymaxJson(response, label){
+  const text = await response.text();
+  const contentType = response.headers.get("content-type") || "";
+  if (!response.ok) {
+    throw new Error(`${label} HTTP ${response.status}: ${text.slice(0,180)}`);
+  }
+  if (!contentType.includes("application/json")) {
+    throw new Error(`${label} JSON 아님 (${contentType || "content-type 없음"}): ${text.slice(0,120)}`);
+  }
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error(`${label} JSON 파싱 실패: ${text.slice(0,120)}`);
+  }
+}
+
+async function loadRates(){
+  const updated = document.getElementById("updated");
+  const err = document.getElementById("errorBox");
+  const alertbar = document.getElementById("alertbar");
+  updated.textContent = "업데이트 확인 중...";
+  err.style.display = "none"; err.textContent = ""; alertbar.classList.remove("show");
+  try{
+    const res = await fetch("/api/rates");
+    const json = await moneymaxJson(res, "/api/rates");
+    const nextRows = (json.data || []).filter(r=>r.buy!==null || r.sell!==null);
+    const nextSignature = ratesSignature(nextRows);
+    const dataChanged = nextSignature !== lastRatesSignature;
+
+    rows = nextRows;
+    latestErrors = json.errors || [];
+    latestBranchStatus = json.branchStatus || [];
+
+    if(dataChanged){
+      lastRatesSignature = nextSignature;
+      updateCurrencyFilter();
+      initV12Settings();
+      renderBranchList();
+      render();
+    }
+    renderBranchStatusPanel();
+    updated.textContent = `실시간 업데이트 ${json.updatedAt || "-"}`;
+    playMoneymaxBackflip();
+    if(latestErrors.length){
+      const names = latestErrors.map(e=>e.split(":")[0].replace("머니박스 ","")).join(", ");
+      document.getElementById("alertText").innerHTML = `<b>${latestErrors.length}개 지점 업데이트 실패</b> · ${names}`;
+      alertbar.classList.add("show");
+      err.textContent = "일부 지점 수집 실패:\n" + latestErrors.join("\n");
+    }
+  }catch(e){
+    updated.textContent = "불러오기 실패";
+    err.style.display = "block"; err.textContent = e.message;
+  }
+}
+function toggleErrorDetail(){ const err=document.getElementById("errorBox"); err.style.display = err.style.display === "block" ? "none" : "block"; }
+function toggleCard(cur){
+  const wasOpen = openCards.has(cur);
+  if(wasOpen) openCards.delete(cur);
+  else openCards.add(cur);
+
+  // V16.6.6: Do not rebuild the entire currency board just to open TOP10.
+  // The full ranking HTML already exists inside each card, so only toggle
+  // the clicked card's class. This avoids regenerating every currency card.
+  const cards = document.querySelectorAll("#board .card");
+  for(const card of cards){
+    const name = card.querySelector(".cur-name")?.textContent?.trim();
+    if(name === cur){
+      card.classList.toggle("open", !wasOpen);
+      break;
+    }
+  }
+}
+
+function updateThemeLogo(){
+  const logo = document.getElementById("mainLogo");
+  if(!logo) return;
+  logo.src = document.documentElement.dataset.theme === "dark" ? "./logo-dark.png" : "./logo-light.png";
+}
+
+function toggleTheme(){ localStorage.setItem('moneymaxThemeUserSet','1');
+  const html=document.documentElement, btn=document.getElementById("themeBtn");
+  if(html.dataset.theme==="dark"){html.dataset.theme="light";btn.textContent="다크모드";}else{html.dataset.theme="dark";btn.textContent="라이트모드";} updateThemeLogo(); updateThemeLogo();
+}
+function toggleTable(){
+  const s=document.getElementById("tableSection"), b=document.getElementById("tableBtn");
+  s.classList.toggle("hide"); b.textContent=s.classList.contains("hide") ? "표 보기" : "표 숨기기";
+}
+document.getElementById("currencyFilter").addEventListener("change", render);
+document.getElementById("branchSearch").addEventListener("input", renderBranchList);
+loadRates();
+setInterval(loadRates,180000);
+
+function fmtMarket(n, max=2){
+  if(n == null || Number.isNaN(Number(n))) return "-";
+  return Number(n).toLocaleString(undefined,{maximumFractionDigits:max});
+}
+function pctText(p){
+  if(p == null || Number.isNaN(Number(p))) return "-";
+  const sign = p > 0 ? "+" : "";
+  return `${sign}${Number(p).toFixed(2)}%`;
+}
+function paintChange(el, value, reverse=false){
+  if(!el) return;
+  el.classList.remove("market-red","market-blue","market-neutral");
+  if(value == null || Number.isNaN(Number(value))) {
+    el.classList.add("market-neutral");
+    return;
+  }
+  const positive = Number(value) > 0;
+  if(reverse){
+    el.classList.add(positive ? "market-blue" : "market-red");
+  }else{
+    el.classList.add(positive ? "market-red" : "market-blue");
+  }
+}
+async function loadMarkets(){
+  try{
+    const res=await fetch(`/api/markets?source=${getSourceModeV145()}`);
+    const json=await res.json();
+    const m=json.indicators||{};
+    updateSourceStatusV145(json);
+    updateSourceStatusV146(json);
+    bindOverviewV145(m);
+    bindReferenceFxV138(m);
+    bindReferenceFxV142(m);
+    bindReferenceFxV139(m);
+    bindReferenceFxV142(m);
+    v142SetMarketValue("usdkrw",m.usdkrw,2);
+    v142SetMarketValue("jpykrw",m.jpykrw,4);
+    v142SetMarketValue("usdjpy",m.usdjpy,3);
+    v142SetMarketValue("usdt",m.usdt,2);
+    v142SetMarketValue("wti",m.wti,2);
+    v142SetMarketValue("dxy",m.dxy,2);
+    v142SetMarketValue("kospi",m.kospi,2);
+    v142SetMarketValue("vix",m.vix,2);
+    v142SetMarketValue("nasdaq",m.nasdaq,2);
+    v142SetMarketValue("sp500",m.sp500,2);
+    v142SetMarketValue("us10y",m.us10y,3,"%");
+    const k=m.kimchi||{};
+    const premium=k.premium;
+    const kimchiEl=document.getElementById("m-kimchi");
+    kimchiEl.textContent=premium==null?"-":`${premium>0?"+":""}${premium.toFixed(2)}%`;
+    kimchiEl.classList.remove("market-red","market-blue","market-neutral");
+    kimchiEl.classList.add(premium==null?"market-neutral":(premium>=0?"market-red":"market-blue"));
+    document.getElementById("m-kimchi-sub").textContent=k.diff==null?"업비트 / 바이낸스":`${k.diff>0?"+":""}${Math.round(k.diff).toLocaleString()}원`;
+    if(document.getElementById("k-upbit")) if(document.getElementById("k-upbit")) document.getElementById("k-upbit").textContent=k.upbit?`${Math.round(k.upbit).toLocaleString()}원`:"-";
+    if(document.getElementById("k-binance")) if(document.getElementById("k-binance")) document.getElementById("k-binance").textContent=k.binance?`$${fmtMarket(k.binance,2)}`:"-";
+    if(document.getElementById("k-usdkrw")) if(document.getElementById("k-usdkrw")) document.getElementById("k-usdkrw").textContent=k.usdkrw?fmtMarket(k.usdkrw,2):"-";
+    if(document.getElementById("k-global")) if(document.getElementById("k-global")) document.getElementById("k-global").textContent=k.globalKrw?`${Math.round(k.globalKrw).toLocaleString()}원`:"-";
+  }catch(e){console.warn("market load failed",e);}
+}
+function toggleCharts(){
+  const panel = document.getElementById("chartPanel");
+  const btn = document.getElementById("chartToggleBtn");
+  panel.classList.toggle("show");
+  btn.textContent = panel.classList.contains("show") ? "경제 차트 접기" : "경제 차트 보기";
+}
+
+updateThemeLogo();
+
+
+function v142SetMarketValue(key, data, digits=2, suffix=""){
+  const valueEl = document.getElementById(`m-${key}`);
+  const subEl = document.getElementById(`m-${key}-sub`);
+  if(!valueEl || !subEl) return;
+  valueEl.textContent = data?.price == null ? "-" : `${fmtMarket(data.price, digits)}${suffix}`;
+  subEl.textContent = pctText(data?.changePct);
+  paintChange(subEl, data?.changePct);
+}
+
+function toggleIndicatorMenu(){
+  const menu = document.getElementById("indicatorMenu");
+  if(menu) menu.classList.toggle("show");
+}
+
+function applyIndicatorVisibility(){
+  document.querySelectorAll("#indicatorMenu input[data-indicator]").forEach(input => {
+    const card = document.querySelector(`[data-indicator-card="${input.dataset.indicator}"]`);
+    if(card) card.style.display = input.checked ? "" : "none";
+  });
+}
+
+document.querySelectorAll("#indicatorMenu input[data-indicator]").forEach(input => {
+  input.addEventListener("change", applyIndicatorVisibility);
+});
+applyIndicatorVisibility();
+
+
+/* V13 final behavior */
+const V13_DEFAULT_INDICATORS = {usdkrw:true,jpykrw:true,usdjpy:true,usdt:true,kimchi:false,wti:false,dxy:false,kospi:false,vix:false,nasdaq:false,sp500:false,us10y:false};
+const V13_DEFAULT_CHARTS = {usdkrw:true,jpykrw:true,usdjpy:false,wti:false};
+const V13_ALERT_RULES = {usdkrw:3,jpykrw:0.15,usdjpy:0.4,usdt:5};
+let lastMarketValues = loadJson("moneymaxLastMarketValues",{});
+let lastMarketAlertAt = loadJson("moneymaxLastMarketAlertAt",{});
+
+function restoreIndicatorSettingsV13(){
+  const saved=loadJson("moneymaxIndicators",null);
+  const source=saved||V13_DEFAULT_INDICATORS;
+  document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(input=>{
+    input.checked=!!source[input.dataset.indicator];
+  });
+}
+function applyIndicatorVisibilityV13(){
+  document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(input=>{
+    const key=input.dataset.indicator;
+    document.querySelectorAll(`[data-indicator-card="${key}"],[data-overview-indicator="${key}"]`).forEach(card=>{
+      card.style.display=input.checked?"":"none";
+    });
+  });
+}
+function saveIndicatorSettingsV13(){
+  const data={};
+  document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(input=>data[input.dataset.indicator]=input.checked);
+  saveJson("moneymaxIndicators",data);
+}
+function restoreChartSettingsV13(){
+  const saved=loadJson("moneymaxCharts",null);
+  const source=saved||V13_DEFAULT_CHARTS;
+  document.querySelectorAll("#chartSideList input[data-chart]").forEach(input=>{
+    input.checked=!!source[input.dataset.chart];
+  });
+}
+function applyChartVisibilityV13(){
+  document.querySelectorAll("#chartSideList input[data-chart]").forEach(input=>{
+    const card=document.querySelector(`[data-chart-card="${input.dataset.chart}"]`);
+    if(card) card.classList.toggle("on",input.checked);
+  });
+}
+function saveChartSettingsV13(){
+  const data={};
+  document.querySelectorAll("#chartSideList input[data-chart]").forEach(input=>data[input.dataset.chart]=input.checked);
+  saveJson("moneymaxCharts",data);
+}
+function initV13Settings(){
+  restoreIndicatorSettingsV13();
+  applyIndicatorVisibilityV13();
+  restoreChartSettingsV13();
+  applyChartVisibilityV13();
+  document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(input=>{
+    input.onchange=()=>{saveIndicatorSettingsV13();applyIndicatorVisibilityV13();};
+  });
+  document.querySelectorAll("#chartSideList input[data-chart]").forEach(input=>{
+    input.onchange=()=>{saveChartSettingsV13();applyChartVisibilityV13();};
+  });
+}
+function v142SetMarketValue(key,data,digits=2,suffix=""){
+  const valueEl=document.getElementById(`m-${key}`);
+  const subEl=document.getElementById(`m-${key}-sub`);
+  const tile=document.querySelector(`[data-indicator-card="${key}"]`);
+  if(!valueEl||!subEl)return;
+  const price=data?.price;
+  const change=data?.changePct;
+  const prev=lastMarketValues[key];
+
+  valueEl.textContent=price==null?"-":`${fmtMarket(price,digits)}${suffix}`;
+  subEl.textContent=pctText(change);
+  paintChange(subEl,change);
+
+  if(price!=null&&prev!=null&&tile){
+    const diff=Number(price)-Number(prev);
+    tile.classList.remove("flash-up","flash-down","warning");
+    void tile.offsetWidth;
+    if(diff>0)tile.classList.add("flash-up");
+    if(diff<0)tile.classList.add("flash-down");
+    const threshold=V13_ALERT_RULES[key];
+    const now=Date.now();
+    const lastAlert=lastMarketAlertAt[key]||0;
+    if(threshold&&Math.abs(diff)>=threshold&&now-lastAlert>180000){
+      tile.classList.add("warning");
+      lastMarketAlertAt[key]=now;
+      saveJson("moneymaxLastMarketAlertAt",lastMarketAlertAt);
+      playSoftAlert();
+    }
+  }
+  if(price!=null){
+    lastMarketValues[key]=Number(price);
+    saveJson("moneymaxLastMarketValues",lastMarketValues);
+  }
+}
+function playSoftAlert(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.type="sine";osc.frequency.value=880;
+    gain.gain.setValueAtTime(0.03,ctx.currentTime);
+    osc.start();osc.stop(ctx.currentTime+0.12);
+  }catch(e){}
+}
+async function loadMarkets(){
+  try{
+    const res=await fetch(`/api/markets?source=${getSourceModeV145()}`);
+    const json=await res.json();
+    const m=json.indicators||{};
+    bindReferenceFxV138(m);
+    bindReferenceFxV142(m);
+    bindReferenceFxV139(m);
+    bindReferenceFxV142(m);
+    v142SetMarketValue("usdkrw",m.usdkrw,2);
+    v142SetMarketValue("jpykrw",m.jpykrw,4);
+    v142SetMarketValue("usdjpy",m.usdjpy,3);
+    v142SetMarketValue("usdt",m.usdt,2);
+    v142SetMarketValue("wti",m.wti,2);
+    v142SetMarketValue("dxy",m.dxy,2);
+    v142SetMarketValue("kospi",m.kospi,2);
+    v142SetMarketValue("vix",m.vix,2);
+    v142SetMarketValue("nasdaq",m.nasdaq,2);
+    v142SetMarketValue("sp500",m.sp500,2);
+    v142SetMarketValue("us10y",m.us10y,3,"%");
+
+    const k=m.kimchi||{};
+    const premium=k.premium;
+    const kimchiEl=document.getElementById("m-kimchi");
+    kimchiEl.textContent=premium==null?"-":`${premium>0?"+":""}${premium.toFixed(2)}%`;
+    kimchiEl.classList.remove("market-red","market-blue","market-neutral");
+    kimchiEl.classList.add(premium==null?"market-neutral":(premium>=0?"market-red":"market-blue"));
+    document.getElementById("m-kimchi-sub").textContent=k.diff==null?"업비트 / 바이낸스":`${k.diff>0?"+":""}${Math.round(k.diff).toLocaleString()}원`;
+
+    if(document.getElementById("k-upbit")) if(document.getElementById("k-upbit")) document.getElementById("k-upbit").textContent=k.upbit?`${Math.round(k.upbit).toLocaleString()}원`:"-";
+    if(document.getElementById("k-binance")) if(document.getElementById("k-binance")) document.getElementById("k-binance").textContent=k.binance?`$${fmtMarket(k.binance,2)}`:"-";
+    if(document.getElementById("k-usdkrw")) if(document.getElementById("k-usdkrw")) document.getElementById("k-usdkrw").textContent=k.usdkrw?fmtMarket(k.usdkrw,2):"-";
+    if(document.getElementById("k-global")) if(document.getElementById("k-global")) document.getElementById("k-global").textContent=k.globalKrw?`${Math.round(k.globalKrw).toLocaleString()}원`:"-";
+  }catch(e){console.warn("market load failed",e);}
+}
+initV13Settings();
+
+loadMarkets();
+
+
+/* V13.1 chart refresh + reference FX */
+function setReferenceFx(id, data, digits=2){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = data?.price == null ? "-" : fmtMarket(data.price, digits);
+}
+function refreshTradingViewFrames(){
+  const panel = document.getElementById("chartPanel");
+  if(!panel || !panel.classList.contains("show")) return;
+  document.querySelectorAll(".chart-frame").forEach(frame => {
+    const src = frame.getAttribute("src");
+    if(src) frame.setAttribute("src", src);
+  });
+}
+setInterval(refreshTradingViewFrames, 60000);
+
+
+/* V13.7 reference FX binding */
+function setReferenceFxV137(id, data, digits=2){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const price = data && data.price != null ? Number(data.price) : null;
+  el.textContent = price == null || Number.isNaN(price) ? "-" : price.toLocaleString(undefined, {maximumFractionDigits: digits});
+}
+function bindReferenceFxV137(m){
+  setReferenceFxV137("r-eurkrw", m.eurkrw, 2);
+  setReferenceFxV137("r-cnykrw", m.cnykrw, 3);
+  setReferenceFxV137("r-twdkrw", m.twdkrw, 3);
+  setReferenceFxV137("r-hkdkrw", m.hkdkrw, 3);
+}
+function toggleReferencePanel(){
+  const panel = document.getElementById("referencePanel");
+  const btn = document.getElementById("referenceToggleBtn");
+  if(!panel) return;
+  panel.classList.toggle("collapsed");
+  const open = !panel.classList.contains("collapsed");
+  if(btn) btn.textContent = open ? "접기" : "펼치기";
+  localStorage.setItem("moneymaxReferenceOpen", open ? "1" : "0");
+}
+function restoreReferencePanel(){
+  const panel = document.getElementById("referencePanel");
+  const btn = document.getElementById("referenceToggleBtn");
+  if(!panel) return;
+  const open = localStorage.getItem("moneymaxReferenceOpen") === "1";
+  panel.classList.toggle("collapsed", !open);
+  if(btn) btn.textContent = open ? "접기" : "펼치기";
+}
+restoreReferencePanel();
+
+
+/* V13.8 hard reference FX binding */
+function setReferenceFxV138(id, data, digits=2){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const price = data && data.price != null ? Number(data.price) : null;
+  el.textContent = price == null || Number.isNaN(price)
+    ? "-"
+    : price.toLocaleString(undefined, { maximumFractionDigits: digits });
+}
+function bindReferenceFxV138(m){
+  setReferenceFxV138("r-eurkrw", m.eurkrw, 2);
+  setReferenceFxV138("r-cnykrw", m.cnykrw, 3);
+  setReferenceFxV138("r-twdkrw", m.twdkrw, 3);
+  setReferenceFxV138("r-hkdkrw", m.hkdkrw, 3);
+}
+
+
+/* V13.9 reference change binding */
+const referenceLastValuesV139 = JSON.parse(localStorage.getItem("moneymaxReferenceLastValues") || "{}");
+
+function formatChangeV139(data){
+  if(!data || data.changePct == null || Number.isNaN(Number(data.changePct))) return "-";
+  const v = Number(data.changePct);
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${v.toFixed(2)}%`;
+}
+
+function setReferenceFxV139(key, data, digits=2){
+  const priceEl = document.getElementById(`r-${key}`);
+  const changeEl = document.getElementById(`r-${key}-change`);
+  const sourceEl = document.getElementById(`r-${key}-source`);
+  const card = document.querySelector(`[data-ref-card="${key}"]`);
+  if(!priceEl) return;
+
+  const price = data && data.price != null ? Number(data.price) : null;
+  priceEl.textContent = price == null || Number.isNaN(price)
+    ? "-"
+    : price.toLocaleString(undefined, {maximumFractionDigits: digits});
+
+  if(changeEl){
+    const cp = data && data.changePct != null ? Number(data.changePct) : null;
+    changeEl.textContent = cp == null || Number.isNaN(cp) ? "-" : `${cp > 0 ? "+" : ""}${cp.toFixed(2)}%`;
+    changeEl.classList.remove("fx-ref-up","fx-ref-down","fx-ref-flat");
+    changeEl.classList.add(cp == null ? "fx-ref-flat" : (cp > 0 ? "fx-ref-up" : cp < 0 ? "fx-ref-down" : "fx-ref-flat"));
+  }
+
+  if(sourceEl){
+    sourceEl.textContent = data?.source || "-";
+  }
+
+  if(card && price != null && referenceLastValuesV139[key] != null){
+    const diff = price - Number(referenceLastValuesV139[key]);
+    card.classList.remove("flash-up","flash-down");
+    void card.offsetWidth;
+    if(diff > 0) card.classList.add("flash-up");
+    if(diff < 0) card.classList.add("flash-down");
+  }
+  if(price != null){
+    referenceLastValuesV139[key] = price;
+    localStorage.setItem("moneymaxReferenceLastValues", JSON.stringify(referenceLastValuesV139));
+  }
+}
+
+function bindReferenceFxV139(m){
+  setReferenceFxV139("eurkrw", m.eurkrw, 2);
+  setReferenceFxV139("cnykrw", m.cnykrw, 3);
+  setReferenceFxV139("twdkrw", m.twdkrw, 3);
+  setReferenceFxV139("hkdkrw", m.hkdkrw, 3);
+}
+
+
+/* V14 admin settings logic */
+const ADMIN_DEFAULTS = {
+  alertThreshold: "3",
+  refreshInterval: "10000",
+  adsEnabled: "off",
+  defaultTheme: "system",
+  sourceMode: "tradingview"
+};
+let marketRefreshTimerV14 = null;
+
+function getAdminSettings(){
+  try{
+    return {...ADMIN_DEFAULTS, ...(JSON.parse(localStorage.getItem("moneymaxAdminSettings") || "{}"))};
+  }catch(e){
+    return {...ADMIN_DEFAULTS};
+  }
+}
+function setAdminSettings(settings){
+  localStorage.setItem("moneymaxAdminSettings", JSON.stringify(settings));
+}
+function openAdminSettings(){
+  syncAdminForm();
+  document.getElementById("adminBackdrop")?.classList.add("show");
+  document.getElementById("adminModal")?.classList.add("show");
+}
+function closeAdminSettings(){
+  document.getElementById("adminBackdrop")?.classList.remove("show");
+  document.getElementById("adminModal")?.classList.remove("show");
+}
+function syncAdminForm(){
+  const s = getAdminSettings();
+  ["sourceMode","alertThreshold","refreshInterval","adsEnabled","defaultTheme"].forEach(name => {
+    const input = document.querySelector(`input[name="${name}"][value="${s[name]}"]`);
+    if(input) input.checked = true;
+  });
+}
+function readAdminForm(){
+  const current = getAdminSettings();
+  ["sourceMode","alertThreshold","refreshInterval","adsEnabled","defaultTheme"].forEach(name => {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    if(checked) current[name] = checked.value;
+  });
+  return current;
+}
+function saveAdminSettings(){
+  const settings = readAdminForm();
+  setAdminSettings(settings);
+  applyAdminSettings();
+  if(typeof loadMarkets==='function') loadMarkets();
+  closeAdminSettings();
+}
+function resetAdminSettings(){
+  localStorage.removeItem("moneymaxAdminSettings");
+  applyAdminSettings();
+  syncAdminForm();
+}
+function applyAdminSettings(){
+  const s = getAdminSettings();
+
+  const ad = document.getElementById("topAdSlot");
+  if(ad) ad.classList.toggle("show", s.adsEnabled === "on");
+
+  applyDefaultThemeSetting(s.defaultTheme);
+  setupMarketRefreshInterval(s.refreshInterval);
+}
+function applyDefaultThemeSetting(mode){
+  if(mode === "system"){
+    return;
+  }
+  const savedTheme = localStorage.getItem("moneymaxThemeUserSet");
+  if(savedTheme === "1") return;
+  document.documentElement.dataset.theme = mode;
+  if(typeof updateThemeLogo === "function") updateThemeLogo();
+}
+function setupMarketRefreshInterval(ms){
+  if(marketRefreshTimerV14) clearInterval(marketRefreshTimerV14);
+  const interval = Number(ms) || 10000;
+  marketRefreshTimerV14 = setInterval(() => {
+    if(typeof loadMarkets === "function") loadMarkets();
+  }, interval);
+}
+function getAlertThresholdV14(key){
+  const s = getAdminSettings();
+  if(s.alertThreshold === "off") return null;
+  const base = Number(s.alertThreshold) || 3;
+  if(key === "usdkrw") return base;
+  if(key === "jpykrw") return base === 3 ? 0.15 : 0.25;
+  if(key === "usdt") return base === 3 ? 5 : 8;
+  if(key === "usdjpy") return base === 3 ? 0.4 : 0.7;
+  return null;
+}
+function saveCurrentIndicatorsAsDefault(){
+  const data = {};
+  document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(input => {
+    data[input.dataset.indicator] = input.checked;
+  });
+  localStorage.setItem("moneymaxIndicatorDefault", JSON.stringify(data));
+}
+function restoreIndicatorDefault(){
+  try{
+    const data = JSON.parse(localStorage.getItem("moneymaxIndicatorDefault") || "{}");
+    document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(input => {
+      if(Object.prototype.hasOwnProperty.call(data, input.dataset.indicator)){
+        input.checked = !!data[input.dataset.indicator];
+      }
+    });
+    if(typeof saveIndicatorSettingsV13 === "function") saveIndicatorSettingsV13();
+    if(typeof applyIndicatorVisibilityV13 === "function") applyIndicatorVisibilityV13();
+    if(typeof saveIndicatorSettings === "function") saveIndicatorSettings();
+    if(typeof applyIndicatorVisibility === "function") applyIndicatorVisibility();
+  }catch(e){}
+}
+
+/* patch alert thresholds if V13 function exists */
+if(typeof V13_ALERT_RULES !== "undefined"){
+  V13_ALERT_RULES.usdkrw = 3;
+  V13_ALERT_RULES.jpykrw = 0.15;
+  V13_ALERT_RULES.usdt = 5;
+  V13_ALERT_RULES.usdjpy = 0.4;
+}
+
+applyAdminSettings();
+
+
+/* V14.2 stable change + flash polish */
+function v142FormatPct(change){
+  if(change == null || Number.isNaN(Number(change))) return "-";
+  const v = Number(change);
+  const sign = v > 0 ? "+" : "";
+  return `${sign}${v.toFixed(2)}%`;
+}
+function v142PaintChange(el, value){
+  if(!el) return;
+  el.classList.remove("market-red","market-blue","market-neutral","bad-data");
+  if(value == null || Number.isNaN(Number(value))){
+    el.textContent = "-";
+    el.classList.add("market-neutral");
+    return;
+  }
+  const v = Number(value);
+  el.classList.add(v > 0 ? "market-red" : v < 0 ? "market-blue" : "market-neutral");
+}
+function v142Bump(el){
+  if(!el) return;
+  el.classList.remove("value-bump");
+  void el.offsetWidth;
+  el.classList.add("value-bump");
+}
+function v142SetMarketValue(key, data, digits=2, suffix=""){
+  const valueEl = document.getElementById(`m-${key}`);
+  const subEl = document.getElementById(`m-${key}-sub`);
+  const tile = document.querySelector(`[data-indicator-card="${key}"]`);
+  if(!valueEl || !subEl) return;
+  const price = data?.price == null ? null : Number(data.price);
+  const oldText = valueEl.textContent;
+  valueEl.textContent = price == null || Number.isNaN(price) ? "-" : `${fmtMarket(price, digits)}${suffix}`;
+  if(oldText !== valueEl.textContent) v142Bump(valueEl);
+  const change = data?.changePct;
+  subEl.textContent = v142FormatPct(change);
+  v142PaintChange(subEl, change);
+  if(tile && price != null && typeof lastMarketValues !== "undefined" && lastMarketValues[key] != null){
+    const diff = price - Number(lastMarketValues[key]);
+    tile.classList.remove("flash-up","flash-down","warning");
+    void tile.offsetWidth;
+    if(diff > 0) tile.classList.add("flash-up");
+    if(diff < 0) tile.classList.add("flash-down");
+    const threshold = typeof getAlertThresholdV14 === "function" ? getAlertThresholdV14(key) : (typeof V13_ALERT_RULES !== "undefined" ? V13_ALERT_RULES[key] : null);
+    const now = Date.now();
+    const lastAlert = (typeof lastMarketAlertAt !== "undefined" && lastMarketAlertAt[key]) ? lastMarketAlertAt[key] : 0;
+    if(threshold && Math.abs(diff) >= threshold && now - lastAlert > 180000){
+      tile.classList.add("warning");
+      if(typeof lastMarketAlertAt !== "undefined"){
+        lastMarketAlertAt[key] = now;
+        saveJson("moneymaxLastMarketAlertAt", lastMarketAlertAt);
+      }
+      if(typeof playSoftAlert === "function") playSoftAlert();
+    }
+  }
+  if(price != null && typeof lastMarketValues !== "undefined"){
+    lastMarketValues[key] = price;
+    saveJson("moneymaxLastMarketValues", lastMarketValues);
+  }
+}
+function v142SetReferenceFx(key, data, digits=2){
+  const priceEl = document.getElementById(`r-${key}`);
+  const changeEl = document.getElementById(`r-${key}-change`);
+  const sourceEl = document.getElementById(`r-${key}-source`);
+  const card = document.querySelector(`[data-ref-card="${key}"]`);
+  if(!priceEl) return;
+  const price = data?.price == null ? null : Number(data.price);
+  const oldText = priceEl.textContent;
+  priceEl.textContent = price == null || Number.isNaN(price) ? "-" : price.toLocaleString(undefined,{maximumFractionDigits:digits});
+  if(oldText !== priceEl.textContent) v142Bump(priceEl);
+  if(changeEl){
+    const cp = data?.changePct == null ? null : Number(data.changePct);
+    changeEl.textContent = v142FormatPct(cp);
+    changeEl.classList.remove("fx-ref-up","fx-ref-down","fx-ref-flat");
+    changeEl.classList.add(cp == null || Number.isNaN(cp) ? "fx-ref-flat" : cp > 0 ? "fx-ref-up" : cp < 0 ? "fx-ref-down" : "fx-ref-flat");
+  }
+  if(sourceEl) sourceEl.textContent = data?.source || "-";
+  const last = JSON.parse(localStorage.getItem("moneymaxV142RefLast") || "{}");
+  const storeKey = `ref_${key}`;
+  if(card && price != null && last[storeKey] != null){
+    const diff = price - Number(last[storeKey]);
+    card.classList.remove("flash-up","flash-down");
+    void card.offsetWidth;
+    if(diff > 0) card.classList.add("flash-up");
+    if(diff < 0) card.classList.add("flash-down");
+  }
+  if(price != null){
+    last[storeKey] = price;
+    localStorage.setItem("moneymaxV142RefLast", JSON.stringify(last));
+  }
+}
+function bindReferenceFxV142(m){
+  v142SetReferenceFx("eurkrw", m.eurkrw, 2);
+  v142SetReferenceFx("cnykrw", m.cnykrw, 3);
+  v142SetReferenceFx("twdkrw", m.twdkrw, 3);
+  v142SetReferenceFx("hkdkrw", m.hkdkrw, 3);
+}
+
+
+/* V14.3 ops helpers */
+function currencyUnitLabelV143(currency){
+  if(currency === "JPY") return "100엔";
+  if(currency === "VND") return "100동";
+  if(currency === "IDR") return "100루피아";
+  return "";
+}
+function polishBlockedRowsV143(){
+  document.querySelectorAll(".rate-row,.rank-row,.branch-rate,.currency-card tr,.best-box").forEach(el=>{
+    if(el.textContent.includes("예약중지") || el.textContent.includes("예약불가")){
+      el.classList.add("blocked-row");
+    }
+  });
+}
+const oldRenderV143 = typeof render === "function" ? render : null;
+if(oldRenderV143 && !window.__v143RenderPatched){
+  window.__v143RenderPatched = true;
+  render = function(){
+    const result = oldRenderV143.apply(this, arguments);
+    setTimeout(polishBlockedRowsV143, 0);
+    return result;
+  }
+}
+
+
+/* V14.5 source mode + overview */
+function getSourceModeV145(){try{return (JSON.parse(localStorage.getItem("moneymaxAdminSettings")||"{}").sourceMode)||"tradingview"}catch(e){return"tradingview"}}
+function sourceModeLabelV145(mode){return mode==="investing"?"Investing 우선 · 차트는 참고용":"TradingView 우선 · 차트/숫자 기준 통일"}
+function setOverviewV145(key,data,digits=2,suffix=""){const v=document.getElementById(`ov-${key}`),s=document.getElementById(`ov-${key}-sub`);if(!v||!s)return;const price=data?.price==null?null:Number(data.price);v.textContent=price==null||Number.isNaN(price)?"-":`${fmtMarket(price,digits)}${suffix}`;const cp=data?.changePct==null?null:Number(data.changePct);s.textContent=cp==null||Number.isNaN(cp)?(data?.source||"-"):`${cp>0?"+":""}${cp.toFixed(2)}% · ${data?.source||"-"}`;s.className="overview-mini-sub "+(cp==null||Number.isNaN(cp)?"market-neutral":cp>0?"market-red":cp<0?"market-blue":"market-neutral")}
+function updateSourceStatusV145(json){const el=document.getElementById("sourceStatusPill");if(!el)return;const mode=json?.sourceMode||getSourceModeV145();el.textContent=`기준 소스: ${sourceModeLabelV145(mode)}`}
+function bindOverviewV145(m){setOverviewV145("usdkrw",m.usdkrw,2);setOverviewV145("jpykrw",m.jpykrw,4);setOverviewV145("usdjpy",m.usdjpy,3);setOverviewV145("usdt",m.usdt,0)}
+
+
+/* V14.6 clean overview behavior */
+function sourceModeLabelV146(mode){
+  return mode==="investing" ? "Investing 우선 · TradingView 보조" : "TradingView 우선 · Investing 보조";
+}
+function updateSourceStatusV146(json){
+  const el=document.getElementById("sourceStatusPill");
+  if(!el)return;
+  const mode=json?.sourceMode || (typeof getSourceModeV145==="function" ? getSourceModeV145() : "tradingview");
+  el.textContent=`기준 소스: ${sourceModeLabelV146(mode)}`;
+}
+function toggleSideSection(name){
+  const s=document.querySelector(`.side-section[data-section="${name}"]`);
+  if(!s)return;
+  s.classList.toggle("open");
+  localStorage.setItem("moneymaxOpenSections",JSON.stringify([...document.querySelectorAll(".side-section.open")].map(x=>x.dataset.section)));
+}
+function restoreSideSections(){
+  let opened=[];try{opened=JSON.parse(localStorage.getItem("moneymaxOpenSections")||"[]")}catch(e){}
+  document.querySelectorAll(".side-section").forEach(s=>{s.classList.toggle("open",opened.includes(s.dataset.section));s.classList.remove("collapsed")});
+}
+function removeNoisyBadgesV146(){
+  document.querySelectorAll("*").forEach(el=>{
+    const t=(el.textContent||"").trim();
+    if(t.includes("최소 스프레드")||t.includes("외부 포함")||/^\d+개 지점$/.test(t)){
+      if(el.children.length===0||String(el.className).includes("pill")||String(el.className).includes("badge")) el.style.display="none";
+    }
+  });
+}
+setTimeout(restoreSideSections,0);
+setTimeout(removeNoisyBadgesV146,500);
+setInterval(removeNoisyBadgesV146,1500);
+
+
+/* V14.7 overview/source/badge fix */
+function getSourceModeV147(){
+  try{return (JSON.parse(localStorage.getItem("moneymaxAdminSettings")||"{}").sourceMode)||"tradingview"}catch(e){return"tradingview"}
+}
+function sourceModeLabelV147(mode){
+  return mode==="investing" ? "Investing 우선 · TradingView 보조" : "TradingView 우선 · Investing 보조";
+}
+function updateSourceStatusV147(json){
+  const el=document.getElementById("sourceStatusPill");
+  if(!el)return;
+  const mode=json?.sourceMode||getSourceModeV147();
+  const time=json?.updatedAt ? ` · ${json.updatedAt}` : "";
+  el.textContent=`${sourceModeLabelV147(mode)}${time}`;
+}
+function setOverviewV147(key,data,digits=2,suffix="",updatedAt="-"){
+  const v=document.getElementById(`ov-${key}`);
+  const s=document.getElementById(`ov-${key}-sub`);
+  const t=document.getElementById(`ov-${key}-time`);
+  if(!v||!s)return;
+  const price=data?.price==null?null:Number(data.price);
+  v.textContent=price==null||Number.isNaN(price)?"-":`${fmtMarket(price,digits)}${suffix}`;
+  const cp=data?.changePct==null?null:Number(data.changePct);
+  s.textContent=cp==null||Number.isNaN(cp)?(data?.source||"-"):`${cp>0?"+":""}${cp.toFixed(2)}% · ${data?.source||"-"}`;
+  s.className="overview-mini-sub "+(cp==null||Number.isNaN(cp)?"market-neutral":cp>0?"market-red":cp<0?"market-blue":"market-neutral");
+  if(t)t.textContent="";
+}
+function bindOverviewV147(json){
+  const m=json?.indicators||{};
+  const updatedAt=json?.updatedAt||"-";
+  setOverviewV147("usdkrw",m.usdkrw,2,"",updatedAt);
+  setOverviewV147("jpykrw",m.jpykrw,4,"",updatedAt);
+  setOverviewV147("usdjpy",m.usdjpy,3,"",updatedAt);
+  setOverviewV147("usdt",m.usdt,0,"",updatedAt);
+}
+function removeNoisyBadgesV147(){
+  document.querySelectorAll("*").forEach(el=>{
+    const t=(el.textContent||"").trim();
+    if(t.includes("최소 스프레드")||t.includes("외부 포함")||/^\d+개 지점$/.test(t)){
+      if(el.children.length===0||String(el.className).includes("pill")||String(el.className).includes("badge")||String(el.className).includes("tag")){
+        el.classList.add("noisy-badge");
+        el.style.display="none";
+      }
+    }
+    if(t==="전체 보기"){
+      el.classList.add("mini-view-btn");
+      el.textContent="";
+    }
+  });
+}
+function patchFetchSourceV147(){
+  if(window.__v147FetchPatched)return;
+  window.__v147FetchPatched=true;
+  const originalFetch=window.fetch;
+  window.fetch=function(input,init){
+    if(typeof input==="string" && input.includes("/api/markets") && !input.includes("source=")){
+      const sep=input.includes("?")?"&":"?";
+      input=`${input}${sep}source=${getSourceModeV147()}`;
+    }
+    return originalFetch(input,init);
+  }
+}
+patchFetchSourceV147();
+
+const oldLoadMarketsV147 = typeof loadMarkets==="function" ? loadMarkets : null;
+if(oldLoadMarketsV147 && !window.__v147LoadPatched){
+  window.__v147LoadPatched=true;
+  loadMarkets = async function(){
+    const result = await oldLoadMarketsV147.apply(this, arguments);
+    try{
+      const res = await fetch(`/api/markets?source=${getSourceModeV147()}&overview=1`);
+      const json = await res.json();
+      updateSourceStatusV147(json);
+      bindOverviewV147(json);
+    }catch(e){}
+    return result;
+  }
+}
+const oldRenderV147 = typeof render==="function" ? render : null;
+if(oldRenderV147 && !window.__v147RenderPatched){
+  window.__v147RenderPatched=true;
+  render=function(){
+    const result=oldRenderV147.apply(this,arguments);
+    setTimeout(removeNoisyBadgesV147,0);
+    return result;
+  }
+}
+setTimeout(removeNoisyBadgesV147,500);
+setInterval(removeNoisyBadgesV147,1000);
+
+
+/* V15.5 small helpers */
+function openBranchPanel(){
+  const section=document.querySelector('.side-section[data-section="branches"]');
+  if(!section) return;
+  section.classList.add('open');
+  localStorage.setItem("moneymaxOpenSections", JSON.stringify(["branches"]));
+}
+document.addEventListener("click", function(e){
+  if(e.target.closest(".expanded")){
+    e.stopPropagation();
+  }
+}, true);
+
+
+
+/* V15.8 clean branch modal + hover-only cards */
+window.openBranchModal = function(){
+  const modal = document.getElementById("branchModal");
+  const bg = document.getElementById("branchModalBackdrop");
+  const mount = document.getElementById("branchModalMount");
+  const source = document.querySelector('.side-section[data-section="branches"] .side-section-body');
+
+  if(mount && source && !mount.dataset.mounted){
+    mount.appendChild(source);
+    mount.dataset.mounted = "1";
+    source.style.display = "block";
+    groupBranchModalV158();
+  }
+
+  modal?.classList.add("show");
+  bg?.classList.add("show");
+};
+
+window.closeBranchModal = function(){
+  document.getElementById("branchModal")?.classList.remove("show");
+  document.getElementById("branchModalBackdrop")?.classList.remove("show");
+};
+
+function wireBranchModalV158(){
+  const btn = document.getElementById("topBranchBtn");
+  if(btn && !btn.dataset.wiredV158){
+    btn.dataset.wiredV158 = "1";
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      window.openBranchModal();
+    });
+  }
+
+  const bg = document.getElementById("branchModalBackdrop");
+  if(bg && !bg.dataset.wiredV158){
+    bg.dataset.wiredV158 = "1";
+    bg.addEventListener("click", window.closeBranchModal);
+  }
+
+  const close = document.getElementById("branchModalClose");
+  if(close && !close.dataset.wiredV158){
+    close.dataset.wiredV158 = "1";
+    close.addEventListener("click", window.closeBranchModal);
+  }
+}
+
+function branchRegionV1595(name){
+  const seoul = ["명동","남대문","명동2","제일환전","강남","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];
+  const metro = ["부평","송도","수원","안양","평택","인천","일산","분당"];
+  if(seoul.includes(name)) return "서울";
+  if(metro.includes(name)) return "경기·인천";
+  return "지방";
+}
+
+function groupBranchModalV158(){
+  const mount = document.getElementById("branchModalMount");
+  if(!mount || mount.dataset.groupedV158 === "1") return;
+
+  const body = mount.querySelector(".side-section-body");
+  if(!body) return;
+
+  const list = body.querySelector(".branch-list");
+  if(!list) return;
+
+  const items = Array.from(list.children);
+  if(!items.length) return;
+
+  const actions = Array.from(body.children).filter(el => el !== list);
+
+  const wrap = document.createElement("div");
+  wrap.className = "branch-region-grid";
+
+  const regions = {
+    "서울": [],
+    "경기·인천": [],
+    "지방": []
+  };
+
+  items.forEach(item => {
+    const txt = (item.textContent || "").replace("★","").trim();
+    regions[branchRegionV1595(txt)]?.push(item);
+  });
+
+  Object.entries(regions).forEach(([title, arr]) => {
+    const card = document.createElement("div");
+    card.className = "branch-region-card";
+
+    const h = document.createElement("div");
+    h.className = "branch-region-title";
+    h.textContent = title;
+    card.appendChild(h);
+
+    arr.forEach(item => card.appendChild(item));
+    wrap.appendChild(card);
+  });
+
+  list.innerHTML = "";
+  list.appendChild(wrap);
+  mount.dataset.groupedV158 = "1";
+}
+
+function removeDetailHintsV158(){
+  document.querySelectorAll(".detail-hint").forEach(el => el.remove());
+}
+
+function applyIndicatorVisibilityV158(){
+  ["usdkrw","jpykrw","usdjpy","usdt"].forEach(k=>{
+    document.querySelectorAll(`[data-indicator-card="${k}"]`).forEach(el=>el.style.display="none");
+  });
+}
+
+function bumpChangedValuesV158(){
+  document.querySelectorAll(".market-value,.overview-mini-value,.price,.fx-ref-number").forEach(el=>{
+    const now = el.textContent;
+    if(!el.dataset.prevValueV158){
+      el.dataset.prevValueV158 = now;
+      return;
+    }
+    if(el.dataset.prevValueV158 !== now){
+      el.classList.remove("value-bump");
+      void el.offsetWidth;
+      el.classList.add("value-bump");
+      el.dataset.prevValueV158 = now;
+    }
+  });
+}
+
+function polishV158(){
+  wireBranchModalV158();
+  removeDetailHintsV158();
+  applyIndicatorVisibilityV158();
+  bumpChangedValuesV158();
+}
+
+document.addEventListener("DOMContentLoaded", polishV158);
+setTimeout(polishV158, 300);
+setInterval(polishV158, 1200);
+
+
+/* V15.8.2 theme inside settings */
+function getThemeModeV1582(){
+  return localStorage.getItem("moneymaxThemeMode") || document.documentElement.getAttribute("data-theme") || "light";
+}
+function applyThemeModeV1582(mode){
+  const safe = mode === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", safe);
+  localStorage.setItem("moneymaxThemeMode", safe);
+  localStorage.setItem("theme", safe);
+}
+function syncThemeRadiosV1582(){
+  const mode = getThemeModeV1582();
+  document.querySelectorAll('input[name="themeMode"]').forEach(r=>{
+    r.checked = r.value === mode;
+    if(!r.dataset.wiredV1582){
+      r.dataset.wiredV1582 = "1";
+      r.addEventListener("change", e=>{
+        if(e.target.checked) applyThemeModeV1582(e.target.value);
+      });
+    }
+  });
+}
+function hideTopThemeButtonV1582(){
+  document.querySelectorAll('#themeBtn, button[onclick="toggleTheme()"]').forEach(btn=>btn.style.display="none");
+}
+const originalToggleThemeV1582 = window.toggleTheme;
+window.toggleTheme = function(){
+  const current = getThemeModeV1582();
+  applyThemeModeV1582(current === "dark" ? "light" : "dark");
+  syncThemeRadiosV1582();
+};
+function polishThemeSettingsV1582(){
+  applyThemeModeV1582(getThemeModeV1582());
+  syncThemeRadiosV1582();
+  hideTopThemeButtonV1582();
+}
+document.addEventListener("DOMContentLoaded", polishThemeSettingsV1582);
+setTimeout(polishThemeSettingsV1582, 300);
+setInterval(polishThemeSettingsV1582, 1500);
+
+
+
+
+/* V16.6.3 branch/profile stablefix */
+(function(){
+  const PROFILE_KEY="moneymaxProfilesV159";
+  const CURRENT_KEY="moneymaxCurrentProfileV159";
+  const DEFAULT_PROFILES={"남대문점":{icon:"🏢",data:{}},"명동점":{icon:"🏢",data:{}},"명동 2호점":{icon:"🏢",data:{}},"강남점":{icon:"🏢",data:{}}};
+  const STATE_KEYS=["moneymaxSelectedBranches","moneyboxFavorites","favoriteBranches","moneymaxIndicators","moneymaxCharts","moneymaxAdminSettings","moneymaxThemeMode","theme"];
+  function readJSON(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f));}catch(e){return f;}}
+  function writeJSON(k,v){localStorage.setItem(k,JSON.stringify(v));}
+  function parseMaybe(v,f){try{return typeof v==="string"?JSON.parse(v):v}catch(e){return f}}
+  function profiles(){let p=readJSON(PROFILE_KEY,{}); if(!p||typeof p!=="object")p={}; p={...DEFAULT_PROFILES,...p}; Object.keys(p).forEach(n=>{p[n].icon??="🏢";p[n].data??={};}); writeJSON(PROFILE_KEY,p); return p;}
+  function currentName(){const p=profiles(); let c=localStorage.getItem(CURRENT_KEY); if(!c||!p[c]){c=Object.keys(p)[0];localStorage.setItem(CURRENT_KEY,c)} return c;}
+  function pdata(){const p=profiles(); const c=currentName(); p[c].data??={}; return p[c].data;}
+  function readBranches(){const d=pdata(); const raw=d.moneymaxSelectedBranches??localStorage.getItem("moneymaxSelectedBranches"); const arr=parseMaybe(raw,[]); return Array.isArray(arr)?arr:[];}
+  function readFavorites(){const d=pdata(); const raw=d.moneyboxFavorites??d.favoriteBranches??localStorage.getItem("moneyboxFavorites")??localStorage.getItem("favoriteBranches"); const arr=parseMaybe(raw,[]); return Array.isArray(arr)?arr:[];}
+  function saveState(part){const p=profiles(); const c=currentName(); p[c].data??={}; const d=p[c].data;
+    if(part.branches){d.moneymaxSelectedBranches=JSON.stringify(part.branches); localStorage.setItem("moneymaxSelectedBranches",JSON.stringify(part.branches));}
+    if(part.favorites){d.moneyboxFavorites=JSON.stringify(part.favorites); d.favoriteBranches=JSON.stringify(part.favorites); localStorage.setItem("moneyboxFavorites",JSON.stringify(part.favorites)); localStorage.setItem("favoriteBranches",JSON.stringify(part.favorites));}
+    if(part.indicators){d.moneymaxIndicators=JSON.stringify(part.indicators); localStorage.setItem("moneymaxIndicators",JSON.stringify(part.indicators));}
+    STATE_KEYS.forEach(k=>{const v=localStorage.getItem(k); if(v!==null && !Object.prototype.hasOwnProperty.call(d,k)) d[k]=v;});
+    writeJSON(PROFILE_KEY,p);
+  }
+  function syncRuntime(){
+    try{selectedBranches.clear(); readBranches().forEach(x=>selectedBranches.add(x));}catch(e){}
+    try{favoriteBranches=new Set(readFavorites());}catch(e){}
+  }
+  function saveCurrentProfile(){
+    let b=[]; try{b=[...selectedBranches];}catch(e){b=readBranches()}
+    let f=[]; try{f=[...favoriteBranches];}catch(e){f=readFavorites()}
+    const ind={}; document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>ind[i.dataset.indicator]=i.checked);
+    saveState({branches:b,favorites:f,indicators:ind});
+    const p=profiles(); const c=currentName(); STATE_KEYS.forEach(k=>{const v=localStorage.getItem(k); if(v!==null)p[c].data[k]=v}); writeJSON(PROFILE_KEY,p);
+  }
+  function applyProfile(n){const p=profiles(); if(!p[n])return; saveCurrentProfile(); localStorage.setItem(CURRENT_KEY,n); const d=p[n].data||{}; Object.keys(d).forEach(k=>localStorage.setItem(k,d[k])); location.reload();}
+  function branchRegion(name){const seoul=["명동","남대문","명동2","제일환전","강남","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
+  window.renderBranchList=function(){syncRuntime(); const list=document.getElementById("branchList"); if(!list)return; const search=document.getElementById("branchSearch"); const favOnlyEl=document.getElementById("favoriteOnly"); const query=(search?.value||"").trim(); const favOnly=!!favOnlyEl?.checked; let bs=allBranches(); if(query)bs=bs.filter(b=>clean(b).includes(query)); if(favOnly)bs=bs.filter(b=>favoriteBranches.has(b));
+    const regions={"서울":[],"경기·인천":[],"지방":[]}; bs.forEach(branch=>{const checked=!selectedBranches.has("__NONE__")&&(selectedBranches.size===0||selectedBranches.has(branch)); const fav=favoriteBranches.has(branch); const type=rows.find(r=>r.branch===branch)?.type; const html=`<label class="branch-item ${checked?'on':''}"><input type="checkbox" value="${branch}" ${checked?'checked':''}><span>${clean(branch)}${type==="external"?'<span class="external-tag">외부</span>':''}</span><span class="star ${fav?'on':''}" data-branch-star="${branch}">★</span></label>`; regions[branchRegion(clean(branch))].push(html);});
+    list.innerHTML=`<div class="branch-region-grid">${Object.entries(regions).map(([title,items])=>`<div class="branch-region-card"><div class="branch-region-title">${title}</div>${items.join("")}</div>`).join("")}</div>`; updateBranchSummary(); };
+  window.onBranchToggle=function(){selectedBranches.delete("__NONE__"); const all=allBranches(); const checks=[...document.querySelectorAll("#branchList input[type=checkbox]")]; if(selectedBranches.size===0){selectedBranches.clear(); all.forEach(b=>selectedBranches.add(b));} checks.forEach(input=>{if(input.checked)selectedBranches.add(input.value); else selectedBranches.delete(input.value);}); if(selectedBranches.size===all.length)selectedBranches.clear(); saveState({branches:[...selectedBranches]}); renderBranchList(); render();};
+  window.selectAllBranches=function(){selectedBranches.clear(); saveState({branches:[]}); renderBranchList(); render();};
+  window.clearBranches=function(){selectedBranches.clear(); selectedBranches.add("__NONE__"); saveState({branches:["__NONE__"]}); renderBranchList(); render();};
+  window.toggleFavorite=function(e,branch){if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation?.();} syncRuntime(); if(favoriteBranches.has(branch))favoriteBranches.delete(branch); else favoriteBranches.add(branch); saveState({favorites:[...favoriteBranches]}); renderBranchList(); render();};
+  window.resetFavorites=function(){favoriteBranches.clear(); saveState({favorites:[]}); renderBranchList(); render();};
+  window.selectedBranchOk=function(branch){syncRuntime(); if(selectedBranches.has("__NONE__"))return false; return selectedBranches.size===0||selectedBranches.has(branch);};
+  try{selectedBranchOk=window.selectedBranchOk;}catch(e){}
+  window.isFocused=function(branch){syncRuntime(); return favoriteBranches.has(branch);}; try{isFocused=window.isFocused;}catch(e){}
+  const oldSaveInd=window.saveIndicatorSettings||saveIndicatorSettings; window.saveIndicatorSettings=function(){const o={};document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>o[i.dataset.indicator]=i.checked);saveState({indicators:o});}; try{saveIndicatorSettings=window.saveIndicatorSettings;}catch(e){}
+  window.restoreIndicatorSettings=function(){const d=pdata(); const saved=d.moneymaxIndicators?parseMaybe(d.moneymaxIndicators,null):readJSON("moneymaxIndicators",null); if(!saved)return; document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>{if(Object.prototype.hasOwnProperty.call(saved,i.dataset.indicator))i.checked=!!saved[i.dataset.indicator];});}; try{restoreIndicatorSettings=window.restoreIndicatorSettings;}catch(e){}
+  window.restoreSelectedBranches=function(){syncRuntime();}; try{restoreSelectedBranches=window.restoreSelectedBranches;}catch(e){}
+  window.saveSelectedBranches=function(){saveState({branches:[...selectedBranches]});}; try{saveSelectedBranches=window.saveSelectedBranches;}catch(e){}
+  function renderProfile(){const p=profiles(),c=currentName(); const btn=document.getElementById("profileSelectorBtn"),menu=document.getElementById("profileMenu"); if(btn)btn.innerHTML=`${p[c]?.icon||"🏢"} ${c} <span>▾</span>`; if(menu)menu.innerHTML=`<div class="profile-menu-section"><div class="profile-menu-label">현재 프로필</div>${Object.keys(p).map(n=>`<button class="profile-option ${n===c?'active':''}" type="button" data-mm-profile-switch="${n}"><span>${p[n].icon||"🏢"} ${n}</span><span>${n===c?'✓':''}</span></button>`).join("")}</div><button class="profile-action" type="button" data-mm-profile-new>＋ 새 프로필 추가</button><button class="profile-action" type="button" data-mm-profile-manage>⚙ 프로필 관리</button>`; const list=document.getElementById("profileManageList"); if(list){const names=Object.keys(p); list.innerHTML=names.map(n=>`<div class="profile-list-row"><div>${p[n].icon||"🏢"} ${n}<small>${n===c?'현재 사용 중':'저장된 프로필'}</small></div><button class="profile-icon-btn" type="button" data-mm-profile-rename="${n}">✎</button><button class="profile-icon-btn" type="button" data-mm-profile-delete="${n}" ${names.length<=1?'disabled':''}>🗑</button></div>`).join("");}}
+  function openManage(f){renderProfile();document.getElementById("profileManageBg")?.classList.add("show");document.getElementById("profileManageModal")?.classList.add("show");if(f)setTimeout(()=>document.getElementById("profileNameInput")?.focus(),50)}
+  function closeManage(){document.getElementById("profileManageBg")?.classList.remove("show");document.getElementById("profileManageModal")?.classList.remove("show")}
+  function addProfile(){const input=document.getElementById("profileNameInput"); const name=(input?.value||"").trim(); if(!name)return; const p=profiles(); if(p[name]){alert("이미 있는 프로필 이름입니다.");return} saveCurrentProfile(); p[name]={icon:"🏢",data:{}}; writeJSON(PROFILE_KEY,p); localStorage.setItem(CURRENT_KEY,name); location.reload();}
+  function delProfile(name){const p=profiles(); if(Object.keys(p).length<=1){alert("프로필은 최소 1개가 필요합니다.");return} if(!confirm(`${name} 프로필을 삭제할까요?`))return; delete p[name]; writeJSON(PROFILE_KEY,p); if(currentName()===name)localStorage.setItem(CURRENT_KEY,Object.keys(p)[0]); location.reload();}
+  function renProfile(name){const next=prompt("새 프로필 이름",name); if(!next||!next.trim())return; const p=profiles(); const clean=next.trim(); if(p[clean]){alert("이미 있는 프로필 이름입니다.");return} p[clean]=p[name]; delete p[name]; writeJSON(PROFILE_KEY,p); if(currentName()===name)localStorage.setItem(CURRENT_KEY,clean); renderProfile();}
+  function wire(){if(window.__mmStablefix1663)return; window.__mmStablefix1663=true; syncRuntime(); renderProfile(); document.addEventListener("click",e=>{const star=e.target.closest("[data-branch-star],#branchList .star"); if(star){const b=star.getAttribute("data-branch-star")||star.closest(".branch-item")?.querySelector("input")?.value; if(b){window.toggleFavorite(e,b);return}} const row=e.target.closest("#branchList .branch-item"); if(row&&!e.target.matches("input")&&!e.target.closest(".star")){const input=row.querySelector("input[type=checkbox]"); if(input){e.preventDefault(); input.checked=!input.checked; window.onBranchToggle(); return}} const pb=e.target.closest("#profileSelectorBtn"); if(pb){e.preventDefault();e.stopPropagation();saveCurrentProfile();renderProfile();document.getElementById("profileMenu")?.classList.toggle("show");return} if(!e.target.closest("#profileSelectorWrap"))document.getElementById("profileMenu")?.classList.remove("show"); const sw=e.target.closest("[data-mm-profile-switch]"); if(sw){e.preventDefault();applyProfile(sw.getAttribute("data-mm-profile-switch"));return} if(e.target.closest("[data-mm-profile-new]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(true);return} if(e.target.closest("[data-mm-profile-manage]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(false);return} const del=e.target.closest("[data-mm-profile-delete]"); if(del){e.preventDefault();if(!del.disabled)delProfile(del.getAttribute("data-mm-profile-delete"));return} const ren=e.target.closest("[data-mm-profile-rename]"); if(ren){e.preventDefault();renProfile(ren.getAttribute("data-mm-profile-rename"));return} if(e.target.closest("#profileAddBtn")){e.preventDefault();addProfile();return} if(e.target.closest("#profileManageClose")||e.target.closest("#profileManageBg")){e.preventDefault();closeManage();return}},true); document.addEventListener("change",e=>{if(e.target.closest("#branchList input[type=checkbox]")){window.onBranchToggle();return} if(e.target.closest("#indicatorSideList input[data-indicator]")){
+    window.saveIndicatorSettings();
+    if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13();
+    else if(typeof applyIndicatorVisibility==="function") applyIndicatorVisibility();
+    return
+  }},true); window.addEventListener("beforeunload",saveCurrentProfile);}
+  document.addEventListener("DOMContentLoaded",wire); setTimeout(wire,100); setTimeout(wire,700);
+  setTimeout(()=>{ if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13(); },750);
+  window.moneymaxStablefix1663={profiles,currentName,saveCurrentProfile,renderProfile,syncRuntime};
+})();
+
+</script>
+
+<div class="admin-modal-backdrop" id="adminBackdrop" onclick="closeAdminSettings()"></div>
+<div class="admin-modal" id="adminModal">
+  <div class="admin-title">
+    <h3>관리자 설정</h3>
+    <button class="admin-close" onclick="closeAdminSettings()">×</button>
+  </div>
+
+  
+<div class="admin-row settings-theme-row">
+  <div class="admin-label">화면 모드</div>
+  <div class="settings-theme-group">
+    <label class="settings-theme-pill"><input type="radio" name="themeMode" value="light"> 라이트</label>
+    <label class="settings-theme-pill"><input type="radio" name="themeMode" value="dark"> 다크</label>
+  </div>
+</div>
+
+<div class="admin-row">
+    <div class="admin-label">환율 기준 소스</div>
+    <div class="admin-options">
+      <label class="admin-pill"><input type="radio" name="sourceMode" value="investing"> Investing 우선</label>
+      <label class="admin-pill"><input type="radio" name="sourceMode" value="tradingview"> TradingView 우선</label>
+    </div>
+  </div>
+
+  <div class="admin-row">
+    <div class="admin-label">급등락 알림 기준</div>
+    <div class="admin-options">
+      <label class="admin-pill"><input type="radio" name="alertThreshold" value="3"> 3원</label>
+      <label class="admin-pill"><input type="radio" name="alertThreshold" value="5"> 5원</label>
+      <label class="admin-pill"><input type="radio" name="alertThreshold" value="off"> OFF</label>
+    </div>
+  </div>
+
+  <div class="admin-row">
+    <div class="admin-label">자동 갱신 주기</div>
+    <div class="admin-options">
+      <label class="admin-pill"><input type="radio" name="refreshInterval" value="10000"> 10초</label>
+      <label class="admin-pill"><input type="radio" name="refreshInterval" value="30000"> 30초</label>
+      <label class="admin-pill"><input type="radio" name="refreshInterval" value="60000"> 1분</label>
+    </div>
+  </div>
+
+  <div class="admin-row">
+    <div class="admin-label">광고 노출</div>
+    <div class="admin-options">
+      <label class="admin-pill"><input type="radio" name="adsEnabled" value="on"> ON</label>
+      <label class="admin-pill"><input type="radio" name="adsEnabled" value="off"> OFF</label>
+    </div>
+  </div>
+
+  <div class="admin-row">
+    <div class="admin-label">기본 화면 모드</div>
+    <div class="admin-options">
+      <label class="admin-pill"><input type="radio" name="defaultTheme" value="light"> 라이트</label>
+      <label class="admin-pill"><input type="radio" name="defaultTheme" value="dark"> 다크</label>
+      <label class="admin-pill"><input type="radio" name="defaultTheme" value="system"> 시스템</label>
+    </div>
+  </div>
+
+  <div class="admin-row">
+    <div class="admin-label">보조지표 기본값</div>
+    <div class="admin-options">
+      <button onclick="saveCurrentIndicatorsAsDefault()">현재 체크값을 기본값으로 저장</button>
+      <button onclick="restoreIndicatorDefault()">기본값 불러오기</button>
+    </div>
+  </div>
+
+
+  <div class="admin-row admin-status-row">
+    <div class="admin-label">지점 수집 상태</div>
+    <div class="branch-status-note">새 API / 기존 방식 / 외부 수집 상태를 한눈에 확인합니다. 환율이 바뀌지 않은 갱신은 화면 전체를 다시 그리지 않습니다.</div>
+    <div id="branchStatusPanel" class="branch-status-panel"><div class="branch-status-empty">수집 상태 확인 중...</div></div>
+  </div>
+
+  <div class="admin-actions">
+    <button onclick="saveAdminSettings()">저장</button>
+    <button onclick="resetAdminSettings()">초기화</button>
+  </div>
+</div>
+
+
+<div class="branch-modal-backdrop" id="branchModalBackdrop"></div>
+<div class="branch-modal" id="branchModal">
+  <div class="branch-modal-title">
+    <h3>지점 선택</h3>
+    <button class="branch-modal-close" id="branchModalClose" type="button">×</button>
+  </div>
+  <div id="branchModalMount"></div>
+</div>
+
+
+<div class="profile-manage-modal-bg" id="profileManageBg"></div>
+<div class="profile-manage-modal" id="profileManageModal">
+  <div class="profile-manage-head"><h3>프로필 관리</h3><button class="profile-close-btn" id="profileManageClose" type="button">×</button></div>
+  <div class="profile-manage-body"><div class="profile-list" id="profileManageList"></div><div class="profile-add-row"><input id="profileNameInput" placeholder="예) 명동점, 강남점"><button class="primary" id="profileAddBtn" type="button">추가</button></div></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

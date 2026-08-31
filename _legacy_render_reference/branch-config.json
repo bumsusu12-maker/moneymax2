@@ -1,0 +1,190 @@
+{
+  "version": "16.7",
+  "branches": [
+    {
+      "name": "머니박스 강남",
+      "area": "강남",
+      "origin": "http://moneyboxgn.com",
+      "referer": "http://moneyboxgn.com/",
+      "apiCode": "gangnam-stn"
+    },
+    {
+      "name": "머니박스 성수",
+      "area": "성수",
+      "origin": "https://moneyboxseongsu.com",
+      "referer": "https://moneyboxseongsu.com/",
+      "apiCode": "seongsu-stn"
+    },
+    {
+      "name": "머니박스 홍대",
+      "area": "홍대",
+      "origin": "http://www.moneyboxhd.com",
+      "referer": "http://www.moneyboxhd.com/",
+      "apiCode": "hongdae"
+    },
+    {
+      "name": "머니박스 명동",
+      "area": "명동",
+      "origin": "http://www.moneyboxmd.com",
+      "referer": "http://www.moneyboxmd.com/",
+      "apiCode": "myeongdong-main"
+    },
+    {
+      "name": "머니박스 인사동",
+      "area": "인사동",
+      "origin": "http://www.moneyboxis.com",
+      "referer": "http://www.moneyboxis.com/",
+      "apiCode": "insadong"
+    },
+    {
+      "name": "머니박스 남대문",
+      "area": "남대문",
+      "origin": "http://www.moneyboxndm.com",
+      "referer": "http://www.moneyboxndm.com/",
+      "apiCode": "namdaemun"
+    },
+    {
+      "name": "머니박스 명동2",
+      "area": "명동2",
+      "origin": "http://www.moneyboxmd2.com",
+      "referer": "http://www.moneyboxmd2.com/",
+      "apiCode": "myeongdong-2"
+    },
+    {
+      "name": "머니박스 충무로",
+      "area": "충무로",
+      "origin": "https://moneyboxcmr.com",
+      "referer": "https://moneyboxcmr.com/",
+      "apiCode": "chungmuro"
+    },
+    {
+      "name": "머니박스 동대문",
+      "area": "동대문",
+      "origin": "http://www.moneyboxddm.com",
+      "referer": "http://www.moneyboxddm.com/",
+      "apiCode": "dongdaemun"
+    },
+    {
+      "name": "머니박스 서울역",
+      "area": "서울역",
+      "origin": "http://www.moneyboxsst.com",
+      "referer": "http://www.moneyboxsst.com/"
+    },
+    {
+      "name": "머니박스 부산역",
+      "area": "부산역",
+      "origin": "http://www.moneyboxbst.com",
+      "referer": "http://www.moneyboxbst.com/",
+      "apiCode": "busan-stn"
+    },
+    {
+      "name": "머니박스 강남신사",
+      "area": "강남신사",
+      "origin": "https://moneyboxsinsa.com",
+      "referer": "https://moneyboxsinsa.com/",
+      "apiCode": "sinsa-gangnam"
+    },
+    {
+      "name": "머니박스 여의도",
+      "area": "여의도",
+      "origin": "https://moneyboxyud.com",
+      "referer": "https://moneyboxyud.com/",
+      "apiCode": "yeouido"
+    },
+    {
+      "name": "머니박스 광장시장",
+      "area": "광장시장",
+      "origin": "https://moneyboxkjm.com",
+      "referer": "https://moneyboxkjm.com/",
+      "apiCode": "gwangjang-market"
+    },
+    {
+      "name": "머니박스 연남",
+      "area": "연남",
+      "origin": "https://moneyboxynd.com",
+      "referer": "https://moneyboxynd.com/",
+      "apiCode": "yeonnam"
+    },
+    {
+      "name": "머니박스 이태원",
+      "area": "이태원",
+      "origin": "http://moneyboxitw.com",
+      "referer": "http://moneyboxitw.com/",
+      "apiCode": "itaewon"
+    },
+    {
+      "name": "머니박스 부평",
+      "area": "부평",
+      "origin": "http://moneyboxbp.com",
+      "referer": "http://moneyboxbp.com/",
+      "apiCode": "bupyeong"
+    },
+    {
+      "name": "머니박스 대구",
+      "area": "대구",
+      "origin": "http://moneyboxdg.com",
+      "referer": "http://moneyboxdg.com/"
+    },
+    {
+      "name": "머니박스 제주",
+      "area": "제주",
+      "origin": "http://www.moneyboxjeju.com",
+      "referer": "http://www.moneyboxjeju.com/"
+    },
+    {
+      "name": "머니박스 제주동문",
+      "area": "제주동문",
+      "origin": "https://www.moneyboxjjdm.com",
+      "referer": "https://www.moneyboxjjdm.com/"
+    },
+    {
+      "name": "머니박스 수원",
+      "area": "수원",
+      "origin": "https://www.moneyboxsw.com",
+      "referer": "https://www.moneyboxsw.com/",
+      "apiCode": "suwon"
+    },
+    {
+      "name": "머니박스 마포",
+      "area": "마포",
+      "origin": "http://www.moneyboxmp.com",
+      "referer": "http://www.moneyboxmp.com/",
+      "apiCode": "mapo"
+    },
+    {
+      "name": "머니박스 송도",
+      "area": "송도",
+      "origin": "https://www.moneyboxsd.com",
+      "referer": "https://www.moneyboxsd.com/",
+      "apiCode": "songdo"
+    },
+    {
+      "name": "머니박스 용산",
+      "area": "용산",
+      "origin": "https://m-box.com",
+      "referer": "https://m-box.com/branch/YS1",
+      "mboxPage": "https://m-box.com/branch/YS1",
+      "apiCode": "seoul-dragon-city"
+    },
+    {
+      "name": "머니박스 울산",
+      "area": "울산",
+      "origin": "http://www.moneyboxulsan.com",
+      "referer": "http://www.moneyboxulsan.com/"
+    },
+    {
+      "name": "머니박스 안양",
+      "area": "안양",
+      "origin": "https://m-box.com",
+      "referer": "https://m-box.com/",
+      "apiCode": "anyang-beomgye-stn"
+    },
+    {
+      "name": "머니박스 안국",
+      "area": "안국",
+      "origin": "https://m-box.com",
+      "referer": "https://m-box.com/",
+      "apiCode": "anguk-stn"
+    }
+  ]
+}
