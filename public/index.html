@@ -854,7 +854,7 @@ html[data-theme="dark"] #topBranchBtn{
 /* 지점 모달 내부를 기존 3열 카드형 디자인으로 유지/강화 */
 #branchModalMount .branch-region-grid{
   display:grid!important;
-  grid-template-columns:1.6fr 1fr 1fr;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:14px;
 }
 #branchModalMount .branch-region-card{
@@ -1545,6 +1545,31 @@ html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#26
 }
 @media (prefers-reduced-motion: reduce){
   #mainLogo.moneymax-backflip{animation:none}
+}
+
+
+
+/* V16.8.7 modal visual stability */
+#branchModalMount .branch-region-grid{
+  width:100%;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+#branchModalMount .branch-region-card{
+  min-width:0;
+}
+.branch-modal{
+  box-sizing:border-box;
+}
+
+
+
+/* V16.8.8: prevent accidental nested region-grid squeeze */
+#branchModalMount .branch-region-card > .branch-region-grid{
+  grid-column:1 / -1;
+  width:100%;
+}
+#branchModalMount .branch-list > .branch-region-grid{
+  width:100%;
 }
 
 </style>
@@ -2882,6 +2907,15 @@ function groupBranchModalV158(){
   const list = body.querySelector(".branch-list");
   if(!list) return;
 
+  // v16.8.8: stablefix renderBranchList() already renders the finished
+  // 3-column region grid. Never wrap that grid a second time.
+  // Double-wrapping was the reason the modal appeared as:
+  // outer "지방" card -> inner 서울/경기·인천/지방, all squeezed to one side.
+  if(list.querySelector(":scope > .branch-region-grid")){
+    mount.dataset.groupedV158 = "1";
+    return;
+  }
+
   const items = Array.from(list.children);
   if(!items.length) return;
 
@@ -3065,6 +3099,149 @@ setInterval(polishThemeSettingsV1582, 1500);
   setTimeout(()=>{ if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13(); },750);
   window.moneymaxStablefix1663={profiles,currentName,saveCurrentProfile,renderProfile,syncRuntime};
 })();
+
+
+/* V16.8.7 branch modal interaction/performance fix
+   - 즐겨찾기/체크 클릭 때 전체 환율 보드를 매번 render()하지 않음
+   - 모달 닫을 때 한 번만 반영
+   - 즐겨찾기 별은 즉시 UI 반영
+   - 3개 지역 열을 동일 폭으로 유지
+*/
+(function(){
+  let branchModalDirtyV1687 = false;
+
+  function markBranchModalDirtyV1687(){
+    branchModalDirtyV1687 = true;
+  }
+
+  function persistFavoritesV1687(){
+    const arr = [...favoriteBranches];
+    localStorage.setItem("moneyboxFavorites", JSON.stringify(arr));
+    localStorage.setItem("favoriteBranches", JSON.stringify(arr));
+
+    try{
+      const key = "moneymaxProfilesV159";
+      const currentKey = "moneymaxCurrentProfileV159";
+      const profiles = JSON.parse(localStorage.getItem(key) || "{}");
+      const current = localStorage.getItem(currentKey);
+      if(current && profiles[current]){
+        profiles[current].data ||= {};
+        profiles[current].data.moneyboxFavorites = JSON.stringify(arr);
+        profiles[current].data.favoriteBranches = JSON.stringify(arr);
+        localStorage.setItem(key, JSON.stringify(profiles));
+      }
+    }catch(e){}
+  }
+
+  function persistBranchesV1687(){
+    const arr = [...selectedBranches];
+    localStorage.setItem("moneymaxSelectedBranches", JSON.stringify(arr));
+
+    try{
+      const key = "moneymaxProfilesV159";
+      const currentKey = "moneymaxCurrentProfileV159";
+      const profiles = JSON.parse(localStorage.getItem(key) || "{}");
+      const current = localStorage.getItem(currentKey);
+      if(current && profiles[current]){
+        profiles[current].data ||= {};
+        profiles[current].data.moneymaxSelectedBranches = JSON.stringify(arr);
+        localStorage.setItem(key, JSON.stringify(profiles));
+      }
+    }catch(e){}
+  }
+
+  // Existing stablefix document handler calls window.toggleFavorite().
+  // Keep that entry point, but make it lightweight while the modal is open.
+  window.toggleFavorite = function(e, branch){
+    if(e){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation?.();
+    }
+
+    if(favoriteBranches.has(branch)) favoriteBranches.delete(branch);
+    else favoriteBranches.add(branch);
+
+    persistFavoritesV1687();
+
+    const on = favoriteBranches.has(branch);
+    document.querySelectorAll("[data-branch-star]").forEach(star=>{
+      if(star.getAttribute("data-branch-star") === branch){
+        star.classList.toggle("on", on);
+      }
+    });
+
+    // 즐겨찾기만 보기 상태에서는 목록 자체가 달라져야 하므로 이때만 목록 재생성.
+    if(document.getElementById("favoriteOnly")?.checked){
+      renderBranchList();
+    }
+
+    markBranchModalDirtyV1687();
+  };
+
+  // Existing stablefix change/click handler calls window.onBranchToggle().
+  // Update only the visible branch rows and state; do not rebuild the whole board.
+  window.onBranchToggle = function(){
+    selectedBranches.delete("__NONE__");
+    const all = allBranches();
+    const checks = [...document.querySelectorAll("#branchList input[type=checkbox]")];
+
+    // Empty set means "all selected". Expand once before applying a partial change.
+    if(selectedBranches.size === 0){
+      all.forEach(b => selectedBranches.add(b));
+    }
+
+    checks.forEach(input=>{
+      if(input.checked) selectedBranches.add(input.value);
+      else selectedBranches.delete(input.value);
+      input.closest(".branch-item")?.classList.toggle("on", input.checked);
+    });
+
+    // Preserve the compact "all selected" representation.
+    if(selectedBranches.size === all.length) selectedBranches.clear();
+
+    persistBranchesV1687();
+    updateBranchSummary();
+    markBranchModalDirtyV1687();
+  };
+
+  const oldOpenBranchModalV1687 = window.openBranchModal;
+  window.openBranchModal = function(){
+    // Render once before opening so profile/favorite state is current.
+    try{ renderBranchList(); }catch(e){}
+    oldOpenBranchModalV1687?.();
+    requestAnimationFrame(()=>{
+      document.getElementById("branchModal")?.classList.add("branch-modal-ready-v1687");
+    });
+  };
+
+  const oldCloseBranchModalV1687 = window.closeBranchModal;
+  window.closeBranchModal = function(){
+    oldCloseBranchModalV1687?.();
+    document.getElementById("branchModal")?.classList.remove("branch-modal-ready-v1687");
+
+    // Expensive currency-card/ranking render happens once, after the user finishes choices.
+    if(branchModalDirtyV1687){
+      branchModalDirtyV1687 = false;
+      requestAnimationFrame(()=>{
+        try{ render(); }catch(e){}
+      });
+    }
+  };
+
+  // If the modal is closed with Escape, use the same one-time render path.
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && document.getElementById("branchModal")?.classList.contains("show")){
+      window.closeBranchModal();
+    }
+  });
+
+  window.moneymaxBranchModalFixV1687 = {
+    version:"16.8.7",
+    get dirty(){ return branchModalDirtyV1687; }
+  };
+})();
+
 
 </script>
 
