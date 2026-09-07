@@ -1882,7 +1882,7 @@ function bestFor(cur){
 }
 function rowTemplate(r,i,type,rankOverride=null){
   const value = type === "buy" ? r.buy : r.sell;
-  const focus = typeof getProfileFavoriteSetV1595 === "function" ? getProfileFavoriteSetV1595().has(r.branch) : false;
+  const focus = typeof isFocused === "function" ? isFocused(r.branch) : favoriteBranches.has(r.branch);
   const rank = rankOverride ?? (i+1);
   return `<div class="row ${type === "buy" ? "buy-row":"sell-row"} ${focus ? "focus-row favorite-row" : ""}">
     <div class="no">${rank}</div>
@@ -1941,7 +1941,7 @@ function renderBoard(){
 function renderTable(){
   const data = activeRows().sort((a,b)=>preferred.indexOf(a.currency)-preferred.indexOf(b.currency)||a.branch.localeCompare(b.branch,"ko"));
   document.getElementById("tbody").innerHTML = data.map(r=>{
-    const focus = typeof getProfileFavoriteSetV1595 === "function" ? getProfileFavoriteSetV1595().has(r.branch) : false;
+    const focus = typeof isFocused === "function" ? isFocused(r.branch) : favoriteBranches.has(r.branch);
     return `<tr class="${focus ? 'focus-row' : ''}">
     <td><b class="${focus ? 'focus-cell' : ''}">${r.branch}${focus ? ' · ★' : ''}</b></td><td>${r.area}</td><td><span class="tag">${r.currency}</span></td>
     <td>${fmt(r.buy)}</td><td>${r.sell?fmt(r.sell):"-"}</td><td>${fmt(r.spread)}</td><td>${fmt(r.base)}</td><td>${fmt(r.buyDiff)}</td><td>${fmt(r.sellDiff)}</td><td>${r.date}</td>
