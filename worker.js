@@ -69,7 +69,8 @@ const branches = [
     "name": "머니박스 서울역",
     "area": "서울역",
     "origin": "http://www.moneyboxsst.com",
-    "referer": "http://www.moneyboxsst.com/"
+    "referer": "http://www.moneyboxsst.com/",
+    "apiCode": "seoul-stn"
   },
   {
     "name": "머니박스 부산역",
@@ -124,19 +125,22 @@ const branches = [
     "name": "머니박스 대구",
     "area": "대구",
     "origin": "http://moneyboxdg.com",
-    "referer": "http://moneyboxdg.com/"
+    "referer": "http://moneyboxdg.com/",
+    "apiCode": "daegu"
   },
   {
     "name": "머니박스 제주",
     "area": "제주",
     "origin": "http://www.moneyboxjeju.com",
-    "referer": "http://www.moneyboxjeju.com/"
+    "referer": "http://www.moneyboxjeju.com/",
+    "apiCode": "jeju"
   },
   {
     "name": "머니박스 제주동문",
     "area": "제주동문",
     "origin": "https://www.moneyboxjjdm.com",
-    "referer": "https://www.moneyboxjjdm.com/"
+    "referer": "https://www.moneyboxjjdm.com/",
+    "apiCode": "jeju-dongmun-market"
   },
   {
     "name": "머니박스 수원",
@@ -171,7 +175,22 @@ const branches = [
     "name": "머니박스 울산",
     "area": "울산",
     "origin": "http://www.moneyboxulsan.com",
-    "referer": "http://www.moneyboxulsan.com/"
+    "referer": "http://www.moneyboxulsan.com/",
+    "apiCode": "ulsan-samsan"
+  },
+  {
+    "name": "머니박스 창원",
+    "area": "창원",
+    "origin": "https://m-box.com",
+    "referer": "https://m-box.com/",
+    "apiCode": "changwon"
+  },
+  {
+    "name": "머니박스 김해공항",
+    "area": "김해공항",
+    "origin": "https://m-box.com",
+    "referer": "https://m-box.com/",
+    "apiCode": "gimhae-airport"
   },
   {
     "name": "머니박스 안양",
@@ -710,7 +729,7 @@ async function handleMarketsGet(context = {}) {
 }
 
 
-const MONEYMAX_VERSION = "16.8.9";
+const MONEYMAX_VERSION = "16.8.11";
 
 function jsonWithVersion(body, init = {}) {
   const headers = new Headers(init.headers || {});

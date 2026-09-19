@@ -101,3 +101,21 @@
 - 순위 렌더링이 삭제된 구형 즐겨찾기 헬퍼를 참조하던 문제 수정
 - 현재 즐겨찾기 상태인 `isFocused(branch)`를 사용하도록 통일
 - 기존 지점 선택 렉 개선/모달 중첩 수정 유지
+
+
+## v16.8.10
+신형 M-BOX API 지점 업데이트:
+- 제주 → `jeju`
+- 제주동문 → `jeju-dongmun-market`
+- 울산 → `ulsan-samsan`
+- 대구 → `daegu`
+- 창원 신규 추가 → `changwon`
+- 김해공항 신규 추가 → `gimhae-airport`
+
+기존 v16.8.9의 즐겨찾기 파란 강조, 지점 선택 모달/렉 개선, Cloudflare Worker 구조는 그대로 유지.
+
+
+## v16.8.11
+- 서울역 신형 M-BOX API 전환 → `seoul-stn`
+- 이로써 기존 관리 대상 MONEYBOX 지점의 신형 API 코드 전환 완료
+- v16.8.10 이하 UI/즐겨찾기/Cloudflare Worker 수정 유지
