@@ -1797,7 +1797,7 @@ const names = {
   CHF:["ch","스위스 프랑"], NZD:["nz","뉴질랜드 달러"], AED:["ae","UAE 디르함"], RUB:["ru","러시아 루블"]
 };
 const fmt = n => n == null || Number.isNaN(Number(n)) ? "-" : Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
-const clean = n => String(n).replace("머니박스 ","");
+const clean = n => { const v=String(n).replace("머니박스 ",""); return v==="잠실역" ? "잠실" : v; };
 function flagUrl(cur){ return `https://flagcdn.com/w80/${names[cur]?.[0] || "un"}.png`; }
 function allBranches(){
   const branches=[...new Set([
@@ -3071,7 +3071,7 @@ setInterval(polishThemeSettingsV1582, 1500);
     const p=profiles(); const c=currentName(); STATE_KEYS.forEach(k=>{const v=localStorage.getItem(k); if(v!==null)p[c].data[k]=v}); writeJSON(PROFILE_KEY,p);
   }
   function applyProfile(n){const p=profiles(); if(!p[n])return; saveCurrentProfile(); localStorage.setItem(CURRENT_KEY,n); const d=p[n].data||{}; Object.keys(d).forEach(k=>localStorage.setItem(k,d[k])); location.reload();}
-  function branchRegion(name){const seoul=["명동","남대문","명동2","제일환전","강남","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
+  function branchRegion(name){const seoul=["명동","남대문","명동2","제일환전","강남","잠실","잠실역","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
   window.renderBranchList=function(){syncRuntime(); const list=document.getElementById("branchList"); if(!list)return; const search=document.getElementById("branchSearch"); const favOnlyEl=document.getElementById("favoriteOnly"); const query=(search?.value||"").trim(); const favOnly=!!favOnlyEl?.checked; let bs=allBranches(); if(query)bs=bs.filter(b=>clean(b).includes(query)); if(favOnly)bs=bs.filter(b=>favoriteBranches.has(b));
     const regions={"서울":[],"경기·인천":[],"지방":[]}; bs.forEach(branch=>{const checked=!selectedBranches.has("__NONE__")&&(selectedBranches.size===0||selectedBranches.has(branch)); const fav=favoriteBranches.has(branch); const type=rows.find(r=>r.branch===branch)?.type; const html=`<label class="branch-item ${checked?'on':''}"><input type="checkbox" value="${branch}" ${checked?'checked':''}><span>${clean(branch)}${type==="external"?'<span class="external-tag">외부</span>':''}</span><span class="star ${fav?'on':''}" data-branch-star="${branch}">★</span></label>`; regions[branchRegion(clean(branch))].push(html);});
     list.innerHTML=`<div class="branch-region-grid">${Object.entries(regions).map(([title,items])=>`<div class="branch-region-card"><div class="branch-region-title">${title}</div>${items.join("")}</div>`).join("")}</div>`; updateBranchSummary(); };
@@ -3248,13 +3248,6 @@ setInterval(polishThemeSettingsV1582, 1500);
 
 
 
-const cleanOriginalV16814 = typeof clean === "function" ? clean : null;
-if(cleanOriginalV16814){
-  window.clean = function(name){
-    const v = cleanOriginalV16814(name);
-    return v === "잠실역" ? "잠실" : v;
-  };
-}
 
 </script>
 
