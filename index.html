@@ -2894,7 +2894,7 @@ function wireBranchModalV158(){
 }
 
 function branchRegionV1595(name){
-  const seoul = ["명동","남대문","명동2","제일환전","강남","잠실역","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];
+  const seoul = ["명동","남대문","명동2","제일환전","강남","잠실","잠실역","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];
   const metro = ["부평","송도","수원","안양","평택","인천","일산","분당"];
   if(seoul.includes(name)) return "서울";
   if(metro.includes(name)) return "경기·인천";
@@ -3246,6 +3246,15 @@ setInterval(polishThemeSettingsV1582, 1500);
   };
 })();
 
+
+
+const cleanOriginalV16814 = typeof clean === "function" ? clean : null;
+if(cleanOriginalV16814){
+  window.clean = function(name){
+    const v = cleanOriginalV16814(name);
+    return v === "잠실역" ? "잠실" : v;
+  };
+}
 
 </script>
 
