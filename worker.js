@@ -10,6 +10,13 @@ const branches = [
     "apiCode": "gangnam-stn"
   },
   {
+    "name": "머니박스 잠실역",
+    "area": "잠실역",
+    "origin": "https://m-box.com",
+    "referer": "https://m-box.com/",
+    "apiCode": "jamsil-stn"
+  },
+  {
     "name": "머니박스 성수",
     "area": "성수",
     "origin": "https://moneyboxseongsu.com",
@@ -729,7 +736,7 @@ async function handleMarketsGet(context = {}) {
 }
 
 
-const MONEYMAX_VERSION = "16.8.11";
+const MONEYMAX_VERSION = "16.8.13";
 
 function jsonWithVersion(body, init = {}) {
   const headers = new Headers(init.headers || {});
