@@ -3071,7 +3071,7 @@ setInterval(polishThemeSettingsV1582, 1500);
     const p=profiles(); const c=currentName(); STATE_KEYS.forEach(k=>{const v=localStorage.getItem(k); if(v!==null)p[c].data[k]=v}); writeJSON(PROFILE_KEY,p);
   }
   function applyProfile(n){const p=profiles(); if(!p[n])return; saveCurrentProfile(); localStorage.setItem(CURRENT_KEY,n); const d=p[n].data||{}; Object.keys(d).forEach(k=>localStorage.setItem(k,d[k])); location.reload();}
-  function branchRegion(name){const seoul=["명동","남대문","명동2","제일환전","강남","잠실","잠실역","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
+  function branchRegion(name){if(name==="잠실"||name==="잠실역"||name==="종로")return"서울";const seoul=["명동","남대문","명동2","제일환전","강남","종로","잠실","잠실역","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
   window.renderBranchList=function(){syncRuntime(); const list=document.getElementById("branchList"); if(!list)return; const search=document.getElementById("branchSearch"); const favOnlyEl=document.getElementById("favoriteOnly"); const query=(search?.value||"").trim(); const favOnly=!!favOnlyEl?.checked; let bs=allBranches(); if(query)bs=bs.filter(b=>clean(b).includes(query)); if(favOnly)bs=bs.filter(b=>favoriteBranches.has(b));
     const regions={"서울":[],"경기·인천":[],"지방":[]}; bs.forEach(branch=>{const checked=!selectedBranches.has("__NONE__")&&(selectedBranches.size===0||selectedBranches.has(branch)); const fav=favoriteBranches.has(branch); const type=rows.find(r=>r.branch===branch)?.type; const html=`<label class="branch-item ${checked?'on':''}"><input type="checkbox" value="${branch}" ${checked?'checked':''}><span>${clean(branch)}${type==="external"?'<span class="external-tag">외부</span>':''}</span><span class="star ${fav?'on':''}" data-branch-star="${branch}">★</span></label>`; regions[branchRegion(clean(branch))].push(html);});
     list.innerHTML=`<div class="branch-region-grid">${Object.entries(regions).map(([title,items])=>`<div class="branch-region-card"><div class="branch-region-title">${title}</div>${items.join("")}</div>`).join("")}</div>`; updateBranchSummary(); };
@@ -3102,6 +3102,55 @@ setInterval(polishThemeSettingsV1582, 1500);
   document.addEventListener("DOMContentLoaded",wire); setTimeout(wire,100); setTimeout(wire,700);
   setTimeout(()=>{ if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13(); },750);
   window.moneymaxStablefix1663={profiles,currentName,saveCurrentProfile,renderProfile,syncRuntime};
+})();
+
+
+
+/* V16.8.16: migrate old Jamsil branch key after source rename */
+(function migrateJamsilBranchKeyV16816(){
+  const OLD = "머니박스 잠실역";
+  const NEW = "머니박스 잠실";
+
+  function replaceInArrayJson(key){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return;
+      const arr = JSON.parse(raw);
+      if(!Array.isArray(arr)) return;
+      const next = [...new Set(arr.map(v => v === OLD ? NEW : v))];
+      if(JSON.stringify(arr) !== JSON.stringify(next)){
+        localStorage.setItem(key, JSON.stringify(next));
+      }
+    }catch(e){}
+  }
+
+  ["moneyboxFavorites","favoriteBranches","moneymaxSelectedBranches"].forEach(replaceInArrayJson);
+
+  try{
+    const key = "moneymaxProfilesV159";
+    const raw = localStorage.getItem(key);
+    if(raw){
+      const profiles = JSON.parse(raw);
+      let changed = false;
+      for(const p of Object.values(profiles || {})){
+        if(!p || !p.data) continue;
+        for(const stateKey of ["moneyboxFavorites","favoriteBranches","moneymaxSelectedBranches"]){
+          const value = p.data[stateKey];
+          if(typeof value !== "string") continue;
+          try{
+            const arr = JSON.parse(value);
+            if(!Array.isArray(arr)) continue;
+            const next = [...new Set(arr.map(v => v === OLD ? NEW : v))];
+            if(JSON.stringify(arr) !== JSON.stringify(next)){
+              p.data[stateKey] = JSON.stringify(next);
+              changed = true;
+            }
+          }catch(e){}
+        }
+      }
+      if(changed) localStorage.setItem(key, JSON.stringify(profiles));
+    }
+  }catch(e){}
 })();
 
 

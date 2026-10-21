@@ -10,8 +10,8 @@ const branches = [
     "apiCode": "gangnam-stn"
   },
   {
-    "name": "머니박스 잠실역",
-    "area": "잠실역",
+    "name": "머니박스 잠실",
+    "area": "잠실",
     "origin": "https://m-box.com",
     "referer": "https://m-box.com/",
     "apiCode": "jamsil-stn"
@@ -43,6 +43,13 @@ const branches = [
     "origin": "http://www.moneyboxis.com",
     "referer": "http://www.moneyboxis.com/",
     "apiCode": "insadong"
+  },
+  {
+    "name": "머니박스 종로",
+    "area": "종로",
+    "origin": "https://m-box.com",
+    "referer": "https://m-box.com/",
+    "apiCode": "jongno"
   },
   {
     "name": "머니박스 남대문",
@@ -736,7 +743,7 @@ async function handleMarketsGet(context = {}) {
 }
 
 
-const MONEYMAX_VERSION = "16.8.15";
+const MONEYMAX_VERSION = "16.8.17";
 
 function jsonWithVersion(body, init = {}) {
   const headers = new Headers(init.headers || {});
@@ -794,7 +801,19 @@ export default {
 
       // v16.8.5: run_worker_first=true, so ALL requests arrive here first.
       // Non-API requests are explicitly delegated to Static Assets.
-      return env.ASSETS.fetch(request);
+      const assetResponse = await env.ASSETS.fetch(request);
+      const accept = request.headers.get("accept") || "";
+      if (request.method === "GET" && accept.includes("text/html")) {
+        const headers = new Headers(assetResponse.headers);
+        headers.set("cache-control", "no-store, no-cache, must-revalidate");
+        headers.set("x-moneymax-version", MONEYMAX_VERSION);
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          statusText: assetResponse.statusText,
+          headers
+        });
+      }
+      return assetResponse;
     } catch (error) {
       if (url.pathname.startsWith("/api/")) {
         return jsonWithVersion(

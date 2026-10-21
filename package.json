@@ -1,6 +1,6 @@
 {
   "name": "moneymax-ver1",
-  "version": "16.8.15",
+  "version": "16.8.17",
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
