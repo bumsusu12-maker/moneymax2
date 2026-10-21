@@ -2894,7 +2894,7 @@ function wireBranchModalV158(){
 }
 
 function branchRegionV1595(name){
-  const seoul = ["명동","남대문","명동2","제일환전","강남","잠실","잠실역","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];
+  const seoul = ["명동","남대문","명동2","제일환전","강남","잠실","잠실역","종로","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];
   const metro = ["부평","송도","수원","안양","평택","인천","일산","분당"];
   if(seoul.includes(name)) return "서울";
   if(metro.includes(name)) return "경기·인천";
@@ -3071,9 +3071,15 @@ setInterval(polishThemeSettingsV1582, 1500);
     const p=profiles(); const c=currentName(); STATE_KEYS.forEach(k=>{const v=localStorage.getItem(k); if(v!==null)p[c].data[k]=v}); writeJSON(PROFILE_KEY,p);
   }
   function applyProfile(n){const p=profiles(); if(!p[n])return; saveCurrentProfile(); localStorage.setItem(CURRENT_KEY,n); const d=p[n].data||{}; Object.keys(d).forEach(k=>localStorage.setItem(k,d[k])); location.reload();}
-  function branchRegion(name){if(name==="잠실"||name==="잠실역"||name==="종로")return"서울";const seoul=["명동","남대문","명동2","제일환전","강남","종로","잠실","잠실역","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
+  function branchRegion(name){if(name==="잠실"||name==="잠실역"||name==="종로")return"서울";const seoul=["명동","남대문","명동2","제일환전","강남","잠실","잠실역","종로","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
   window.renderBranchList=function(){syncRuntime(); const list=document.getElementById("branchList"); if(!list)return; const search=document.getElementById("branchSearch"); const favOnlyEl=document.getElementById("favoriteOnly"); const query=(search?.value||"").trim(); const favOnly=!!favOnlyEl?.checked; let bs=allBranches(); if(query)bs=bs.filter(b=>clean(b).includes(query)); if(favOnly)bs=bs.filter(b=>favoriteBranches.has(b));
-    const regions={"서울":[],"경기·인천":[],"지방":[]}; bs.forEach(branch=>{const checked=!selectedBranches.has("__NONE__")&&(selectedBranches.size===0||selectedBranches.has(branch)); const fav=favoriteBranches.has(branch); const type=rows.find(r=>r.branch===branch)?.type; const html=`<label class="branch-item ${checked?'on':''}"><input type="checkbox" value="${branch}" ${checked?'checked':''}><span>${clean(branch)}${type==="external"?'<span class="external-tag">외부</span>':''}</span><span class="star ${fav?'on':''}" data-branch-star="${branch}">★</span></label>`; regions[branchRegion(clean(branch))].push(html);});
+    const regions={"서울":[],"경기·인천":[],"지방":[]}; bs.forEach(branch=>{const checked=!selectedBranches.has("__NONE__")&&(selectedBranches.size===0||selectedBranches.has(branch)); const fav=favoriteBranches.has(branch); const type=rows.find(r=>r.branch===branch)?.type; const html=`<label class="branch-item ${checked?'on':''}"><input type="checkbox" value="${branch}" ${checked?'checked':''}><span>${clean(branch)}${type==="external"?'<span class="external-tag">외부</span>':''}</span><span class="star ${fav?'on':''}" data-branch-star="${branch}">★</span></label>`; {
+      const displayName = clean(branch);
+      const forcedRegion = (displayName === "잠실" || displayName === "잠실역" || displayName === "종로")
+        ? "서울"
+        : branchRegion(displayName);
+      regions[forcedRegion].push(html);
+    }});
     list.innerHTML=`<div class="branch-region-grid">${Object.entries(regions).map(([title,items])=>`<div class="branch-region-card"><div class="branch-region-title">${title}</div>${items.join("")}</div>`).join("")}</div>`; updateBranchSummary(); };
   window.onBranchToggle=function(){selectedBranches.delete("__NONE__"); const all=allBranches(); const checks=[...document.querySelectorAll("#branchList input[type=checkbox]")]; if(selectedBranches.size===0){selectedBranches.clear(); all.forEach(b=>selectedBranches.add(b));} checks.forEach(input=>{if(input.checked)selectedBranches.add(input.value); else selectedBranches.delete(input.value);}); if(selectedBranches.size===all.length)selectedBranches.clear(); saveState({branches:[...selectedBranches]}); renderBranchList(); render();};
   window.selectAllBranches=function(){selectedBranches.clear(); saveState({branches:[]}); renderBranchList(); render();};

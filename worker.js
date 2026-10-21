@@ -743,7 +743,7 @@ async function handleMarketsGet(context = {}) {
 }
 
 
-const MONEYMAX_VERSION = "16.8.17";
+const MONEYMAX_VERSION = "16.8.18";
 
 function jsonWithVersion(body, init = {}) {
   const headers = new Headers(init.headers || {});
@@ -807,7 +807,17 @@ export default {
         const headers = new Headers(assetResponse.headers);
         headers.set("cache-control", "no-store, no-cache, must-revalidate");
         headers.set("x-moneymax-version", MONEYMAX_VERSION);
-        return new Response(assetResponse.body, {
+        headers.delete("content-length");
+
+        let body = await assetResponse.text();
+        const regionHardfix = "<script id=\"moneymax-region-hardfix-v16818\">\n(function(){\n  const TARGETS = new Set([\"잠실\",\"잠실역\",\"종로\"]);\n\n  function visibleName(item){\n    const label = item && item.querySelector(\"span:not(.star)\");\n    if(!label) return \"\";\n    let text = \"\";\n    for(const node of label.childNodes){\n      if(node.nodeType === Node.TEXT_NODE) text += node.textContent || \"\";\n    }\n    text = text.trim();\n    return text === \"잠실역\" ? \"잠실\" : text;\n  }\n\n  function fixSeoulBranches(){\n    const grid = document.querySelector(\"#branchList > .branch-region-grid\");\n    if(!grid) return;\n\n    const cards = [...grid.querySelectorAll(\":scope > .branch-region-card\")];\n    const seoul = cards.find(card =>\n      card.querySelector(\":scope > .branch-region-title\")?.textContent.trim() === \"서울\"\n    );\n    if(!seoul) return;\n\n    for(const card of cards){\n      if(card === seoul) continue;\n      for(const item of [...card.querySelectorAll(\":scope > .branch-item\")]){\n        const name = visibleName(item);\n        if(TARGETS.has(name)){\n          const label = item.querySelector(\"span:not(.star)\");\n          if(label){\n            for(const node of label.childNodes){\n              if(node.nodeType === Node.TEXT_NODE && node.textContent.trim() === \"잠실역\"){\n                node.textContent = node.textContent.replace(\"잠실역\",\"잠실\");\n                break;\n              }\n            }\n          }\n          seoul.appendChild(item);\n        }\n      }\n    }\n  }\n\n  let queued = false;\n  function scheduleFix(){\n    if(queued) return;\n    queued = true;\n    requestAnimationFrame(()=>{\n      queued = false;\n      fixSeoulBranches();\n    });\n  }\n\n  const observer = new MutationObserver(scheduleFix);\n  observer.observe(document.documentElement, {childList:true, subtree:true});\n  document.addEventListener(\"click\", scheduleFix, true);\n  document.addEventListener(\"change\", scheduleFix, true);\n  window.addEventListener(\"load\", scheduleFix);\n  scheduleFix();\n\n  window.__moneymaxRegionHardfix = {\n    version: \"16.8.18\",\n    fix: fixSeoulBranches\n  };\n})();\n</script>";
+        if (body.includes("</body>")) {
+          body = body.replace("</body>", regionHardfix + "\n</body>");
+        } else {
+          body += regionHardfix;
+        }
+
+        return new Response(body, {
           status: assetResponse.status,
           statusText: assetResponse.statusText,
           headers
