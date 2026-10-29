@@ -743,7 +743,7 @@ async function handleMarketsGet(context = {}) {
 }
 
 
-const MONEYMAX_VERSION = "16.8.18";
+const MONEYMAX_VERSION = "16.8.19";
 
 function jsonWithVersion(body, init = {}) {
   const headers = new Headers(init.headers || {});

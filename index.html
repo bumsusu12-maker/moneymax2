@@ -1884,6 +1884,14 @@ function bestFor(cur){
   const spread = [...list].filter(r=>r.spread>0).sort((a,b)=>a.spread-b.spread);
   return {buy,sell,spread,list};
 }
+function tiedRank(list,index,type){
+  if(index <= 0) return 1;
+  const key = type === "buy" ? "buy" : "sell";
+  const current = Number(list[index]?.[key]);
+  let first = index;
+  while(first > 0 && Number(list[first-1]?.[key]) === current) first--;
+  return first + 1;
+}
 function rowTemplate(r,i,type,rankOverride=null){
   const value = type === "buy" ? r.buy : r.sell;
   const focus = typeof isFocused === "function" ? isFocused(r.branch) : favoriteBranches.has(r.branch);
@@ -1899,15 +1907,15 @@ function fullRankRows(list,type){
   const top10 = list.slice(0,10);
   const topKeys = new Set(top10.map(r=>`${r.branch}__${r.currency}`));
   const favOutside = list
-    .map((r,i)=>({r,rank:i+1}))
+    .map((r,i)=>({r,index:i,rank:tiedRank(list,i,type)}))
     .filter(x=>isFocused(x.r.branch) && !topKeys.has(`${x.r.branch}__${x.r.currency}`));
 
-  const main = top10.map((r,i)=>rowTemplate(r,i,type)).join("");
+  const main = top10.map((r,i)=>rowTemplate(r,i,type,tiedRank(list,i,type))).join("");
   if(!favOutside.length) return main;
 
   return main
     + `<div class="fav-rank-divider">★ 즐겨찾기 순위</div>`
-    + favOutside.map(x=>rowTemplate(x.r,x.rank-1,type,x.rank)).join("");
+    + favOutside.map(x=>rowTemplate(x.r,x.index,type,x.rank)).join("");
 }
 function renderBoard(){
   const board = document.getElementById("board");
@@ -1929,8 +1937,8 @@ function renderBoard(){
         <div class="best-box sell"><div class="best-label">팔 때 BEST</div><div class="best-value">${s?fmt(s.sell):"-"}</div><div class="best-branch">${s?clean(s.branch):"-"}</div></div>
       </div>
       <div class="rank-wrap">
-        <div class="rank-box"><div class="rank-title"><span>살 때 TOP3</span><span>↓</span></div>${data.buy.slice(0,3).map((r,i)=>rowTemplate(r,i,"buy")).join("")}</div>
-        <div class="rank-box"><div class="rank-title"><span>팔 때 TOP3</span><span>↑</span></div>${data.sell.slice(0,3).map((r,i)=>rowTemplate(r,i,"sell")).join("")}</div>
+        <div class="rank-box"><div class="rank-title"><span>살 때 TOP3</span><span>↓</span></div>${data.buy.slice(0,3).map((r,i)=>rowTemplate(r,i,"buy",tiedRank(data.buy,i,"buy"))).join("")}</div>
+        <div class="rank-box"><div class="rank-title"><span>팔 때 TOP3</span><span>↑</span></div>${data.sell.slice(0,3).map((r,i)=>rowTemplate(r,i,"sell",tiedRank(data.sell,i,"sell"))).join("")}</div>
       </div>
       <div class="expanded">
         <div class="full-title">${cur} 전체 지점 순위</div>
