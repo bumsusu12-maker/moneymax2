@@ -1884,12 +1884,17 @@ function bestFor(cur){
   const spread = [...list].filter(r=>r.spread>0).sort((a,b)=>a.spread-b.spread);
   return {buy,sell,spread,list};
 }
+function rankDisplayKey(value){
+  // 순위는 사용자가 실제 화면에서 보는 환율을 기준으로 묶는다.
+  // fmt()와 동일하게 최대 소수 4자리로 반올림된 표시값을 사용.
+  return fmt(value);
+}
 function tiedRank(list,index,type){
   if(index <= 0) return 1;
   const key = type === "buy" ? "buy" : "sell";
-  const current = Number(list[index]?.[key]);
+  const current = rankDisplayKey(list[index]?.[key]);
   let first = index;
-  while(first > 0 && Number(list[first-1]?.[key]) === current) first--;
+  while(first > 0 && rankDisplayKey(list[first-1]?.[key]) === current) first--;
   return first + 1;
 }
 function rowTemplate(r,i,type,rankOverride=null){
