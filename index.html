@@ -1572,6 +1572,1005 @@ html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#26
   width:100%;
 }
 
+
+
+/* V16.8.21 MONEYBOX / MYBANK workspace tabs */
+.workspace-tabs{
+  display:flex;
+  gap:10px;
+  margin:0 0 16px;
+  padding:5px;
+  width:max-content;
+  max-width:100%;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:0 8px 22px rgba(15,23,42,.05);
+}
+.workspace-tab{
+  min-width:150px;
+  height:54px;
+  padding:7px 18px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:var(--muted);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  gap:2px;
+  cursor:pointer;
+  box-shadow:none;
+}
+.workspace-tab:hover{background:var(--surface2);border-color:transparent}
+.workspace-tab.active{
+  background:var(--blue);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(8,120,255,.22);
+}
+.workspace-tab-title{font-size:14px;font-weight:950;line-height:1.1}
+.workspace-tab-sub{font-size:10px;font-weight:800;opacity:.8}
+.workspace-view[hidden]{display:none!important}
+
+/* MYBANK prototype layout — data intentionally not connected yet */
+.mybank-view{animation:workspaceFade .18s ease}
+@keyframes workspaceFade{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
+.mybank-head{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  margin:4px 0 16px;
+  padding:20px 22px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+}
+.mybank-eyebrow{font-size:10px;font-weight:950;letter-spacing:.12em;color:var(--blue);margin-bottom:6px}
+.mybank-head h2{font-size:22px;line-height:1.2;margin:0 0 7px;letter-spacing:-.03em}
+.mybank-head p{margin:0;color:var(--muted);font-size:12px;font-weight:700}
+.mybank-head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.mybank-status-dot{
+  height:34px;padding:0 12px;border:1px solid var(--line);border-radius:999px;
+  display:inline-flex;align-items:center;gap:7px;background:var(--surface2);
+  color:var(--muted);font-size:11px;font-weight:900;white-space:nowrap
+}
+.mybank-status-dot i{width:7px;height:7px;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.12)}
+.mybank-disabled-btn,.mybank-monitor-head button{
+  height:34px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);
+  color:var(--muted);font-size:11px;font-weight:900;opacity:.7;cursor:not-allowed
+}
+.mybank-shell{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+.mybank-main,.mybank-monitor{
+  min-width:0;
+}
+.mybank-main{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+.mybank-section-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin-bottom:14px;padding-bottom:13px;border-bottom:1px solid var(--line)
+}
+.mybank-section-head>div:first-child{display:flex;flex-direction:column;gap:3px}
+.mybank-section-head b{font-size:14px}
+.mybank-section-head span{font-size:10px;color:var(--muted);font-weight:800}
+.mybank-currency-pills{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.mybank-currency-pills span{
+  padding:5px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);
+  font-size:9px!important;font-weight:950;color:var(--muted)!important
+}
+.mybank-currency-pills span.active{background:rgba(8,120,255,.10);border-color:rgba(8,120,255,.28);color:var(--blue)!important}
+.mybank-currency-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mybank-currency-card{
+  border:1px solid var(--line);border-radius:16px;background:var(--surface2);overflow:hidden;min-width:0
+}
+.mybank-currency-title{
+  display:flex;align-items:center;gap:7px;padding:12px 13px 9px;border-bottom:1px solid var(--line)
+}
+.mybank-currency-title>b{font-size:12px}
+.mybank-currency-title small{margin-left:auto;color:var(--muted);font-size:9px;font-weight:800}
+.mybank-base{margin:9px 12px;padding:8px 10px;border:1px solid var(--line);background:var(--surface);text-align:center;font-size:10px;font-weight:850;color:var(--muted)}
+.mybank-base strong{color:var(--text)}
+.mybank-two-columns{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 10px}
+.mybank-rate-panel{border:1px solid var(--line);background:var(--surface);min-height:154px;overflow:hidden}
+.mybank-rate-panel.buy{border-top:2px solid var(--cyan)}
+.mybank-rate-panel.sell{border-top:2px solid var(--coral)}
+.mybank-panel-title{
+  display:flex;justify-content:space-between;align-items:center;gap:7px;padding:8px 9px;border-bottom:1px solid var(--line)
+}
+.mybank-panel-title b{font-size:10px}
+.mybank-rate-panel.buy .mybank-panel-title b{color:var(--cyan)}
+.mybank-rate-panel.sell .mybank-panel-title b{color:var(--coral)}
+.mybank-panel-title span{font-size:8px;color:var(--muted);font-weight:800}
+.mybank-empty-rank{
+  min-height:115px;padding:20px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px
+}
+.mybank-empty-rank strong{font-size:11px;color:var(--muted)}
+.mybank-empty-rank span{font-size:9px;color:var(--muted);line-height:1.5;max-width:150px}
+.mybank-more-card{
+  min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:18px
+}
+.mybank-more-icon{
+  width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(8,120,255,.09);border:1px dashed rgba(8,120,255,.35);color:var(--blue);font-size:23px;font-weight:700
+}
+.mybank-more-card b{font-size:12px}
+.mybank-more-card span{font-size:10px;line-height:1.5;color:var(--muted);max-width:230px}
+.mybank-monitor{
+  background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;
+  box-shadow:var(--shadow);position:sticky;top:16px
+}
+.mybank-monitor-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 2px 12px;border-bottom:1px solid var(--line)
+}
+.mybank-monitor-head>div{display:flex;flex-direction:column;gap:3px}
+.mybank-monitor-head b{font-size:13px}
+.mybank-monitor-head span{font-size:9px;color:var(--muted);font-weight:800}
+.mybank-monitor-card{margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface2)}
+.mybank-monitor-title{display:flex;justify-content:space-between;gap:8px;padding:9px 10px;border-bottom:1px solid var(--line)}
+.mybank-monitor-title b{font-size:10px}
+.mybank-monitor-title span{font-size:9px;color:var(--muted);font-weight:900}
+.mybank-monitor-rates{display:grid;grid-template-columns:1fr 1fr}
+.mybank-monitor-rates>div{
+  display:grid;grid-template-columns:35px 1fr;gap:3px 6px;padding:8px 9px;border-bottom:1px solid var(--line)
+}
+.mybank-monitor-rates>div:nth-child(odd){border-right:1px solid var(--line)}
+.mybank-monitor-rates b{grid-row:1/3;font-size:9px;align-self:center}
+.mybank-monitor-rates span{font-size:8px;font-weight:850;text-align:right}
+.mybank-monitor-rates .buy{color:var(--cyan)}
+.mybank-monitor-rates .sell{color:var(--coral)}
+.mybank-monitor-note{
+  margin-top:10px;padding:11px 12px;border:1px dashed var(--line);border-radius:12px;background:var(--surface2);
+  display:flex;flex-direction:column;gap:4px
+}
+.mybank-monitor-note b{font-size:10px;color:var(--blue)}
+.mybank-monitor-note span{font-size:9px;color:var(--muted);line-height:1.5}
+
+@media(max-width:1180px){
+  .mybank-shell{grid-template-columns:1fr}
+  .mybank-monitor{position:static}
+  .mybank-monitor-rates{grid-template-columns:repeat(3,1fr)}
+  .mybank-monitor-rates>div:nth-child(odd){border-right:0}
+  .mybank-monitor-rates>div{border-right:1px solid var(--line)}
+}
+@media(max-width:760px){
+  .workspace-tabs{width:100%}
+  .workspace-tab{flex:1;min-width:0;align-items:center}
+  .mybank-head{flex-direction:column}
+  .mybank-head-actions{width:100%;justify-content:flex-start}
+  .mybank-section-head{align-items:flex-start;flex-direction:column}
+  .mybank-currency-pills{justify-content:flex-start}
+  .mybank-currency-grid{grid-template-columns:1fr}
+  .mybank-monitor-rates{grid-template-columns:1fr 1fr}
+}
+
+
+
+/* V16.8.22 MYBANK market-mood redesign */
+.mybank-head-market p b{color:var(--text)}
+.mybank-market-pulse{
+  margin:0 0 16px;padding:15px 16px;background:var(--surface);border:1px solid var(--line);
+  border-radius:20px;box-shadow:var(--shadow)
+}
+.mybank-pulse-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px}
+.mybank-pulse-head>div:first-child{display:flex;flex-direction:column;gap:3px}
+.mybank-pulse-head b{font-size:13px}.mybank-pulse-head span{font-size:9px;color:var(--muted);font-weight:800}
+.mybank-market-legend{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.mybank-market-legend span,.monitor-legend span{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:900}
+.mybank-market-legend i,.monitor-legend i{width:7px;height:7px;border-radius:2px;display:inline-block}
+.sell-side{color:var(--cyan)!important}.buy-side{color:var(--coral)!important}
+.sell-side i{background:var(--cyan)}.buy-side i{background:var(--coral)}
+.mybank-pulse-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.mybank-pulse-card{padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface2);min-width:0}
+.pulse-top{display:flex;align-items:baseline;gap:6px;margin-bottom:8px}.pulse-top b{font-size:12px}.pulse-top span{font-size:8px;color:var(--muted);font-weight:800}
+.pulse-balance{height:11px;border-radius:999px;overflow:hidden;display:flex;background:var(--line)}
+.pulse-balance .sell-fill{background:var(--cyan);width:50%}.pulse-balance .buy-fill{background:var(--coral);width:50%}
+.pulse-balance.empty{opacity:.18}
+.pulse-foot{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;margin-top:7px}
+.pulse-foot span{font-size:8px;font-weight:900}.pulse-foot span:last-child{text-align:right}.pulse-foot strong{font-size:8px;color:var(--muted);white-space:nowrap}
+.market-shell{grid-template-columns:minmax(0,1fr) 330px}
+.mybank-market-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mybank-market-card{border:1px solid var(--line);border-radius:16px;background:var(--surface2);overflow:hidden;min-width:0}
+.market-card-head{height:43px;padding:0 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.market-card-head>div:first-child{display:flex;align-items:center;gap:7px}.market-card-head b{font-size:11px}.market-card-head .flag{font-size:13px}
+.market-base{font-size:8px;color:var(--muted);font-weight:800}.market-base strong{color:var(--text)}
+.market-side-summary{display:grid;grid-template-columns:1fr .8fr 1fr;border-bottom:1px solid var(--line);background:var(--surface)}
+.market-side-summary>div{padding:8px 9px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.market-side-summary>div+div{border-left:1px solid var(--line)}
+.market-side-summary span{font-size:8px;font-weight:900}.market-side-summary strong{font-size:13px}.market-side-summary small{font-size:7px;color:var(--muted);font-weight:800}
+.market-side-summary .market-mid{text-align:center;align-items:center;justify-content:center}.market-side-summary .market-mid strong{font-size:10px;color:var(--muted)}
+.market-book{display:grid;grid-template-columns:1fr 1fr;min-height:190px}
+.market-book-side{min-width:0;background:var(--surface)}
+.market-book-side+div{border-left:1px solid var(--line)}
+.sell-book{box-shadow:inset 0 2px 0 var(--cyan)}.buy-book{box-shadow:inset 0 2px 0 var(--coral)}
+.book-title{padding:8px 9px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:5px;align-items:center}
+.book-title b{font-size:9px}.sell-book .book-title b{color:var(--cyan)}.buy-book .book-title b{color:var(--coral)}
+.book-title span{font-size:7px;color:var(--muted);font-weight:800;text-align:right}
+.market-empty{height:145px;padding:12px 10px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.market-empty>span{font-size:8px;color:var(--muted);font-weight:800;text-align:center;line-height:1.45}
+.market-empty-bars{display:flex;flex-direction:column;align-items:flex-end;gap:5px;opacity:.14}
+.market-empty-bars.reverse{align-items:flex-start}
+.market-empty-bars i{height:8px;border-radius:3px 0 0 3px;background:var(--cyan)}
+.market-empty-bars.reverse i{background:var(--coral);border-radius:0 3px 3px 0}
+.market-more-card{min-height:278px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;gap:8px}
+.market-more-card b{font-size:12px}.market-more-card span{font-size:9px;color:var(--muted);line-height:1.5;max-width:220px}
+.market-monitor{position:sticky;top:16px}
+.monitor-legend{display:flex;gap:10px;padding:8px 2px 0}
+.market-monitor-card{background:var(--surface)}
+.market-monitor-rates{display:grid;grid-template-columns:1fr 1fr}
+.market-monitor-rates>div{padding:8px 9px;display:grid;grid-template-columns:32px 1fr;gap:2px 6px;border-bottom:1px solid var(--line)}
+.market-monitor-rates>div:nth-child(odd){border-right:1px solid var(--line)}
+.market-monitor-rates b{grid-row:1/3;align-self:center;font-size:8px}
+.market-monitor-rates span{font-size:8px;font-weight:900;text-align:right}
+.market-read-guide{margin-top:10px;padding:11px 12px;border:1px dashed var(--line);border-radius:12px;background:var(--surface2)}
+.market-read-guide b{font-size:10px}.market-read-guide p{margin:5px 0 0;font-size:8px;line-height:1.6;color:var(--muted);font-weight:800}
+@media(max-width:1180px){.mybank-pulse-grid{grid-template-columns:repeat(2,1fr)}.market-shell{grid-template-columns:1fr}.market-monitor{position:static}}
+@media(max-width:760px){.mybank-pulse-head{align-items:flex-start;flex-direction:column}.mybank-market-legend{justify-content:flex-start}.mybank-pulse-grid{grid-template-columns:1fr 1fr}.mybank-market-grid{grid-template-columns:1fr}}
+
+
+
+/* V16.8.23 live MyBank data */
+.mybank-live-refresh{opacity:1!important;cursor:pointer!important;color:var(--blue)!important;background:rgba(8,120,255,.08)!important}
+.mybank-status-dot.live i{background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.12)}
+.mybank-status-dot.error i{background:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.12)}
+.market-live-list{height:145px;overflow:auto;background:var(--surface)}
+.market-live-list::-webkit-scrollbar{width:6px}.market-live-list::-webkit-scrollbar-thumb{background:#aab4c2;border-radius:99px}
+.market-live-row{display:grid;grid-template-columns:68px minmax(0,1fr) 55px;align-items:center;gap:7px;padding:6px 8px;border-bottom:1px solid var(--line);font-size:8px;min-width:0}
+.market-live-row:last-child{border-bottom:0}
+.market-live-row .rate{font-size:10px;font-weight:950;font-variant-numeric:tabular-nums}
+.market-live-row .name{font-weight:850;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.market-live-row .date{text-align:right;color:var(--muted);font-size:7px;font-weight:750}
+.sell-book .market-live-row .rate{color:var(--cyan)}
+.buy-book .market-live-row .rate{color:var(--coral)}
+.market-card-head .market-updated{font-size:7px;color:var(--muted);font-weight:800}
+.market-side-summary .market-mid strong.supply{color:var(--cyan)}
+.market-side-summary .market-mid strong.demand{color:var(--coral)}
+.market-side-summary .market-mid strong.balance{color:var(--text)}
+.market-empty.error{color:#ef4444}
+.market-monitor-rates span.missing{color:var(--muted)!important}
+.mybank-source-note{font-size:7px;color:var(--muted);font-weight:750;margin-top:6px;text-align:right}
+
+
+
+/* V16.8.24 compact MYBANK */
+.compact-mybank{padding-top:0}
+.compact-mybank-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 10px;padding:8px 10px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.compact-title-line{display:flex;align-items:center;gap:8px}.compact-title-line>b{font-size:15px}.compact-title-line>span{font-size:10px;font-weight:800;color:var(--muted)}
+.compact-subline{display:flex;align-items:center;gap:10px;margin-top:3px;font-size:8px;color:var(--muted);font-weight:800}
+.compact-subline .legend{display:inline-flex;align-items:center;gap:4px}.compact-subline i{width:6px;height:6px;border-radius:1px;display:inline-block}
+.sell-side i{background:var(--cyan)}.buy-side i{background:var(--coral)}
+.compact-actions{display:flex;gap:6px}.compact-btn{height:30px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);font-size:9px;font-weight:900;cursor:pointer;color:var(--text)}
+.compact-btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.compact-mybank-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:10px;align-items:start}
+.compact-currency-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.compact-currency-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.compact-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line)}
+.compact-card-title{display:flex;align-items:center;gap:5px}.compact-card-title .flag{font-size:12px}.compact-card-title b{font-size:10px}.compact-card-title .name{font-size:9px;font-weight:800;color:var(--muted)}
+.compact-card-head .updated{font-size:7px;color:var(--muted);font-weight:750;white-space:nowrap}
+.compact-base{margin:7px 10px;padding:6px 8px;border:1px solid var(--line);text-align:center;font-size:8px;font-weight:850;background:var(--surface2)}.compact-base strong{font-size:10px;color:var(--text)}
+.compact-book{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 10px 8px}
+.compact-side{border:1px solid var(--line);min-width:0;background:var(--surface)}.compact-side.sell-book{border-top:2px solid var(--cyan)}.compact-side.buy-book{border-top:2px solid var(--coral)}
+.compact-side-head{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:6px 7px;border-bottom:1px solid var(--line)}
+.compact-side-head b{font-size:8px}.sell-book .compact-side-head b{color:var(--cyan)}.buy-book .compact-side-head b{color:var(--coral)}
+.compact-side-head span{font-size:7px;color:var(--muted);font-weight:800}
+.compact-list{height:115px;overflow:auto}.compact-list::-webkit-scrollbar{width:5px}.compact-list::-webkit-scrollbar-thumb{background:#aab4c2;border-radius:99px}
+.compact-row{display:grid;grid-template-columns:58px minmax(0,1fr);gap:6px;align-items:center;padding:5px 7px;border-bottom:1px solid var(--line);font-size:8px;min-width:0}
+.compact-row:last-child{border-bottom:0}.compact-row .rate{font-size:9px;font-weight:950;font-variant-numeric:tabular-nums}.sell-book .rate{color:var(--cyan)}.buy-book .rate{color:var(--coral)}
+.compact-row .office{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compact-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--muted);font-weight:800}
+.compact-card-foot{display:grid;grid-template-columns:1fr 1fr}.compact-card-foot>div{padding:5px 8px;color:#fff;display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px}
+.sell-foot{background:var(--cyan)}.buy-foot{background:var(--coral)}.compact-card-foot strong{font-size:9px}.compact-card-foot span{font-weight:800;opacity:.9}
+.compact-monitor-panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;position:sticky;top:10px}
+.compact-monitor-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.compact-monitor-head>div{display:flex;flex-direction:column;gap:2px}.compact-monitor-head b{font-size:10px}.compact-monitor-head span{font-size:7px;color:var(--muted);font-weight:800}
+.compact-monitor-head button{height:27px;padding:0 9px;border:1px solid var(--line);border-radius:7px;background:var(--surface2);font-size:8px;font-weight:900;cursor:pointer}
+.compact-monitor-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.compact-monitor-empty{min-height:150px;border:1px dashed var(--line);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:8px;font-weight:800}
+.compact-monitor-empty button{height:28px;padding:0 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface2);font-size:8px;font-weight:900;cursor:pointer}
+.compact-monitor-card{border:1px solid var(--line);border-radius:8px;overflow:hidden}.compact-monitor-title{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--surface2);border-bottom:1px solid var(--line)}
+.compact-monitor-title b{font-size:9px}.compact-monitor-title button{border:0;background:transparent;color:var(--muted);font-size:12px;cursor:pointer}
+.compact-monitor-grid{display:grid;grid-template-columns:1fr 1fr}.compact-monitor-cell{display:grid;grid-template-columns:30px 1fr;gap:2px 4px;padding:6px 7px;border-bottom:1px solid var(--line);font-size:7px}
+.compact-monitor-cell:nth-child(odd){border-right:1px solid var(--line)}.compact-monitor-cell b{grid-row:1/3;align-self:center;font-size:7px}.compact-monitor-cell span{text-align:right;font-weight:850}
+.compact-monitor-cell .sell{color:var(--cyan)}.compact-monitor-cell .buy{color:var(--coral)}.compact-monitor-cell .missing{color:var(--muted)}
+.mybank-picker-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.42);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}.mybank-picker-backdrop[hidden]{display:none!important}
+.mybank-picker{width:min(560px,95vw);max-height:80vh;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 24px 70px rgba(15,23,42,.25);display:flex;flex-direction:column}
+.mybank-picker-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}.mybank-picker-head>div{display:flex;flex-direction:column;gap:2px}
+.mybank-picker-head b{font-size:12px}.mybank-picker-head span{font-size:8px;color:var(--muted);font-weight:800}.mybank-picker-head button{border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--text)}
+.mybank-picker-search{padding:10px 12px;border-bottom:1px solid var(--line)}.mybank-picker-search input{width:100%;height:34px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:var(--surface2);color:var(--text)}
+.mybank-picker-list{overflow:auto;padding:6px 12px;min-height:250px;max-height:50vh}.mybank-picker-item{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid var(--line);font-size:9px;font-weight:800;cursor:pointer}
+.mybank-picker-item input{accent-color:var(--blue)}.mybank-picker-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-top:1px solid var(--line)}
+.mybank-picker-foot span{font-size:8px;color:var(--muted);font-weight:850}
+@media(max-width:1100px){.compact-mybank-layout{grid-template-columns:1fr}.compact-monitor-panel{position:static}.compact-monitor-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.compact-currency-grid{grid-template-columns:1fr}.compact-monitor-list{grid-template-columns:1fr}.compact-mybank-topbar{align-items:flex-start;flex-direction:column}.compact-actions{width:100%}.compact-actions .compact-btn{flex:1}}
+
+
+
+/* V16.8.25 MYBANK ratio bar + monitor placement */
+.compact-mybank-layout{
+  grid-template-columns:minmax(0,1fr) 330px!important;
+  align-items:start!important;
+}
+.compact-currency-grid{
+  grid-column:1;
+  grid-row:1;
+}
+.compact-monitor-panel{
+  grid-column:2;
+  grid-row:1;
+  position:sticky!important;
+  top:10px!important;
+  align-self:start;
+  max-height:calc(100vh - 24px);
+  overflow:auto;
+}
+.compact-card-foot{
+  display:flex!important;
+  width:100%;
+  min-height:27px;
+  overflow:hidden;
+}
+.compact-card-foot>div{
+  width:auto;
+  min-width:0;
+  transition:width .28s ease;
+  white-space:nowrap;
+  overflow:hidden;
+}
+.compact-card-foot>div strong,
+.compact-card-foot>div span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.compact-card-foot .sell-foot{justify-content:flex-end;padding-right:10px}
+.compact-card-foot .buy-foot{justify-content:flex-start;padding-left:10px}
+@media(max-width:1100px){
+  .compact-mybank-layout{grid-template-columns:1fr!important}
+  .compact-monitor-panel{
+    grid-column:1;
+    grid-row:1;
+    position:static!important;
+    max-height:none;
+    overflow:visible;
+    margin-bottom:10px;
+  }
+  .compact-currency-grid{
+    grid-column:1;
+    grid-row:2;
+  }
+}
+
+
+
+/* V16.8.26 MYBANK readability pass */
+.compact-card-head{padding:9px 10px}
+.compact-card-title{gap:7px}
+.compact-card-title .flag{font-size:18px;line-height:1}
+.compact-card-title b{font-size:12px;font-weight:950}
+.compact-card-title .name{font-size:10px;font-weight:900;color:var(--text)}
+.compact-head-right{display:flex;align-items:center;gap:7px}
+.mood-badge{display:inline-flex;align-items:center;justify-content:center;height:21px;padding:0 7px;border-radius:999px;font-size:8px;font-weight:950;white-space:nowrap}
+.mood-badge.balance{background:rgba(100,116,139,.10);color:#64748b}
+.mood-badge.supply{background:rgba(6,182,212,.11);color:var(--cyan)}
+.mood-badge.demand{background:rgba(255,107,92,.12);color:var(--coral)}
+.compact-base{margin:7px 10px 8px;padding:7px 8px;font-size:9px}.compact-base strong{font-size:12px;font-weight:950}
+.compact-list{height:132px}
+.compact-row{position:relative;grid-template-columns:72px minmax(0,1fr);min-height:25px;gap:8px;padding:6px 8px 6px 10px}
+.compact-row::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:2px;opacity:0}
+.sell-book .compact-row::before{background:var(--cyan)}.buy-book .compact-row::before{background:var(--coral)}
+.compact-row.top::before{opacity:1}.compact-row.top{background:rgba(15,23,42,.018)}
+.compact-row .rate{font-size:11px;font-weight:1000;text-align:right}
+.compact-row .office{font-size:9px;font-weight:900;color:var(--text)}
+.compact-card-foot{min-height:32px}
+.compact-card-foot>div{flex-direction:column;align-items:center!important;justify-content:center!important;gap:0;padding:4px 8px!important}
+.compact-card-foot strong{font-size:9px}.compact-card-foot span{font-size:7px}
+.compact-monitor-panel{width:330px}
+.compact-monitor-title b{font-size:9px;max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.compact-monitor-grid{grid-template-columns:1fr}
+.compact-monitor-cell{display:grid;grid-template-columns:38px 1fr 1fr;align-items:center;gap:6px;padding:7px 8px;border-right:0!important;border-bottom:1px solid var(--line)}
+.compact-monitor-cell b{grid-row:auto;font-size:8px;font-weight:950}
+.compact-monitor-cell span{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;font-size:10px;font-weight:1000;white-space:nowrap}
+.compact-monitor-cell span em{font-style:normal;font-size:7px;font-weight:900;opacity:.75}
+@media(max-width:1100px){.compact-monitor-panel{width:auto}}
+
+
+
+/* V16.8.27 MYBANK larger font + stronger flags */
+.compact-title-line>b{font-size:18px}
+.compact-title-line>span{font-size:11px}
+.compact-subline{font-size:9px}
+.compact-btn{height:34px;font-size:10px}
+.compact-card-head{padding:11px 12px}
+.compact-card-title{gap:9px}
+.compact-card-title .flag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:30px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid var(--line);
+  font-size:20px;
+  line-height:1;
+  box-shadow:0 1px 2px rgba(15,23,42,.06);
+  flex:0 0 auto;
+}
+.compact-card-title b{font-size:15px;font-weight:1000;letter-spacing:-.01em}
+.compact-card-title .name{font-size:12px;font-weight:950;color:var(--text)}
+.compact-card-head .updated{font-size:10px}
+.mood-badge{height:24px;padding:0 9px;font-size:9px}
+.compact-base{padding:9px 10px;font-size:10px}
+.compact-base strong{font-size:15px}
+.compact-book{gap:10px;padding:0 12px 10px}
+.compact-side-head{padding:8px 9px}
+.compact-side-head b{font-size:11px}
+.compact-side-head span{font-size:8px}
+.compact-list{height:148px}
+.compact-row{grid-template-columns:86px minmax(0,1fr);min-height:30px;gap:10px;padding:7px 9px 7px 12px}
+.compact-row .rate{font-size:15px;font-weight:1000}
+.compact-row .office{font-size:11px;font-weight:950}
+.compact-card-foot{min-height:38px}
+.compact-card-foot strong{font-size:11px}
+.compact-card-foot span{font-size:8px}
+.compact-monitor-panel{width:350px;padding:12px}
+.compact-monitor-head b{font-size:13px}
+.compact-monitor-head span{font-size:9px}
+.compact-monitor-head button{height:30px;font-size:9px}
+.compact-monitor-title{padding:8px 9px}
+.compact-monitor-title b{font-size:10px}
+.compact-monitor-cell{grid-template-columns:42px 1fr 1fr;padding:8px 9px}
+.compact-monitor-cell b{font-size:9px}
+.compact-monitor-cell span{font-size:11px}
+.compact-monitor-cell span em{font-size:8px}
+@media(max-width:1100px){.compact-monitor-panel{width:auto}}
+@media(max-width:760px){
+  .compact-card-title b{font-size:14px}
+  .compact-card-title .name{font-size:11px}
+  .compact-row .rate{font-size:14px}
+  .compact-row .office{font-size:10px}
+}
+
+
+
+/* V16.8.28 MyBank favorites + extra currencies + image flags */
+.compact-card-title .flag-img{width:24px;height:24px;border-radius:999px;object-fit:cover;border:1px solid var(--line);background:#fff;display:block;box-shadow:0 1px 2px rgba(15,23,42,.06)}
+.compact-card-title .flag-fallback{display:none;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);font-size:10px;font-weight:950;color:var(--text)}
+.compact-row.favorite{background:rgba(245,158,11,.08)}
+.compact-row.favorite::before{opacity:1!important;background:#f59e0b!important}
+.compact-office-wrap{display:flex;align-items:center;gap:6px;min-width:0}
+.compact-row .office{flex:1;min-width:0}
+.compact-office-star{flex:0 0 auto;width:18px;height:18px;border:0;background:transparent;padding:0;cursor:pointer;color:#cbd5e1;font-size:14px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.compact-office-star.on{color:#f59e0b;text-shadow:0 1px 0 rgba(0,0,0,.08)}
+.compact-office-star:hover{transform:scale(1.08)}
+.mybank-picker-item{justify-content:space-between}
+.mybank-picker-item .picker-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.mybank-picker-item .picker-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mybank-picker-item .picker-star{flex:0 0 auto;width:24px;height:24px;border:1px solid var(--line);border-radius:999px;background:var(--surface2);cursor:pointer;color:#cbd5e1;font-size:14px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.mybank-picker-item .picker-star.on{color:#f59e0b;background:rgba(245,158,11,.10);border-color:rgba(245,158,11,.28)}
+.compact-monitor-title .title-wrap{display:flex;align-items:center;gap:6px;min-width:0}
+.compact-monitor-title .title-wrap b{max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.compact-monitor-title .mini-star{color:#f59e0b;font-size:12px;line-height:1}
+
+
+
+/* V16.8.29 MyBank market-signal upgrades */
+.compact-side-head{min-height:36px}
+.compact-side-head .cluster{display:inline-flex;align-items:center;gap:3px;max-width:68%;padding:3px 6px;border-radius:999px;font-size:8px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sell-book .compact-side-head .cluster{background:rgba(6,182,212,.10);color:var(--cyan)}
+.buy-book .compact-side-head .cluster{background:rgba(255,107,92,.11);color:var(--coral)}
+.compact-row.changed{background:rgba(245,158,11,.12)!important;box-shadow:inset 0 0 0 1px rgba(245,158,11,.22)}
+.compact-row.changed::after{content:"변경";position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:7px;font-weight:1000;color:#b45309;background:rgba(254,243,199,.95);border:1px solid rgba(245,158,11,.28);border-radius:999px;padding:2px 5px;pointer-events:none}
+.compact-row.stale{opacity:.42;filter:saturate(.65)}
+.compact-row.stale:hover{opacity:.72}
+.compact-delta{font-size:8px;font-weight:1000;margin-left:3px}
+.compact-delta.up{color:#fff}.compact-delta.down{color:#fff}.compact-delta.flat{opacity:.7}
+.compact-card-foot>div{gap:1px}
+.compact-card-foot .foot-main{display:flex;align-items:center;gap:3px}
+.compact-card-foot .foot-sub{font-size:7px;opacity:.92}
+.compact-base .base-source{margin-left:5px;font-size:7px;color:var(--muted);font-weight:800}
+
+
+
+/* V16.8.30 Investing base-rate source */
+.compact-base small{
+  margin-left:6px;
+  font-size:7px;
+  font-weight:900;
+  color:var(--muted);
+  opacity:.82;
+}
+
+
+
+/* V16.8.31 MyBank visual hierarchy / lower saturation */
+.compact-currency-card{
+  border-color:rgba(148,163,184,.28);
+  box-shadow:none;
+}
+.compact-card-head{
+  background:var(--surface);
+  border-bottom-color:rgba(148,163,184,.22);
+}
+.compact-base{
+  background:rgba(148,163,184,.055)!important;
+  border-color:rgba(148,163,184,.24)!important;
+  color:var(--muted);
+}
+.compact-base strong{
+  color:var(--text)!important;
+}
+.compact-base small,
+.compact-base .base-source{
+  display:none!important;
+}
+
+/* The list itself should read as information, not as a warning signal. */
+.compact-side{
+  border-color:rgba(148,163,184,.24)!important;
+  border-top-width:1px!important;
+}
+.compact-side.sell-book{
+  border-top-color:rgba(48,143,153,.42)!important;
+}
+.compact-side.buy-book{
+  border-top-color:rgba(195,104,91,.42)!important;
+}
+.compact-side-head{
+  background:rgba(148,163,184,.035);
+  border-bottom-color:rgba(148,163,184,.20)!important;
+}
+.sell-book .compact-side-head b{
+  color:#3e7f86!important;
+}
+.buy-book .compact-side-head b{
+  color:#a85f55!important;
+}
+.sell-book .compact-side-head .cluster{
+  background:rgba(62,127,134,.08)!important;
+  color:#4f7d82!important;
+  border:1px solid rgba(62,127,134,.10);
+}
+.buy-book .compact-side-head .cluster{
+  background:rgba(168,95,85,.075)!important;
+  color:#94645d!important;
+  border:1px solid rgba(168,95,85,.09);
+}
+
+/* No first-price / rank emphasis. All normal rows are neutral. */
+.compact-row,
+.compact-row.top{
+  background:transparent!important;
+}
+.compact-row::before,
+.compact-row.top::before{
+  opacity:0!important;
+}
+.compact-row .rate,
+.sell-book .compact-row .rate,
+.buy-book .compact-row .rate{
+  color:var(--text)!important;
+  font-weight:900!important;
+}
+.compact-row .office{
+  color:var(--text)!important;
+  font-weight:850!important;
+}
+.compact-row:hover{
+  background:rgba(148,163,184,.055)!important;
+}
+
+/* Favorites and actual changes remain meaningful signals. */
+.compact-row.favorite{
+  background:rgba(245,158,11,.055)!important;
+}
+.compact-row.favorite::before{
+  opacity:1!important;
+  background:rgba(217,145,22,.72)!important;
+}
+.compact-row.changed{
+  background:rgba(245,158,11,.075)!important;
+  box-shadow:inset 0 0 0 1px rgba(245,158,11,.13)!important;
+}
+.compact-row.changed::after{
+  color:#9a6110!important;
+  background:rgba(254,243,199,.78)!important;
+  border-color:rgba(245,158,11,.18)!important;
+}
+.compact-row.stale{
+  opacity:.50!important;
+  filter:saturate(.45)!important;
+}
+
+/* Mood badges are secondary, not dominant. */
+.mood-badge{
+  border:1px solid transparent;
+}
+.mood-badge.balance{
+  background:rgba(100,116,139,.065)!important;
+  color:#6b7280!important;
+  border-color:rgba(100,116,139,.08);
+}
+.mood-badge.supply{
+  background:rgba(62,127,134,.07)!important;
+  color:#4f7d82!important;
+  border-color:rgba(62,127,134,.10);
+}
+.mood-badge.demand{
+  background:rgba(168,95,85,.07)!important;
+  color:#94645d!important;
+  border-color:rgba(168,95,85,.10);
+}
+
+/* The ratio bar is the main color signal, but use muted tones. */
+.sell-foot{
+  background:#579aa1!important;
+}
+.buy-foot{
+  background:#cf7a6e!important;
+}
+.compact-card-foot{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.20);
+}
+.compact-card-foot strong{
+  color:#fff!important;
+}
+.compact-card-foot .foot-sub,
+.compact-delta{
+  color:rgba(255,255,255,.88)!important;
+}
+
+/* Monitoring panel also uses neutral numbers; only small labels retain direction. */
+.compact-monitor-cell .sell,
+.compact-monitor-cell .buy{
+  color:var(--text)!important;
+}
+.compact-monitor-cell .sell em{
+  color:#4f7d82!important;
+}
+.compact-monitor-cell .buy em{
+  color:#94645d!important;
+}
+.compact-monitor-panel{
+  border-color:rgba(148,163,184,.28)!important;
+}
+
+
+
+/* V16.8.32 MyBank palette aligned to MONEYMAX */
+/* Reuse MONEYMAX native variables:
+   cyan #13aeb8 / cyan-bg #e0f8fa
+   coral #ff6b57 / coral-bg #ffe9e4
+   blue #0878ff
+*/
+
+.compact-currency-card{
+  border-color:var(--line)!important;
+  background:var(--surface)!important;
+}
+.compact-card-head{
+  background:var(--surface)!important;
+  border-bottom-color:var(--line)!important;
+}
+.compact-base{
+  background:var(--surface2)!important;
+  border-color:var(--line)!important;
+  color:var(--muted)!important;
+}
+.compact-base strong{
+  color:var(--text)!important;
+}
+
+/* Directional palette = exact MONEYMAX buy/sell palette */
+.compact-side.sell-book{
+  border-color:var(--line)!important;
+  border-top:2px solid var(--cyan)!important;
+}
+.compact-side.buy-book{
+  border-color:var(--line)!important;
+  border-top:2px solid var(--coral)!important;
+}
+.sell-book .compact-side-head b{
+  color:var(--cyan)!important;
+}
+.buy-book .compact-side-head b{
+  color:var(--coral)!important;
+}
+.sell-book .compact-side-head .cluster{
+  background:var(--cyan-bg)!important;
+  color:var(--cyan)!important;
+  border:1px solid rgba(19,174,184,.18)!important;
+}
+.buy-book .compact-side-head .cluster{
+  background:var(--coral-bg)!important;
+  color:var(--coral)!important;
+  border:1px solid rgba(255,107,87,.18)!important;
+}
+
+/* Keep rows easy to scan, but use the same MONEYMAX directional number colors. */
+.compact-row,
+.compact-row.top{
+  background:transparent!important;
+}
+.compact-row::before,
+.compact-row.top::before{
+  opacity:0!important;
+}
+.sell-book .compact-row .rate{
+  color:var(--cyan)!important;
+  font-weight:950!important;
+}
+.buy-book .compact-row .rate{
+  color:var(--coral)!important;
+  font-weight:950!important;
+}
+.compact-row .office{
+  color:var(--text)!important;
+  font-weight:850!important;
+}
+.compact-row:hover{
+  background:var(--surface2)!important;
+}
+
+/* Favorites now match MONEYMAX's blue favorite treatment. */
+.compact-office-star,
+.mybank-picker-item .picker-star{
+  color:#b7c4d3!important;
+}
+.compact-office-star.on,
+.mybank-picker-item .picker-star.on,
+.compact-monitor-title .mini-star{
+  color:var(--blue)!important;
+}
+.compact-row.favorite{
+  background:rgba(8,120,255,.055)!important;
+  outline:1px solid rgba(8,120,255,.12)!important;
+  outline-offset:-1px;
+}
+.compact-row.favorite::before{
+  opacity:1!important;
+  background:var(--blue)!important;
+}
+.mybank-picker-item .picker-star.on{
+  background:rgba(8,120,255,.07)!important;
+  border-color:rgba(8,120,255,.20)!important;
+}
+
+/* Changed/stale signals stay secondary. */
+.compact-row.changed{
+  background:rgba(245,158,11,.06)!important;
+  box-shadow:inset 0 0 0 1px rgba(245,158,11,.10)!important;
+}
+.compact-row.changed::after{
+  color:#94600f!important;
+  background:rgba(254,243,199,.70)!important;
+  border-color:rgba(245,158,11,.14)!important;
+}
+.compact-row.stale{
+  opacity:.50!important;
+  filter:saturate(.50)!important;
+}
+
+/* Mood badges use the exact light MONEYMAX backgrounds. */
+.mood-badge.balance{
+  background:var(--surface2)!important;
+  color:var(--muted)!important;
+  border-color:var(--line)!important;
+}
+.mood-badge.supply{
+  background:var(--cyan-bg)!important;
+  color:var(--cyan)!important;
+  border-color:rgba(19,174,184,.20)!important;
+}
+.mood-badge.demand{
+  background:var(--coral-bg)!important;
+  color:var(--coral)!important;
+  border-color:rgba(255,107,87,.20)!important;
+}
+
+/* Main market-direction signal = exact MONEYMAX cyan/coral. */
+.sell-foot{
+  background:var(--cyan)!important;
+}
+.buy-foot{
+  background:var(--coral)!important;
+}
+.compact-card-foot{
+  box-shadow:none!important;
+}
+.compact-card-foot strong,
+.compact-card-foot .foot-sub,
+.compact-delta{
+  color:#fff!important;
+}
+
+/* Monitoring panel also uses MONEYMAX palette. */
+.compact-monitor-cell .sell{
+  color:var(--cyan)!important;
+}
+.compact-monitor-cell .buy{
+  color:var(--coral)!important;
+}
+.compact-monitor-cell .sell em{
+  color:var(--cyan)!important;
+}
+.compact-monitor-cell .buy em{
+  color:var(--coral)!important;
+}
+.compact-monitor-panel{
+  border-color:var(--line)!important;
+}
+
+
+/* V16.8.33 softer MyBank palette + cleanup */
+.compact-subline .legend{display:none!important}
+
+/* soften overall directional emphasis */
+.sell-book .compact-side-head .cluster{
+  background:#E0F8FA!important;
+  color:#15808a!important;
+  border:1px solid rgba(19,174,184,.18)!important;
+}
+.buy-book .compact-side-head .cluster{
+  background:#FFE9E4!important;
+  color:#de6c5d!important;
+  border:1px solid rgba(255,107,87,.18)!important;
+}
+.compact-side-head .cluster{
+  font-size:10px!important;
+  font-weight:1000!important;
+  padding:4px 9px!important;
+  gap:4px!important;
+  max-width:none!important;
+}
+
+/* footer bars: light moneymax backgrounds, dark readable text */
+.sell-foot{
+  background:#E0F8FA!important;
+}
+.buy-foot{
+  background:#FFE9E4!important;
+}
+.compact-card-foot strong{
+  color:#1a6770!important;
+}
+.buy-foot strong{
+  color:#c85f51!important;
+}
+.compact-card-foot .foot-sub,
+.compact-delta{
+  color:rgba(23,37,84,.66)!important;
+}
+.buy-foot .foot-sub,
+.buy-foot .compact-delta{
+  color:rgba(127,29,29,.66)!important;
+}
+
+/* slightly softer section labels */
+.sell-book .compact-side-head b{color:#1697a2!important}
+.buy-book .compact-side-head b{color:#ff7a66!important}
+
+/* keep favorite star in MoneyMax blue */
+.compact-office-star.on,
+.mybank-picker-item .picker-star.on,
+.compact-monitor-title .mini-star{color:#0878FF!important}
+
+/* a touch more readability in rows */
+.compact-row .rate{font-size:11px!important}
+.compact-row .office{font-size:10px!important}
+.compact-card-foot strong{font-size:10px!important}
+.compact-card-foot .foot-sub{font-size:8px!important}
+
+
+/* V16.8.34 softer top line + cluster microcopy */
+.compact-side.sell-book{
+  border-top:2px solid rgba(31,176,188,.34)!important;
+}
+.compact-side.buy-book{
+  border-top:2px solid rgba(255,122,102,.34)!important;
+}
+.compact-side-head{
+  background:rgba(148,163,184,.022)!important;
+}
+.compact-side-head .cluster{
+  letter-spacing:-0.01em!important;
+}
+/* Make the slim emphasis bars calmer as well */
+.compact-row::before,
+.compact-row::after{opacity:.58!important}
+
+
+
+/* V16.8.35 clean header / secondary price-cluster cue */
+.compact-card-head{
+  min-height:46px;
+}
+.compact-head-right{
+  gap:8px!important;
+  flex-wrap:nowrap;
+}
+.header-base-rate{
+  display:inline-flex;
+  align-items:baseline;
+  gap:4px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.header-base-rate strong{
+  color:var(--text);
+  font-size:12px;
+  font-weight:1000;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Old standalone base-rate row is no longer used. */
+.compact-base{
+  display:none!important;
+}
+
+/* Price concentration is only supporting context. */
+.compact-side-head .cluster{
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--muted)!important;
+  font-size:8px!important;
+  font-weight:750!important;
+  opacity:.72!important;
+  letter-spacing:0!important;
+  max-width:62%!important;
+}
+.sell-book .compact-side-head .cluster,
+.buy-book .compact-side-head .cluster{
+  background:transparent!important;
+  color:var(--muted)!important;
+  border:0!important;
+}
+
+/* Footer is about market participation only. */
+.compact-card-foot .foot-sub{
+  font-size:8px!important;
+  font-weight:850!important;
+  opacity:.75!important;
+}
+
+/* Make direction rails even quieter. */
+.compact-side.sell-book{
+  border-top-color:rgba(19,174,184,.24)!important;
+}
+.compact-side.buy-book{
+  border-top-color:rgba(255,107,87,.24)!important;
+}
+
+
+/* V16.8.37 performance containment */
+.compact-currency-card{
+  content-visibility:auto;
+  contain:layout paint style;
+  contain-intrinsic-size:320px;
+}
+.compact-row{
+  contain:layout paint style;
+}
+
+
+
+/* V16.8.38 profile-switch performance */
+.compact-currency-card{
+  content-visibility:auto;
+  contain-intrinsic-size:340px 320px;
+}
+.profile-menu{
+  contain:layout paint;
+}
+
 </style>
 </head>
 <body>
@@ -1660,12 +2659,18 @@ html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#26
       </div>
     </header>
 
-    <div class="group-tabs">
-      <button class="tab active" data-group="all" onclick="setGroup('all')">전체 통화</button>
-      <button class="tab" data-group="major" onclick="setGroup('major')">주요 통화</button>
-      <button class="tab" data-group="asia" onclick="setGroup('asia')">동남아</button>
-      <button class="tab" data-group="etc" onclick="setGroup('etc')">기타통화</button>
+    <div class="workspace-tabs" role="tablist" aria-label="MONEYMAX 화면 전환">
+      <button class="workspace-tab active" id="workspaceTabMoneybox" type="button" role="tab" aria-selected="true" onclick="switchWorkspace('moneybox')">
+        <span class="workspace-tab-title">머니박스</span>
+        <span class="workspace-tab-sub">지점별 환율 비교</span>
+      </button>
+      <button class="workspace-tab" id="workspaceTabMybank" type="button" role="tab" aria-selected="false" onclick="switchWorkspace('mybank')">
+        <span class="workspace-tab-title">마이뱅크</span>
+        <span class="workspace-tab-sub">타환전소 모니터링</span>
+      </button>
     </div>
+
+    <section id="moneyboxView" class="workspace-view active" aria-labelledby="workspaceTabMoneybox">
 <div class="source-status-pill" id="sourceStatusPill">기준 소스: -</div>
     <div class="overview-strip" id="overviewStrip">
       <div class="overview-mini" data-overview-indicator="usdkrw"><div class="overview-mini-label">USD/KRW 원달러</div><div class="overview-mini-value" id="ov-usdkrw">-</div><div class="overview-mini-sub" id="ov-usdkrw-sub">-</div><div class="overview-mini-time" id="ov-usdkrw-time">-</div></div>
@@ -1753,10 +2758,497 @@ html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#26
         </table>
       </div>
     </section>
+    </section>
+
+    <section id="mybankView" class="workspace-view mybank-view compact-mybank" aria-labelledby="workspaceTabMybank" hidden>
+      <div class="compact-mybank-topbar">
+        <div>
+          <div class="compact-title-line">
+            <b>마이뱅크</b>
+            <span>타환전소 시장 모니터</span>
+          </div>
+          <div class="compact-subline">
+            <span id="mybankUpdatedText">최근 갱신 -</span>
+            
+          </div>
+        </div>
+        <div class="compact-actions">
+          <button type="button" class="compact-btn" onclick="openMybankMonitorPicker()">모니터링 선택</button>
+          <button type="button" class="compact-btn primary" onclick="loadMybank(true)">새로고침</button>
+        </div>
+      </div>
+
+      <div class="compact-mybank-layout">
+        <div class="compact-currency-grid" id="compactCurrencyGrid">
+        </div>
+
+        <aside class="compact-monitor-panel">
+          <div class="compact-monitor-head">
+            <div><b>모니터링 환전소</b><span>선택한 환전소를 항상 위에서 확인</span></div>
+            <button type="button" onclick="openMybankMonitorPicker()">편집</button>
+          </div>
+          <div id="compactMonitorList" class="compact-monitor-list">
+            <div class="compact-monitor-empty">
+              <span>모니터링 환전소를 등록해주세요.</span>
+              <button type="button" onclick="openMybankMonitorPicker()">＋ 추가</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="mybank-picker-backdrop" id="mybankPicker" hidden>
+        <div class="mybank-picker">
+          <div class="mybank-picker-head">
+            <div><b>모니터링 환전소 선택</b><span>최대 6개까지 선택</span></div>
+            <button type="button" onclick="closeMybankMonitorPicker()">×</button>
+          </div>
+          <div class="mybank-picker-search">
+            <input id="mybankPickerSearch" type="search" placeholder="환전소 검색" oninput="renderMybankPicker()">
+          </div>
+          <div id="mybankPickerList" class="mybank-picker-list"></div>
+          <div class="mybank-picker-foot">
+            <span id="mybankPickerCount">0 / 6 선택</span>
+            <button type="button" class="compact-btn primary" onclick="saveMybankMonitorSelection()">적용</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    </section>
   </main>
 </div>
 
 <script>
+
+
+
+
+/* V16.8.37 optimized compact live MyBank */
+let mybankStateV16824 = {
+  loading:false,
+  secondaryLoading:false,
+  loaded:false,
+  complete:false,
+  rendered:false,
+  loadedAt:0,
+  data:null
+};
+const MYBANK_CLIENT_CACHE_MS = 180000;
+const MYBANK_SESSION_CACHE_KEY = "moneymaxMybankDataCacheV16837";
+const MYBANK_CURRENCY_META = [
+  { code:"USD", name:"미국", flag:"us" },
+  { code:"JPY", name:"일본", flag:"jp" },
+  { code:"CNY", name:"중국", flag:"cn" },
+  { code:"HKD", name:"홍콩", flag:"hk" },
+  { code:"TWD", name:"대만", flag:"tw" },
+  { code:"EUR", name:"유럽", flag:"eu" },
+  { code:"AUD", name:"호주", flag:"au" },
+  { code:"SGD", name:"싱가포르", flag:"sg" },
+  { code:"CAD", name:"캐나다", flag:"ca" },
+  { code:"GBP", name:"영국", flag:"gb" },
+  { code:"THB", name:"태국", flag:"th" },
+  { code:"PHP", name:"필리핀", flag:"ph" },
+  { code:"MYR", name:"말레이시아", flag:"my" },
+  { code:"VND", name:"베트남", flag:"vn" }
+];
+const MYBANK_CURRENCIES_UI = MYBANK_CURRENCY_META.map(x=>x.code);
+const MYBANK_PRIMARY_CODES = ["USD","JPY","CNY","HKD","TWD","EUR"];
+const MYBANK_SECONDARY_CODES = MYBANK_CURRENCIES_UI.filter(x=>!MYBANK_PRIMARY_CODES.includes(x));
+const MYBANK_MONITOR_CODES = [...MYBANK_PRIMARY_CODES];
+const MYBANK_MONITOR_KEY = "moneymaxMybankMonitorsV16824";
+const MYBANK_FAVORITES_KEY = "moneymaxMybankOfficeFavoritesV16828";
+const MYBANK_SNAPSHOT_KEY = "moneymaxMybankSnapshotV16829";
+const MYBANK_PROFILE_ID_KEY = "moneymaxCurrentProfileV159";
+let mybankPreviousSnapshotV16829 = null;
+let mybankPickerDraft = [];
+let mybankFavoriteCache = {profile:null,set:null};
+
+function mybankMeta(code){ return MYBANK_CURRENCY_META.find(x=>x.code===code) || { code, name:code, flag:'un' }; }
+function mybankFlagUrl(code){ return `https://flagcdn.com/w40/${mybankMeta(code).flag}.png`; }
+function mybankFlagFallback(code){ return (mybankMeta(code).flag || code || '??').slice(0,2).toUpperCase(); }
+function mybankLabel(code){ const m=mybankMeta(code); return `${m.name} (${code})`; }
+function mybankFmt(n){
+  if(n == null || !Number.isFinite(Number(n))) return "-";
+  return Number(n).toLocaleString(undefined,{maximumFractionDigits:4});
+}
+function mybankTime(iso){
+  if(!iso) return "-";
+  try{return new Date(iso).toLocaleString("ko-KR",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});}catch(e){return "-";}
+}
+function mybankCurrentProfile(){ return localStorage.getItem(MYBANK_PROFILE_ID_KEY) || "남대문점"; }
+function mybankScopedKey(base, profile=mybankCurrentProfile()){ return `${base}::${encodeURIComponent(profile)}`; }
+function mybankLegacyProfileValue(base){
+  const profile=mybankCurrentProfile();
+  try{
+    const profiles=JSON.parse(localStorage.getItem("moneymaxProfilesV159")||"{}");
+    const v=profiles?.[profile]?.data?.[base];
+    if(v!==undefined && v!==null) return v;
+  }catch(e){}
+  return localStorage.getItem(base);
+}
+function mybankReadScopedRaw(base){
+  const key=mybankScopedKey(base);
+  let raw=localStorage.getItem(key);
+  if(raw!==null) return raw;
+  raw=mybankLegacyProfileValue(base);
+  if(raw!==null && raw!==undefined){
+    try{localStorage.setItem(key,typeof raw==="string"?raw:JSON.stringify(raw));}catch(e){}
+    return typeof raw==="string"?raw:JSON.stringify(raw);
+  }
+  return null;
+}
+function getMybankMonitorSelection(){
+  try{const arr=JSON.parse(mybankReadScopedRaw(MYBANK_MONITOR_KEY)||"[]");return Array.isArray(arr)?arr:[]}catch(e){return []}
+}
+function setMybankMonitorSelection(arr){
+  try{localStorage.setItem(mybankScopedKey(MYBANK_MONITOR_KEY),JSON.stringify([...new Set(arr)].slice(0,6)))}catch(e){}
+}
+function getMybankFavoriteOffices(){
+  const profile=mybankCurrentProfile();
+  if(mybankFavoriteCache.profile===profile && mybankFavoriteCache.set) return mybankFavoriteCache.set;
+  let set;
+  try{set=new Set(JSON.parse(mybankReadScopedRaw(MYBANK_FAVORITES_KEY)||"[]"))}catch(e){set=new Set()}
+  mybankFavoriteCache={profile,set};
+  return set;
+}
+function setMybankFavoriteOffices(set){
+  mybankFavoriteCache={profile:mybankCurrentProfile(),set};
+  try{localStorage.setItem(mybankScopedKey(MYBANK_FAVORITES_KEY),JSON.stringify([...set]))}catch(e){}
+}
+function isMybankFavoriteOffice(name){return getMybankFavoriteOffices().has(name)}
+function patchMybankFavoriteUI(name,fav){
+  const safe=encodeURIComponent(name);
+  document.querySelectorAll(`.compact-row[data-office="${safe}"]`).forEach(row=>{
+    row.classList.toggle("favorite",fav);
+    const star=row.querySelector(".compact-office-star");
+    if(star){star.classList.toggle("on",fav);star.textContent=fav?"★":"☆";}
+  });
+  renderCompactMonitors();
+  const picker=document.getElementById("mybankPicker");
+  if(picker && !picker.hidden) renderMybankPicker();
+}
+function toggleMybankOfficeFavorite(name){
+  const favs=getMybankFavoriteOffices();
+  const next=!favs.has(name);
+  if(next) favs.add(name); else favs.delete(name);
+  setMybankFavoriteOffices(favs);
+  patchMybankFavoriteUI(name,next);
+}
+function allMybankOffices(){
+  const data=mybankStateV16824.data;if(!data?.currencies)return [];
+  const set=new Set();
+  for(const c of data.currencies)for(const r of [...(c.supply||[]),...(c.demand||[])])if(r?.name)set.add(r.name);
+  const favs=getMybankFavoriteOffices();
+  return [...set].sort((a,b)=>{
+    const af=favs.has(a), bf=favs.has(b);
+    if(af!==bf) return af?-1:1;
+    return a.localeCompare(b,"ko");
+  });
+}
+function findOfficeRate(rows,name){return rows?.find(r=>r.name===name)||null}
+
+function renderMybankCardScaffold(){
+  const holder=document.getElementById('compactCurrencyGrid'); if(!holder) return;
+  if(holder.dataset.scaffoldReady==="1" && holder.querySelectorAll('[data-mybank-card]').length===MYBANK_CURRENCIES_UI.length) return;
+  holder.innerHTML = MYBANK_CURRENCIES_UI.map(code=>`
+    <article class="compact-currency-card" data-mybank-card="${code}">
+      <div class="compact-card-head">
+        <div class="compact-card-title">
+          <img class="flag-img" src="${mybankFlagUrl(code)}" alt="${code} flag" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex'">
+          <span class="flag-fallback">${mybankFlagFallback(code)}</span>
+          <b>${code}</b><span class="name">${mybankLabel(code)}</span>
+        </div>
+        <div class="compact-head-right">
+          <span class="mood-badge balance">균형</span>
+          <span class="header-base-rate">기준 <strong>-</strong></span>
+        </div>
+      </div>
+      <div class="compact-book">
+        <div class="compact-side sell-book">
+          <div class="compact-side-head"><b>매각</b><span class="cluster"></span></div>
+          <div class="compact-list"><div class="compact-empty">불러오는 중</div></div>
+        </div>
+        <div class="compact-side buy-book">
+          <div class="compact-side-head"><b>매입</b><span class="cluster"></span></div>
+          <div class="compact-list"><div class="compact-empty">불러오는 중</div></div>
+        </div>
+      </div>
+      <div class="compact-card-foot">
+        <div class="sell-foot" style="width:50%"><span class="foot-main"><strong>-곳</strong></span><span class="foot-sub">-</span></div>
+        <div class="buy-foot" style="width:50%"><span class="foot-main"><strong>-곳</strong></span><span class="foot-sub">-</span></div>
+      </div>
+    </article>`).join('');
+  holder.dataset.scaffoldReady="1";
+}
+
+function getMybankSnapshot(){
+  try{return JSON.parse(mybankReadScopedRaw(MYBANK_SNAPSHOT_KEY)||"null")}catch(e){return null}
+}
+function makeMybankSnapshot(data){
+  const currencies={};
+  for(const c of data?.currencies||[]){
+    currencies[c.currency]={
+      supplyCount:Number(c.supplyCount||0), demandCount:Number(c.demandCount||0),
+      supply:Object.fromEntries((c.supply||[]).map(r=>[r.name,Number(r.rate)])),
+      demand:Object.fromEntries((c.demand||[]).map(r=>[r.name,Number(r.rate)]))
+    };
+  }
+  return {savedAt:Date.now(), currencies};
+}
+function saveMybankSnapshotDeferred(data){
+  const key=mybankScopedKey(MYBANK_SNAPSHOT_KEY);
+  const run=()=>{
+    try{localStorage.setItem(key,JSON.stringify(makeMybankSnapshot(data)))}catch(e){}
+  };
+  if("requestIdleCallback" in window) requestIdleCallback(run,{timeout:1600}); else setTimeout(run,20);
+}
+function mybankPreviousRate(code,side,name){return mybankPreviousSnapshotV16829?.currencies?.[code]?.[side]?.[name]}
+function mybankCountDelta(code,side,current){
+  const prev=Number(mybankPreviousSnapshotV16829?.currencies?.[code]?.[side+"Count"]);
+  if(!Number.isFinite(prev)) return null;
+  return Number(current||0)-prev;
+}
+function mybankDeltaHtml(){return "";}
+function mybankPriceCluster(rows){
+  if(!rows?.length) return null;
+  const map=new Map();
+  for(const r of rows){const k=String(Number(r.rate)); const item=map.get(k)||{rate:Number(r.rate),count:0}; item.count++; map.set(k,item);}
+  return [...map.values()].sort((a,b)=>b.count-a.count || a.rate-b.rate)[0] || null;
+}
+function mybankIsStaleRow(row,latestDate){
+  if(!row?.date || !latestDate) return false;
+  return String(row.date).replace(/\./g,"-") < String(latestDate).replace(/\./g,"-");
+}
+function renderCompactRows(rows,code,side,latestDate,favs){
+  if(!rows?.length)return `<div class="compact-empty">등록 없음</div>`;
+  return rows.map(r=>{
+    const fav=favs.has(r.name);
+    const prev=mybankPreviousRate(code,side,r.name);
+    const changed=Number.isFinite(Number(prev)) && Number(prev)!==Number(r.rate);
+    const stale=mybankIsStaleRow(r,latestDate);
+    const safe=encodeURIComponent(r.name);
+    return `<div class="compact-row ${fav?"favorite":""} ${changed?"changed":""} ${stale?"stale":""}" data-office="${safe}" title="${String(r.name).replace(/"/g,"&quot;")}${stale?' · 오래된 업데이트':''}">
+      <span class="rate">${mybankFmt(r.rate)}</span>
+      <span class="compact-office-wrap">
+        <span class="office">${r.name}</span>
+        <button type="button" class="compact-office-star ${fav?"on":""}" onclick="event.stopPropagation();toggleMybankOfficeFavorite(decodeURIComponent('${safe}'))" title="중요 환전소 표시">${fav?'★':'☆'}</button>
+      </span>
+    </div>`;
+  }).join("");
+}
+function renderCompactCurrencyCards(data,codes=MYBANK_CURRENCIES_UI){
+  renderMybankCardScaffold();
+  const currencyMap=new Map((data?.currencies||[]).map(c=>[c.currency,c]));
+  const favs=getMybankFavoriteOffices();
+  for(const code of codes){
+    const card=document.querySelector(`[data-mybank-card="${code}"]`);if(!card)continue;
+    const c=currencyMap.get(code); if(!c) continue;
+    const baseStrong=card.querySelector(".header-base-rate strong");
+    if(baseStrong) baseStrong.textContent=mybankFmt(c?.baseRate);
+    const lists=card.querySelectorAll(".compact-list");
+    if(c?.error){
+      lists[0].innerHTML=`<div class="compact-empty">수집 실패</div>`;
+      lists[1].innerHTML=`<div class="compact-empty">수집 실패</div>`;
+    }else{
+      lists[0].innerHTML=renderCompactRows(c?.supply||[],code,"supply",c?.latestDate,favs);
+      lists[1].innerHTML=renderCompactRows(c?.demand||[],code,"demand",c?.latestDate,favs);
+    }
+    const sideHeads=card.querySelectorAll(".compact-side-head");
+    const supplyCluster=mybankPriceCluster(c?.supply||[]), demandCluster=mybankPriceCluster(c?.demand||[]);
+    if(sideHeads[0]) sideHeads[0].innerHTML=`<b>매각</b><span class="cluster">${supplyCluster?`${mybankFmt(supplyCluster.rate)} · ${supplyCluster.count}곳`:""}</span>`;
+    if(sideHeads[1]) sideHeads[1].innerHTML=`<b>매입</b><span class="cluster">${demandCluster?`${mybankFmt(demandCluster.rate)} · ${demandCluster.count}곳`:""}</span>`;
+    const sf=card.querySelector(".sell-foot"),bf=card.querySelector(".buy-foot");
+    const supplyCount=Number(c?.supplyCount||0), demandCount=Number(c?.demandCount||0);
+    const totalCount=supplyCount+demandCount;
+    const supplyPct=totalCount>0 ? (supplyCount/totalCount*100) : 50;
+    const demandPct=totalCount>0 ? (demandCount/totalCount*100) : 50;
+    sf.style.width=`${supplyPct}%`; bf.style.width=`${demandPct}%`;
+    sf.title=`매각 ${supplyCount}곳 · 전체 ${totalCount}곳 중 ${supplyPct.toFixed(1)}%`;
+    bf.title=`매입 ${demandCount}곳 · 전체 ${totalCount}곳 중 ${demandPct.toFixed(1)}%`;
+    sf.innerHTML=`<span class="foot-main"><strong>매각 ${supplyCount}곳</strong></span><span class="foot-sub">${supplyPct.toFixed(0)}%</span>`;
+    bf.innerHTML=`<span class="foot-main"><strong>매입 ${demandCount}곳</strong></span><span class="foot-sub">${demandPct.toFixed(0)}%</span>`;
+    const mood=card.querySelector(".mood-badge");
+    if(mood){
+      let label="균형", cls="balance";
+      if(demandPct>=60){label="매입 우세";cls="demand";}
+      else if(supplyPct>=60){label="매각 우세";cls="supply";}
+      mood.textContent=label; mood.className=`mood-badge ${cls}`;
+    }
+  }
+}
+function renderCompactMonitors(){
+  const holder=document.getElementById("compactMonitorList");if(!holder)return;
+  const selected=getMybankMonitorSelection();
+  if(!selected.length){holder.innerHTML=`<div class="compact-monitor-empty"><span>모니터링 환전소를 등록해주세요.</span><button type="button" onclick="openMybankMonitorPicker()">＋ 추가</button></div>`;return}
+  const data=mybankStateV16824.data;
+  holder.innerHTML=selected.map(name=>{
+    const fav=isMybankFavoriteOffice(name);
+    return `<div class="compact-monitor-card">
+      <div class="compact-monitor-title"><div class="title-wrap">${fav?'<span class="mini-star">★</span>':''}<b>${name}</b></div><button type="button" onclick="removeMybankMonitor(${JSON.stringify(name).replace(/"/g,"&quot;")})">×</button></div>
+      <div class="compact-monitor-grid">
+      ${MYBANK_MONITOR_CODES.map(code=>{
+        const c=data?.currencies?.find(x=>x.currency===code),s=findOfficeRate(c?.supply,name),d=findOfficeRate(c?.demand,name);
+        return `<div class="compact-monitor-cell"><b>${code}</b><span class="${s?"sell":"missing"}"><em>매각</em>${s?mybankFmt(s.rate):"-"}</span><span class="${d?"buy":"missing"}"><em>매입</em>${d?mybankFmt(d.rate):"-"}</span></div>`;
+      }).join("")}</div></div>`;
+  }).join("");
+}
+function removeMybankMonitor(name){setMybankMonitorSelection(getMybankMonitorSelection().filter(x=>x!==name));renderCompactMonitors()}
+function openMybankMonitorPicker(){
+  mybankPickerDraft=[...getMybankMonitorSelection()];
+  const el=document.getElementById("mybankPicker");if(el)el.hidden=false;
+  const input=document.getElementById("mybankPickerSearch");if(input){input.value="";setTimeout(()=>input.focus(),0)}
+  renderMybankPicker();
+}
+function closeMybankMonitorPicker(){const el=document.getElementById("mybankPicker");if(el)el.hidden=true}
+function renderMybankPicker(){
+  const holder=document.getElementById("mybankPickerList");if(!holder)return;
+  const q=(document.getElementById("mybankPickerSearch")?.value||"").trim().toLowerCase();
+  const offices=allMybankOffices().filter(n=>!q||n.toLowerCase().includes(q));
+  const favs=getMybankFavoriteOffices();
+  holder.innerHTML=offices.length?offices.map(name=>{
+    const checked=mybankPickerDraft.includes(name), fav=favs.has(name), safe=encodeURIComponent(name);
+    return `<label class="mybank-picker-item ${fav?'favorite':''}"><span class="picker-left"><input type="checkbox" ${checked?"checked":""} onchange="toggleMybankPickerOffice(decodeURIComponent('${safe}'),this.checked)"><span class="picker-name">${name}</span></span><button type="button" class="picker-star ${fav?'on':''}" onclick="event.preventDefault();event.stopPropagation();toggleMybankOfficeFavorite(decodeURIComponent('${safe}'))">${fav?'★':'☆'}</button></label>`;
+  }).join(""):`<div class="compact-empty" style="height:180px">검색 결과 없음</div>`;
+  const count=document.getElementById("mybankPickerCount");if(count)count.textContent=`${mybankPickerDraft.length} / 6 선택`;
+}
+function toggleMybankPickerOffice(name,on){
+  if(on){if(mybankPickerDraft.length>=6){renderMybankPicker();return}if(!mybankPickerDraft.includes(name))mybankPickerDraft.push(name)}
+  else mybankPickerDraft=mybankPickerDraft.filter(x=>x!==name);
+  renderMybankPicker();
+}
+function saveMybankMonitorSelection(){setMybankMonitorSelection(mybankPickerDraft);closeMybankMonitorPicker();renderCompactMonitors()}
+
+function mergeMybankData(base,chunk){
+  const map=new Map((base?.currencies||[]).map(c=>[c.currency,c]));
+  for(const c of chunk?.currencies||[]) map.set(c.currency,c);
+  return {
+    ...(base||{}),
+    ...(chunk||{}),
+    currencies:MYBANK_CURRENCIES_UI.map(code=>map.get(code)).filter(Boolean),
+    collectedAt:chunk?.collectedAt || base?.collectedAt || new Date().toISOString()
+  };
+}
+function getMybankSessionCache(){
+  try{
+    const v=JSON.parse(sessionStorage.getItem(MYBANK_SESSION_CACHE_KEY)||"null");
+    if(v?.data && Number.isFinite(Number(v.loadedAt))) return v;
+  }catch(e){}
+  return null;
+}
+function saveMybankSessionCache(data,loadedAt,complete){
+  const run=()=>{try{sessionStorage.setItem(MYBANK_SESSION_CACHE_KEY,JSON.stringify({data,loadedAt,complete}))}catch(e){}};
+  if("requestIdleCallback" in window) requestIdleCallback(run,{timeout:1000}); else setTimeout(run,0);
+}
+function renderMybank(data,codes=MYBANK_CURRENCIES_UI){
+  renderCompactCurrencyCards(data,codes);
+  if(codes.some(c=>MYBANK_MONITOR_CODES.includes(c))) renderCompactMonitors();
+  const updated=document.getElementById("mybankUpdatedText");if(updated)updated.textContent=`최근 갱신 ${mybankTime(data.collectedAt)}`;
+  mybankStateV16824.rendered=true;
+}
+async function fetchMybankChunk(codes,force=false){
+  const qs=new URLSearchParams({currencies:codes.join(",")});
+  if(force) qs.set("force","1");
+  const res=await fetch(`/api/mybank?${qs.toString()}`);
+  return moneymaxJson(res,"/api/mybank");
+}
+function scheduleMybankSecondary(force=false){
+  if(mybankStateV16824.secondaryLoading || !MYBANK_SECONDARY_CODES.length) return;
+  const run=()=>loadMybankSecondary(force);
+  if("requestIdleCallback" in window) requestIdleCallback(run,{timeout:700}); else setTimeout(run,120);
+}
+async function loadMybankSecondary(force=false){
+  if(mybankStateV16824.secondaryLoading) return;
+  mybankStateV16824.secondaryLoading=true;
+  try{
+    const chunk=await fetchMybankChunk(MYBANK_SECONDARY_CODES,force);
+    const merged=mergeMybankData(mybankStateV16824.data,chunk);
+    mybankStateV16824.data=merged;
+    mybankStateV16824.complete=true;
+    renderMybank(merged,MYBANK_SECONDARY_CODES);
+    saveMybankSessionCache(merged,mybankStateV16824.loadedAt,true);
+    saveMybankSnapshotDeferred(merged);
+  }catch(e){
+    console.warn("MyBank secondary load error",e);
+  }finally{
+    mybankStateV16824.secondaryLoading=false;
+  }
+}
+async function loadMybank(force=false){
+  if(mybankStateV16824.loading) return;
+
+  // Show session-cached market data immediately after profile/page reload.
+  if(mybankStateV16824.data && !mybankStateV16824.rendered){
+    renderMybank(mybankStateV16824.data,mybankStateV16824.data.currencies?.map(c=>c.currency)||MYBANK_CURRENCIES_UI);
+  }
+
+  const fresh=mybankStateV16824.loaded && Date.now()-mybankStateV16824.loadedAt<MYBANK_CLIENT_CACHE_MS;
+  if(!force && fresh){
+    if(!mybankStateV16824.complete) scheduleMybankSecondary(false);
+    return;
+  }
+
+  mybankStateV16824.loading=true;
+  mybankPreviousSnapshotV16829=getMybankSnapshot();
+  try{
+    const primary=await fetchMybankChunk(MYBANK_PRIMARY_CODES,force);
+    const merged=mergeMybankData(mybankStateV16824.data,primary);
+    const now=Date.now();
+    mybankStateV16824.data=merged;
+    mybankStateV16824.loaded=true;
+    mybankStateV16824.loadedAt=now;
+    mybankStateV16824.complete=false;
+    renderMybank(merged,MYBANK_PRIMARY_CODES);
+    saveMybankSessionCache(merged,now,false);
+    scheduleMybankSecondary(force);
+  }catch(e){
+    console.error("MyBank load error",e);
+    const updated=document.getElementById("mybankUpdatedText");if(updated)updated.textContent="마이뱅크 수집 실패";
+  }finally{
+    mybankStateV16824.loading=false;
+  }
+}
+
+renderMybankCardScaffold();
+mybankPreviousSnapshotV16829=getMybankSnapshot();
+const mybankSessionCacheV16837=getMybankSessionCache();
+if(mybankSessionCacheV16837){
+  mybankStateV16824.data=mybankSessionCacheV16837.data;
+  mybankStateV16824.loaded=true;
+  mybankStateV16824.loadedAt=Number(mybankSessionCacheV16837.loadedAt)||0;
+  mybankStateV16824.complete=!!mybankSessionCacheV16837.complete;
+}
+
+
+/* V16.8.21 MONEYBOX / MYBANK workspace switching */
+function switchWorkspace(view){
+  const next = view === "mybank" ? "mybank" : "moneybox";
+  const moneybox = document.getElementById("moneyboxView");
+  const mybank = document.getElementById("mybankView");
+  const tabMoneybox = document.getElementById("workspaceTabMoneybox");
+  const tabMybank = document.getElementById("workspaceTabMybank");
+
+  if(!moneybox || !mybank || !tabMoneybox || !tabMybank) return;
+
+  const showMoneybox = next === "moneybox";
+  moneybox.hidden = !showMoneybox;
+  mybank.hidden = showMoneybox;
+  moneybox.classList.toggle("active", showMoneybox);
+  mybank.classList.toggle("active", !showMoneybox);
+
+  tabMoneybox.classList.toggle("active", showMoneybox);
+  tabMybank.classList.toggle("active", !showMoneybox);
+  tabMoneybox.setAttribute("aria-selected", showMoneybox ? "true" : "false");
+  tabMybank.setAttribute("aria-selected", !showMoneybox ? "true" : "false");
+
+  localStorage.setItem("moneymaxWorkspaceV16821", next);
+  if(next === "mybank" && typeof loadMybank === "function") loadMybank(false);
+}
+
+function restoreWorkspaceV16821(){
+  const saved = localStorage.getItem("moneymaxWorkspaceV16821");
+  switchWorkspace(saved === "mybank" ? "mybank" : "moneybox");
+}
+
+
 
 const BRANCH_PRIORITY = ["머니박스 명동","머니박스 남대문","머니박스 명동2","제일환전","머니박스 강남"];
 function saveJson(key,value){localStorage.setItem(key,JSON.stringify(value));}
@@ -3056,11 +4548,66 @@ setInterval(polishThemeSettingsV1582, 1500);
   const PROFILE_KEY="moneymaxProfilesV159";
   const CURRENT_KEY="moneymaxCurrentProfileV159";
   const DEFAULT_PROFILES={"남대문점":{icon:"🏢",data:{}},"명동점":{icon:"🏢",data:{}},"명동 2호점":{icon:"🏢",data:{}},"강남점":{icon:"🏢",data:{}}};
-  const STATE_KEYS=["moneymaxSelectedBranches","moneyboxFavorites","favoriteBranches","moneymaxIndicators","moneymaxCharts","moneymaxAdminSettings","moneymaxThemeMode","theme"];
+  const STATE_KEYS=[
+    "moneymaxSelectedBranches",
+    "moneyboxFavorites",
+    "favoriteBranches",
+    "moneymaxIndicators",
+    "moneymaxCharts",
+    "moneymaxAdminSettings",
+    "moneymaxThemeMode",
+    "theme"
+  ];
+  const LEGACY_MYBANK_PROFILE_KEYS=[
+    "moneymaxMybankMonitorsV16824",
+    "moneymaxMybankOfficeFavoritesV16828",
+    "moneymaxMybankSnapshotV16829"
+  ];
   function readJSON(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f));}catch(e){return f;}}
   function writeJSON(k,v){localStorage.setItem(k,JSON.stringify(v));}
   function parseMaybe(v,f){try{return typeof v==="string"?JSON.parse(v):v}catch(e){return f}}
-  function profiles(){let p=readJSON(PROFILE_KEY,{}); if(!p||typeof p!=="object")p={}; p={...DEFAULT_PROFILES,...p}; Object.keys(p).forEach(n=>{p[n].icon??="🏢";p[n].data??={};}); writeJSON(PROFILE_KEY,p); return p;}
+  function migrateLegacyMybankProfileData(p){
+    let changed=false;
+    Object.entries(p||{}).forEach(([name,profile])=>{
+      const d=profile?.data||{};
+      LEGACY_MYBANK_PROFILE_KEYS.forEach(k=>{
+        if(d[k]===undefined || d[k]===null) return;
+        const scoped=`${k}::${encodeURIComponent(name)}`;
+        if(localStorage.getItem(scoped)===null){
+          try{localStorage.setItem(scoped,typeof d[k]==="string"?d[k]:JSON.stringify(d[k]))}catch(e){}
+        }
+        delete d[k];
+        changed=true;
+      });
+    });
+
+    // v16.8.36 also left one global copy. Preserve it only for the
+    // currently active profile, then remove it so new profiles cannot
+    // accidentally inherit another branch's MyBank setup.
+    const active=localStorage.getItem(CURRENT_KEY) || Object.keys(p||{})[0] || "남대문점";
+    LEGACY_MYBANK_PROFILE_KEYS.forEach(k=>{
+      const raw=localStorage.getItem(k);
+      if(raw===null) return;
+      const scoped=`${k}::${encodeURIComponent(active)}`;
+      if(localStorage.getItem(scoped)===null){
+        try{localStorage.setItem(scoped,raw)}catch(e){}
+      }
+      localStorage.removeItem(k);
+    });
+    return changed;
+  }
+  function profiles(){
+    let p=readJSON(PROFILE_KEY,{}); if(!p||typeof p!=="object")p={};
+    let changed=false;
+    Object.entries(DEFAULT_PROFILES).forEach(([n,v])=>{if(!p[n]){p[n]={icon:v.icon,data:{}};changed=true;}});
+    Object.keys(p).forEach(n=>{
+      if(p[n].icon==null){p[n].icon="🏢";changed=true;}
+      if(!p[n].data){p[n].data={};changed=true;}
+    });
+    if(migrateLegacyMybankProfileData(p)) changed=true;
+    if(changed) writeJSON(PROFILE_KEY,p);
+    return p;
+  }
   function currentName(){const p=profiles(); let c=localStorage.getItem(CURRENT_KEY); if(!c||!p[c]){c=Object.keys(p)[0];localStorage.setItem(CURRENT_KEY,c)} return c;}
   function pdata(){const p=profiles(); const c=currentName(); p[c].data??={}; return p[c].data;}
   function readBranches(){const d=pdata(); const raw=d.moneymaxSelectedBranches??localStorage.getItem("moneymaxSelectedBranches"); const arr=parseMaybe(raw,[]); return Array.isArray(arr)?arr:[];}
@@ -3077,13 +4624,104 @@ setInterval(polishThemeSettingsV1582, 1500);
     try{favoriteBranches=new Set(readFavorites());}catch(e){}
   }
   function saveCurrentProfile(){
+    const p=profiles();
+    const c=currentName();
+    if(!p[c]) return;
+    p[c].data??={};
+    const d=p[c].data;
+
     let b=[]; try{b=[...selectedBranches];}catch(e){b=readBranches()}
     let f=[]; try{f=[...favoriteBranches];}catch(e){f=readFavorites()}
-    const ind={}; document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>ind[i.dataset.indicator]=i.checked);
-    saveState({branches:b,favorites:f,indicators:ind});
-    const p=profiles(); const c=currentName(); STATE_KEYS.forEach(k=>{const v=localStorage.getItem(k); if(v!==null)p[c].data[k]=v}); writeJSON(PROFILE_KEY,p);
+
+    d.moneymaxSelectedBranches=JSON.stringify(b);
+    d.moneyboxFavorites=JSON.stringify(f);
+    d.favoriteBranches=JSON.stringify(f);
+
+    const ind={};
+    document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>ind[i.dataset.indicator]=i.checked);
+    d.moneymaxIndicators=JSON.stringify(ind);
+
+    const charts={};
+    document.querySelectorAll("#chartSideList input[data-chart]").forEach(i=>charts[i.dataset.chart]=i.checked);
+    d.moneymaxCharts=JSON.stringify(charts);
+
+    STATE_KEYS.forEach(k=>{
+      const v=localStorage.getItem(k);
+      if(v!==null) d[k]=v;
+      else delete d[k];
+    });
+
+    writeJSON(PROFILE_KEY,p);
   }
-  function applyProfile(n){const p=profiles(); if(!p[n])return; saveCurrentProfile(); localStorage.setItem(CURRENT_KEY,n); const d=p[n].data||{}; Object.keys(d).forEach(k=>localStorage.setItem(k,d[k])); location.reload();}
+  function applyProfile(n){
+    const p=profiles();
+    if(!p[n] || n===currentName()){
+      document.getElementById("profileMenu")?.classList.remove("show");
+      return;
+    }
+
+    // Persist the profile we are leaving once, then switch state in place.
+    saveCurrentProfile();
+
+    const freshProfiles=profiles();
+    const d=freshProfiles[n]?.data||{};
+    localStorage.setItem(CURRENT_KEY,n);
+
+    // Only profile-scoped MONEYMAX settings need to be swapped.
+    // Remove missing keys first so the previous branch cannot leak into the next.
+    STATE_KEYS.forEach(k=>{
+      if(Object.prototype.hasOwnProperty.call(d,k) && d[k]!==null){
+        localStorage.setItem(k,d[k]);
+      }else{
+        localStorage.removeItem(k);
+      }
+    });
+
+    // Update runtime state without reloading the document.
+    syncRuntime();
+
+    if(typeof restoreIndicatorSettingsV13==="function") restoreIndicatorSettingsV13();
+    else if(typeof window.restoreIndicatorSettings==="function") window.restoreIndicatorSettings();
+
+    if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13();
+    else if(typeof applyIndicatorVisibility==="function") applyIndicatorVisibility();
+
+    if(typeof restoreChartSettingsV13==="function") restoreChartSettingsV13();
+    if(typeof applyChartVisibilityV13==="function") applyChartVisibilityV13();
+    else if(typeof applyChartVisibility==="function") applyChartVisibility();
+
+    if(typeof applyThemeModeV1582==="function"){
+      applyThemeModeV1582(localStorage.getItem("moneymaxThemeMode") || localStorage.getItem("theme") || "light");
+      if(typeof syncThemeRadiosV1582==="function") syncThemeRadiosV1582();
+    }
+
+    if(typeof applyAdminSettings==="function") applyAdminSettings();
+
+    // MONEYBOX rankings depend on selected branches/favorites, so redraw once.
+    if(typeof renderBranchList==="function") renderBranchList();
+    if(typeof render==="function") render();
+
+    // Market data itself is shared between profiles. Reuse it; only reapply
+    // the target profile's MyBank favorites/monitor selection when needed.
+    try{
+      if(typeof mybankFavoriteCache!=="undefined") mybankFavoriteCache={profile:null,set:null};
+      if(typeof getMybankSnapshot==="function") mybankPreviousSnapshotV16829=getMybankSnapshot();
+
+      const mybankView=document.getElementById("mybankView");
+      if(typeof mybankStateV16824!=="undefined"){
+        mybankStateV16824.rendered=false;
+        if(mybankView && !mybankView.hidden && mybankStateV16824.data && typeof renderMybank==="function"){
+          renderMybank(
+            mybankStateV16824.data,
+            mybankStateV16824.data.currencies?.map(c=>c.currency)||MYBANK_CURRENCIES_UI
+          );
+        }
+      }
+    }catch(e){console.warn("profile MyBank repaint skipped",e)}
+
+    renderProfile();
+    document.getElementById("profileMenu")?.classList.remove("show");
+  }
   function branchRegion(name){if(name==="잠실"||name==="잠실역"||name==="종로")return"서울";const seoul=["명동","남대문","명동2","제일환전","강남","잠실","잠실역","종로","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
   window.renderBranchList=function(){syncRuntime(); const list=document.getElementById("branchList"); if(!list)return; const search=document.getElementById("branchSearch"); const favOnlyEl=document.getElementById("favoriteOnly"); const query=(search?.value||"").trim(); const favOnly=!!favOnlyEl?.checked; let bs=allBranches(); if(query)bs=bs.filter(b=>clean(b).includes(query)); if(favOnly)bs=bs.filter(b=>favoriteBranches.has(b));
     const regions={"서울":[],"경기·인천":[],"지방":[]}; bs.forEach(branch=>{const checked=!selectedBranches.has("__NONE__")&&(selectedBranches.size===0||selectedBranches.has(branch)); const fav=favoriteBranches.has(branch); const type=rows.find(r=>r.branch===branch)?.type; const html=`<label class="branch-item ${checked?'on':''}"><input type="checkbox" value="${branch}" ${checked?'checked':''}><span>${clean(branch)}${type==="external"?'<span class="external-tag">외부</span>':''}</span><span class="star ${fav?'on':''}" data-branch-star="${branch}">★</span></label>`; {
@@ -3112,7 +4750,7 @@ setInterval(polishThemeSettingsV1582, 1500);
   function addProfile(){const input=document.getElementById("profileNameInput"); const name=(input?.value||"").trim(); if(!name)return; const p=profiles(); if(p[name]){alert("이미 있는 프로필 이름입니다.");return} saveCurrentProfile(); p[name]={icon:"🏢",data:{}}; writeJSON(PROFILE_KEY,p); localStorage.setItem(CURRENT_KEY,name); location.reload();}
   function delProfile(name){const p=profiles(); if(Object.keys(p).length<=1){alert("프로필은 최소 1개가 필요합니다.");return} if(!confirm(`${name} 프로필을 삭제할까요?`))return; delete p[name]; writeJSON(PROFILE_KEY,p); if(currentName()===name)localStorage.setItem(CURRENT_KEY,Object.keys(p)[0]); location.reload();}
   function renProfile(name){const next=prompt("새 프로필 이름",name); if(!next||!next.trim())return; const p=profiles(); const clean=next.trim(); if(p[clean]){alert("이미 있는 프로필 이름입니다.");return} p[clean]=p[name]; delete p[name]; writeJSON(PROFILE_KEY,p); if(currentName()===name)localStorage.setItem(CURRENT_KEY,clean); renderProfile();}
-  function wire(){if(window.__mmStablefix1663)return; window.__mmStablefix1663=true; syncRuntime(); renderProfile(); document.addEventListener("click",e=>{const star=e.target.closest("[data-branch-star],#branchList .star"); if(star){const b=star.getAttribute("data-branch-star")||star.closest(".branch-item")?.querySelector("input")?.value; if(b){window.toggleFavorite(e,b);return}} const row=e.target.closest("#branchList .branch-item"); if(row&&!e.target.matches("input")&&!e.target.closest(".star")){const input=row.querySelector("input[type=checkbox]"); if(input){e.preventDefault(); input.checked=!input.checked; window.onBranchToggle(); return}} const pb=e.target.closest("#profileSelectorBtn"); if(pb){e.preventDefault();e.stopPropagation();saveCurrentProfile();renderProfile();document.getElementById("profileMenu")?.classList.toggle("show");return} if(!e.target.closest("#profileSelectorWrap"))document.getElementById("profileMenu")?.classList.remove("show"); const sw=e.target.closest("[data-mm-profile-switch]"); if(sw){e.preventDefault();applyProfile(sw.getAttribute("data-mm-profile-switch"));return} if(e.target.closest("[data-mm-profile-new]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(true);return} if(e.target.closest("[data-mm-profile-manage]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(false);return} const del=e.target.closest("[data-mm-profile-delete]"); if(del){e.preventDefault();if(!del.disabled)delProfile(del.getAttribute("data-mm-profile-delete"));return} const ren=e.target.closest("[data-mm-profile-rename]"); if(ren){e.preventDefault();renProfile(ren.getAttribute("data-mm-profile-rename"));return} if(e.target.closest("#profileAddBtn")){e.preventDefault();addProfile();return} if(e.target.closest("#profileManageClose")||e.target.closest("#profileManageBg")){e.preventDefault();closeManage();return}},true); document.addEventListener("change",e=>{if(e.target.closest("#branchList input[type=checkbox]")){window.onBranchToggle();return} if(e.target.closest("#indicatorSideList input[data-indicator]")){
+  function wire(){if(window.__mmStablefix1663)return; window.__mmStablefix1663=true; syncRuntime(); renderProfile(); document.addEventListener("click",e=>{const star=e.target.closest("[data-branch-star],#branchList .star"); if(star){const b=star.getAttribute("data-branch-star")||star.closest(".branch-item")?.querySelector("input")?.value; if(b){window.toggleFavorite(e,b);return}} const row=e.target.closest("#branchList .branch-item"); if(row&&!e.target.matches("input")&&!e.target.closest(".star")){const input=row.querySelector("input[type=checkbox]"); if(input){e.preventDefault(); input.checked=!input.checked; window.onBranchToggle(); return}} const pb=e.target.closest("#profileSelectorBtn"); if(pb){e.preventDefault();e.stopPropagation();renderProfile();document.getElementById("profileMenu")?.classList.toggle("show");return} if(!e.target.closest("#profileSelectorWrap"))document.getElementById("profileMenu")?.classList.remove("show"); const sw=e.target.closest("[data-mm-profile-switch]"); if(sw){e.preventDefault();applyProfile(sw.getAttribute("data-mm-profile-switch"));return} if(e.target.closest("[data-mm-profile-new]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(true);return} if(e.target.closest("[data-mm-profile-manage]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(false);return} const del=e.target.closest("[data-mm-profile-delete]"); if(del){e.preventDefault();if(!del.disabled)delProfile(del.getAttribute("data-mm-profile-delete"));return} const ren=e.target.closest("[data-mm-profile-rename]"); if(ren){e.preventDefault();renProfile(ren.getAttribute("data-mm-profile-rename"));return} if(e.target.closest("#profileAddBtn")){e.preventDefault();addProfile();return} if(e.target.closest("#profileManageClose")||e.target.closest("#profileManageBg")){e.preventDefault();closeManage();return}},true); document.addEventListener("change",e=>{if(e.target.closest("#branchList input[type=checkbox]")){window.onBranchToggle();return} if(e.target.closest("#indicatorSideList input[data-indicator]")){
     window.saveIndicatorSettings();
     if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13();
     else if(typeof applyIndicatorVisibility==="function") applyIndicatorVisibility();
@@ -3424,6 +5062,10 @@ setInterval(polishThemeSettingsV1582, 1500);
 
 
 
+
+<script>
+window.addEventListener("DOMContentLoaded", restoreWorkspaceV16821);
+</script>
 
 </body>
 </html>

@@ -743,7 +743,7 @@ async function handleMarketsGet(context = {}) {
 }
 
 
-const MONEYMAX_VERSION = "16.8.20";
+const MONEYMAX_VERSION = "16.8.38";
 
 function jsonWithVersion(body, init = {}) {
   const headers = new Headers(init.headers || {});
@@ -761,6 +761,454 @@ async function withVersion(response) {
     headers
   });
 }
+
+
+// ---- V16.8.23 MYBANK public exchange-office market collector ----
+// MyBank public saving page query:
+// currency_cd=USD|JPY|CNY, region_cd=09 (Seoul), amount=1,
+// exchange_type=buy  -> customer cash BUY  -> exchange office SELL/supply (blue)
+// exchange_type=sell -> customer cash SELL -> exchange office BUY/demand (red)
+const MYBANK_BASE_URL = "https://exchange.mibank.me/saving";
+const MYBANK_BANK_URL = "https://exchange.mibank.me/bank";
+const MYBANK_REGION_CD = "09";
+const MYBANK_CURRENCIES = ["USD", "JPY", "CNY", "HKD", "TWD", "EUR", "AUD", "SGD", "CAD", "GBP", "THB", "PHP", "MYR", "VND"];
+const MYBANK_CACHE_SECONDS = 180;
+
+const INVESTING_BASE_URL = "https://kr.investing.com/currencies";
+const INVESTING_CACHE_SECONDS = 180;
+
+function investingPairUrl(currency){
+  return `${INVESTING_BASE_URL}/${String(currency).toLowerCase()}-krw`;
+}
+
+function investingNormalizeBaseRate(currency, raw){
+  const n = Number(raw);
+  if(!Number.isFinite(n)) return null;
+  if(currency === "JPY") return n * 100;
+  if(currency === "VND") return n * 10;
+  return n;
+}
+
+function investingParseCurrentPrice(html, currency){
+  const raw = String(html || "");
+  const patterns = [
+    /data-test=["']instrument-price-last["'][^>]*>\s*([^<]+)\s*</i,
+    /data-test=["']instrument-price-last["'][^>]*content=["']([^"']+)["']/i,
+    /"last(?:_close|Close|Price|)"\s*:\s*"?(\d[\d,.]*)"?/i,
+    /"price"\s*:\s*"?(\d[\d,.]*)"?/i
+  ];
+
+  for(const p of patterns){
+    const m = raw.match(p);
+    if(!m) continue;
+    const parsed = Number(String(m[1]).replace(/,/g,"").trim());
+    if(Number.isFinite(parsed)) return investingNormalizeBaseRate(currency, parsed);
+  }
+
+  const text = mybankDecodeHtml(raw);
+  const pair = `${currency}/KRW`;
+  const idx = text.indexOf(pair);
+  if(idx >= 0){
+    const near = text.slice(idx, idx + 500);
+    const m = near.match(/\b(\d{1,4}(?:,\d{3})*(?:\.\d+)?)\b/);
+    if(m){
+      const parsed = Number(m[1].replace(/,/g,""));
+      if(Number.isFinite(parsed)) return investingNormalizeBaseRate(currency, parsed);
+    }
+  }
+  return null;
+}
+
+async function investingFetchBaseRate(currency, force = false){
+  const url = investingPairUrl(currency);
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://moneymax-cache.invalid/investing/base/${currency}`,
+    { method:"GET" }
+  );
+
+  if(!force){
+    const cached = await cache.match(cacheKey);
+    if(cached){
+      const payload = await cached.json();
+      return { ...payload, cached:true };
+    }
+  }
+
+  const res = await fetch(url, {
+    headers:{
+      "accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "accept-language":"ko-KR,ko;q=0.9,en;q=0.7",
+      "user-agent":"Mozilla/5.0 (compatible; MONEYMAX/16.8.30; +fx-monitor)",
+      "referer":"https://kr.investing.com/"
+    },
+    cf:{ cacheTtl:INVESTING_CACHE_SECONDS, cacheEverything:true }
+  });
+
+  if(!res.ok) throw new Error(`Investing ${currency}/KRW HTTP ${res.status}`);
+  const text = await res.text();
+  const rate = investingParseCurrentPrice(text, currency);
+  if(!Number.isFinite(rate)) throw new Error(`Investing ${currency}/KRW price parse failed`);
+
+  const payload = {
+    currency,
+    rate,
+    source:"Investing.com",
+    url,
+    fetchedAt:new Date().toISOString(),
+    cached:false
+  };
+
+  await cache.put(cacheKey, new Response(JSON.stringify(payload), {
+    headers:{
+      "content-type":"application/json; charset=UTF-8",
+      "cache-control":`public, max-age=${INVESTING_CACHE_SECONDS}`
+    }
+  }));
+
+  return payload;
+}
+
+async function investingFetchBaseRates(currencies = MYBANK_CURRENCIES, force = false){
+  const items = await Promise.all(currencies.map(async currency => {
+    try{
+      return await investingFetchBaseRate(currency, force);
+    }catch(error){
+      return {
+        currency,
+        rate:null,
+        source:"Investing.com",
+        url:investingPairUrl(currency),
+        error:String(error?.message || error)
+      };
+    }
+  }));
+
+  const rates = {};
+  const meta = {};
+  for(const item of items){
+    if(Number.isFinite(item.rate)) rates[item.currency] = item.rate;
+    meta[item.currency] = item;
+  }
+  return { rates, meta };
+}
+
+function mybankDecodeHtml(text){
+  return String(text || "")
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function mybankNumber(text){
+  const m = String(text || "").replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
+  return m ? Number(m[0]) : null;
+}
+
+function mybankIsBank(name){
+  const n = String(name || "").replace(/\s+/g, "");
+  if(!n) return true;
+  if(n.includes("은행")) return true;
+  const bankWords = [
+    "KEB하나","하나은행","우리은행","KB국민","국민은행","신한은행",
+    "NH농협","농협은행","기업은행","SC제일","한국씨티","씨티은행",
+    "수협은행","부산은행","iM뱅크","IM뱅크","전북은행","경남은행","제주은행"
+  ];
+  return bankWords.some(x => n.toLowerCase().includes(x.replace(/\s+/g,"").toLowerCase()));
+}
+
+function mybankParseSavingHtml(html){
+  const rows = [];
+  const trList = String(html || "").match(/<tr\b[\s\S]*?<\/tr>/gi) || [];
+
+  for(const tr of trList){
+    const cellHtml = tr.match(/<(?:td|th)\b[\s\S]*?<\/(?:td|th)>/gi) || [];
+    const cells = cellHtml.map(mybankDecodeHtml).filter(Boolean);
+    if(cells.length < 2) continue;
+
+    const date = cells.find(v => /^\d{4}[.-]\d{2}[.-]\d{2}$/.test(v)) || null;
+
+    // Rate is normally the first pure numeric cell after the exchange-office name.
+    let rateIndex = -1;
+    for(let i=0;i<cells.length;i++){
+      if(/^[\d,]+(?:\.\d+)?$/.test(cells[i]) && mybankNumber(cells[i]) !== null){
+        rateIndex = i;
+        break;
+      }
+    }
+    if(rateIndex <= 0) continue;
+
+    let name = cells[rateIndex - 1];
+    if(/^(Best|베스트)$/i.test(name) && rateIndex >= 2) name = cells[rateIndex - 2];
+    name = String(name || "").replace(/^Best\s*/i, "").replace(/^Image\s*/i, "").trim();
+
+    const rate = mybankNumber(cells[rateIndex]);
+    if(!name || rate === null || !Number.isFinite(rate)) continue;
+    if(mybankIsBank(name)) continue;
+    if(/환전소\s*환율|환율\(원\)|절약금액|절약율|UPDATE/i.test(name)) continue;
+
+    rows.push({ name, rate, date });
+  }
+
+  // de-duplicate in case responsive/hidden markup repeats the same table.
+  const seen = new Set();
+  return rows.filter(r => {
+    const key = `${r.name}__${r.rate}__${r.date || ""}`;
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function mybankParseBaseRate(html){
+  const text = mybankDecodeHtml(html);
+  const patterns = [
+    /기준환율\s*[:：]?\s*([\d,]+(?:\.\d+)?)/i,
+    /기준\s*환율\s*[:：]?\s*([\d,]+(?:\.\d+)?)/i
+  ];
+  for(const p of patterns){
+    const m = text.match(p);
+    if(m){
+      const n = mybankNumber(m[1]);
+      if(Number.isFinite(n)) return n;
+    }
+  }
+  return null;
+}
+
+
+const MYBANK_BANK_NAME_TO_CODE = {
+  "미국":"USD", "일본":"JPY", "중국":"CNY", "홍콩":"HKD", "대만":"TWD",
+  "유럽연합":"EUR", "유럽":"EUR", "호주":"AUD", "싱가폴":"SGD", "싱가포르":"SGD",
+  "캐나다":"CAD", "영국":"GBP", "태국":"THB", "필리핀":"PHP", "말레이시아":"MYR", "베트남":"VND"
+};
+
+function mybankParseBankBaseRates(html){
+  const out = {};
+  const trList = String(html || "").match(/<tr\b[\s\S]*?<\/tr>/gi) || [];
+  for(const tr of trList){
+    const cellHtml = tr.match(/<(?:td|th)\b[\s\S]*?<\/(?:td|th)>/gi) || [];
+    const cells = cellHtml.map(mybankDecodeHtml).filter(Boolean);
+    if(cells.length < 2) continue;
+    let code = null;
+    for(const cell of cells){
+      const key = String(cell).replace(/^Image\s*/i, "").trim();
+      if(MYBANK_BANK_NAME_TO_CODE[key]){ code = MYBANK_BANK_NAME_TO_CODE[key]; break; }
+    }
+    if(!code) continue;
+    const nums = cells
+      .filter(v => /^[\d,]+(?:\.\d+)?$/.test(v))
+      .map(mybankNumber)
+      .filter(v => Number.isFinite(v));
+    if(!nums.length) continue;
+    out[code] = nums[nums.length - 1];
+  }
+  return out;
+}
+
+function mybankParseBankUpdatedAt(html){
+  const text = mybankDecodeHtml(html);
+  const m = text.match(/(\d{4}\.\d{2}\.\d{2}\s+\d{2}:\d{2})\s*기준/);
+  return m ? m[1] : null;
+}
+
+async function mybankFetchBankPage(){
+  const cache = caches.default;
+  const cacheKey = new Request("https://moneymax-cache.invalid/mybank/bank-base-rates", { method:"GET" });
+  const cached = await cache.match(cacheKey);
+  if(cached) return { html: await cached.text(), cached:true, url:MYBANK_BANK_URL };
+
+  const res = await fetch(MYBANK_BANK_URL, {
+    headers: {
+      "accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "accept-language":"ko-KR,ko;q=0.9,en;q=0.7",
+      "user-agent":"Mozilla/5.0 (compatible; MONEYMAX/16.8.29; +market-monitor)",
+      "referer":"https://exchange.mibank.me/"
+    },
+    cf:{ cacheTtl:MYBANK_CACHE_SECONDS, cacheEverything:true }
+  });
+  if(!res.ok) throw new Error(`MyBank bank HTTP ${res.status}`);
+  const text = await res.text();
+  await cache.put(cacheKey, new Response(text, {
+    headers:{ "content-type":"text/html; charset=UTF-8", "cache-control":`public, max-age=${MYBANK_CACHE_SECONDS}` }
+  }));
+  return { html:text, cached:false, url:MYBANK_BANK_URL };
+}
+
+async function mybankFetchPage(currency, exchangeType, force = false){
+  const url = new URL(MYBANK_BASE_URL);
+  url.searchParams.set("currency_cd", currency);
+  url.searchParams.set("region_cd", MYBANK_REGION_CD);
+  url.searchParams.set("amount", "1");
+  url.searchParams.set("exchange_type", exchangeType);
+
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://moneymax-cache.invalid/mybank/${currency}/${exchangeType}`,
+    { method: "GET" }
+  );
+
+  if(!force){
+    const cached = await cache.match(cacheKey);
+    if(cached){
+      return {
+        html: await cached.text(),
+        cached: true,
+        url: url.toString()
+      };
+    }
+  }
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "accept-language": "ko-KR,ko;q=0.9,en;q=0.7",
+      "user-agent": "Mozilla/5.0 (compatible; MONEYMAX/16.8.23; +market-monitor)",
+      "referer": "https://exchange.mibank.me/"
+    },
+    cf: {
+      cacheTtl: MYBANK_CACHE_SECONDS,
+      cacheEverything: true
+    }
+  });
+
+  if(!res.ok) throw new Error(`MyBank ${currency}/${exchangeType} HTTP ${res.status}`);
+  const text = await res.text();
+
+  const cacheResponse = new Response(text, {
+    headers: {
+      "content-type": "text/html; charset=UTF-8",
+      "cache-control": `public, max-age=${MYBANK_CACHE_SECONDS}`
+    }
+  });
+  await cache.put(cacheKey, cacheResponse);
+
+  return { html: text, cached: false, url: url.toString() };
+}
+
+function mybankLatestDate(rows){
+  const dates = rows.map(r => r.date).filter(Boolean).sort();
+  return dates.length ? dates[dates.length - 1] : null;
+}
+
+async function handleMybankGet(context){
+  const request = context?.request;
+  const reqUrl = new URL(request?.url || "https://moneymax.local/api/mybank");
+  const force = reqUrl.searchParams.get("force") === "1";
+  const requestedRaw = (reqUrl.searchParams.get("currencies") || "")
+    .split(",").map(x=>x.trim().toUpperCase()).filter(Boolean);
+  const requestedSet = new Set(requestedRaw);
+  const requestedCurrencies = requestedRaw.length
+    ? MYBANK_CURRENCIES.filter(code => requestedSet.has(code))
+    : [...MYBANK_CURRENCIES];
+  const currenciesToLoad = requestedCurrencies.length ? requestedCurrencies : [...MYBANK_CURRENCIES];
+  const collectedAt = new Date().toISOString();
+
+  // Cache the already-parsed JSON bundle as well as the underlying pages.
+  // This avoids reparsing dozens of HTML tables on repeated/profile-switch loads.
+  const bundleCache = caches.default;
+  const bundleKey = new Request(
+    `https://moneymax-cache.invalid/mybank-bundle/${currenciesToLoad.join("-")}`,
+    { method:"GET" }
+  );
+  if(!force){
+    const bundled = await bundleCache.match(bundleKey);
+    if(bundled) return bundled;
+  }
+
+  const investingPromise = investingFetchBaseRates(currenciesToLoad, force)
+    .catch(error => ({ rates:{}, meta:{}, error:String(error?.message || error) }));
+
+  const tasks = currenciesToLoad.map(currency =>
+    Promise.all([
+      mybankFetchPage(currency, "buy", force),
+      mybankFetchPage(currency, "sell", force)
+    ]).then(([buyPage, sellPage]) => {
+      const supply = mybankParseSavingHtml(buyPage.html);
+      const demand = mybankParseSavingHtml(sellPage.html);
+      return {
+        currency,
+        baseRate: null,
+        supply,
+        demand,
+        supplyCount: supply.length,
+        demandCount: demand.length,
+        latestDate: mybankLatestDate([...supply, ...demand]),
+        source: {
+          supplyUrl: buyPage.url,
+          demandUrl: sellPage.url,
+          cached: buyPage.cached && sellPage.cached
+        }
+      };
+    }).catch(error => ({
+      currency,
+      baseRate: null,
+      supply: [],
+      demand: [],
+      supplyCount: 0,
+      demandCount: 0,
+      latestDate: null,
+      error: String(error?.message || error)
+    }))
+  );
+
+  const [rawCurrencies, investingInfo] = await Promise.all([
+    Promise.all(tasks),
+    investingPromise
+  ]);
+
+  const currencies = rawCurrencies.map(c => ({
+    ...c,
+    baseRate: investingInfo.rates?.[c.currency] ?? null,
+    baseRateSource: "Investing.com",
+    baseRateSourceUrl: investingInfo.meta?.[c.currency]?.url || investingPairUrl(c.currency),
+    baseRateError: investingInfo.meta?.[c.currency]?.error || null
+  }));
+  const successful = currencies.filter(x => !x.error);
+
+  const payload = {
+    success: successful.length > 0,
+    version: MONEYMAX_VERSION,
+    provider: "MyBank",
+    baseRateProvider: "Investing.com",
+    region: "서울",
+    regionCode: MYBANK_REGION_CD,
+    semantics: {
+      supply: "MyBank 현찰 살 때 → 환전소 매각/외화 공급",
+      demand: "MyBank 현찰 팔 때 → 환전소 매입/외화 수요"
+    },
+    requestedCurrencies: currenciesToLoad,
+    collectedAt,
+    cacheSeconds: MYBANK_CACHE_SECONDS,
+    currencies
+  };
+
+  const status = successful.length > 0 ? 200 : 502;
+  if(status === 200){
+    const cacheResponse = new Response(JSON.stringify(payload), {
+      status:200,
+      headers:{
+        "content-type":"application/json; charset=UTF-8",
+        "cache-control":`public, max-age=${MYBANK_CACHE_SECONDS}`,
+        "x-moneymax-version":MONEYMAX_VERSION
+      }
+    });
+    context?.waitUntil?.(bundleCache.put(bundleKey, cacheResponse));
+  }
+
+  return jsonWithVersion(payload, {
+    status,
+    headers:{"cache-control":"no-store"}
+  });
+}
+
 
 export default {
   async fetch(request, env, ctx) {
@@ -790,6 +1238,10 @@ export default {
 
       if (url.pathname === "/api/markets") {
         return withVersion(await handleMarketsGet(context));
+      }
+
+      if (url.pathname === "/api/mybank") {
+        return withVersion(await handleMybankGet(context));
       }
 
       if (url.pathname.startsWith("/api/")) {
