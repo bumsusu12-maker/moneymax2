@@ -2406,169 +2406,35 @@ html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#26
 }
 
 
-/* V16.8.33 softer MyBank palette + cleanup */
-.compact-subline .legend{display:none!important}
 
-/* soften overall directional emphasis */
-.sell-book .compact-side-head .cluster{
-  background:#E0F8FA!important;
-  color:#15808a!important;
-  border:1px solid rgba(19,174,184,.18)!important;
-}
-.buy-book .compact-side-head .cluster{
-  background:#FFE9E4!important;
-  color:#de6c5d!important;
-  border:1px solid rgba(255,107,87,.18)!important;
-}
-.compact-side-head .cluster{
-  font-size:10px!important;
-  font-weight:1000!important;
-  padding:4px 9px!important;
+/* V16.8.33 — row width reclaim + less office-name truncation */
+.compact-row{
+  grid-template-columns:48px minmax(0,1fr)!important;
   gap:4px!important;
-  max-width:none!important;
+  padding:5px 5px 5px 4px!important;
 }
-
-/* footer bars: light moneymax backgrounds, dark readable text */
-.sell-foot{
-  background:#E0F8FA!important;
+.compact-row::before{
+  left:0!important;
+  width:2px!important;
 }
-.buy-foot{
-  background:#FFE9E4!important;
+.compact-row .rate{
+  font-size:11px!important;
+  letter-spacing:-0.02em!important;
 }
-.compact-card-foot strong{
-  color:#1a6770!important;
+.compact-office-wrap{
+  gap:3px!important;
 }
-.buy-foot strong{
-  color:#c85f51!important;
-}
-.compact-card-foot .foot-sub,
-.compact-delta{
-  color:rgba(23,37,84,.66)!important;
-}
-.buy-foot .foot-sub,
-.buy-foot .compact-delta{
-  color:rgba(127,29,29,.66)!important;
-}
-
-/* slightly softer section labels */
-.sell-book .compact-side-head b{color:#1697a2!important}
-.buy-book .compact-side-head b{color:#ff7a66!important}
-
-/* keep favorite star in MoneyMax blue */
-.compact-office-star.on,
-.mybank-picker-item .picker-star.on,
-.compact-monitor-title .mini-star{color:#0878FF!important}
-
-/* a touch more readability in rows */
-.compact-row .rate{font-size:11px!important}
-.compact-row .office{font-size:10px!important}
-.compact-card-foot strong{font-size:10px!important}
-.compact-card-foot .foot-sub{font-size:8px!important}
-
-
-/* V16.8.34 softer top line + cluster microcopy */
-.compact-side.sell-book{
-  border-top:2px solid rgba(31,176,188,.34)!important;
-}
-.compact-side.buy-book{
-  border-top:2px solid rgba(255,122,102,.34)!important;
-}
-.compact-side-head{
-  background:rgba(148,163,184,.022)!important;
-}
-.compact-side-head .cluster{
+.compact-row .office{
+  font-size:9px!important;
   letter-spacing:-0.01em!important;
 }
-/* Make the slim emphasis bars calmer as well */
-.compact-row::before,
-.compact-row::after{opacity:.58!important}
-
-
-
-/* V16.8.35 clean header / secondary price-cluster cue */
-.compact-card-head{
-  min-height:46px;
+.compact-office-star{
+  width:14px!important;
+  height:14px!important;
+  font-size:12px!important;
 }
-.compact-head-right{
-  gap:8px!important;
-  flex-wrap:nowrap;
-}
-.header-base-rate{
-  display:inline-flex;
-  align-items:baseline;
-  gap:4px;
-  color:var(--muted);
-  font-size:9px;
-  font-weight:800;
-  white-space:nowrap;
-}
-.header-base-rate strong{
-  color:var(--text);
-  font-size:12px;
-  font-weight:1000;
-  font-variant-numeric:tabular-nums;
-}
-
-/* Old standalone base-rate row is no longer used. */
-.compact-base{
-  display:none!important;
-}
-
-/* Price concentration is only supporting context. */
-.compact-side-head .cluster{
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  color:var(--muted)!important;
-  font-size:8px!important;
-  font-weight:750!important;
-  opacity:.72!important;
-  letter-spacing:0!important;
-  max-width:62%!important;
-}
-.sell-book .compact-side-head .cluster,
-.buy-book .compact-side-head .cluster{
-  background:transparent!important;
-  color:var(--muted)!important;
-  border:0!important;
-}
-
-/* Footer is about market participation only. */
-.compact-card-foot .foot-sub{
-  font-size:8px!important;
-  font-weight:850!important;
-  opacity:.75!important;
-}
-
-/* Make direction rails even quieter. */
-.compact-side.sell-book{
-  border-top-color:rgba(19,174,184,.24)!important;
-}
-.compact-side.buy-book{
-  border-top-color:rgba(255,107,87,.24)!important;
-}
-
-
-/* V16.8.37 performance containment */
-.compact-currency-card{
-  content-visibility:auto;
-  contain:layout paint style;
-  contain-intrinsic-size:320px;
-}
-.compact-row{
-  contain:layout paint style;
-}
-
-
-
-/* V16.8.38 profile-switch performance */
-.compact-currency-card{
-  content-visibility:auto;
-  contain-intrinsic-size:340px 320px;
-}
-.profile-menu{
-  contain:layout paint;
+.compact-list{
+  overflow-x:hidden!important;
 }
 
 </style>
@@ -2769,7 +2635,8 @@ html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#26
           </div>
           <div class="compact-subline">
             <span id="mybankUpdatedText">최근 갱신 -</span>
-            
+            <span class="legend sell-side"><i></i> 매각</span>
+            <span class="legend buy-side"><i></i> 매입</span>
           </div>
         </div>
         <div class="compact-actions">
@@ -2822,18 +2689,9 @@ html[data-theme="dark"] .branch-status-panel{background:#0f172a;border-color:#26
 
 
 
-/* V16.8.37 optimized compact live MyBank */
-let mybankStateV16824 = {
-  loading:false,
-  secondaryLoading:false,
-  loaded:false,
-  complete:false,
-  rendered:false,
-  loadedAt:0,
-  data:null
-};
+/* V16.8.28 compact live MyBank */
+let mybankStateV16824 = { loading:false, loaded:false, loadedAt:0, data:null };
 const MYBANK_CLIENT_CACHE_MS = 180000;
-const MYBANK_SESSION_CACHE_KEY = "moneymaxMybankDataCacheV16837";
 const MYBANK_CURRENCY_META = [
   { code:"USD", name:"미국", flag:"us" },
   { code:"JPY", name:"일본", flag:"jp" },
@@ -2851,16 +2709,12 @@ const MYBANK_CURRENCY_META = [
   { code:"VND", name:"베트남", flag:"vn" }
 ];
 const MYBANK_CURRENCIES_UI = MYBANK_CURRENCY_META.map(x=>x.code);
-const MYBANK_PRIMARY_CODES = ["USD","JPY","CNY","HKD","TWD","EUR"];
-const MYBANK_SECONDARY_CODES = MYBANK_CURRENCIES_UI.filter(x=>!MYBANK_PRIMARY_CODES.includes(x));
-const MYBANK_MONITOR_CODES = [...MYBANK_PRIMARY_CODES];
+const MYBANK_MONITOR_CODES = ["USD","JPY","CNY","HKD","TWD","EUR"];
 const MYBANK_MONITOR_KEY = "moneymaxMybankMonitorsV16824";
 const MYBANK_FAVORITES_KEY = "moneymaxMybankOfficeFavoritesV16828";
 const MYBANK_SNAPSHOT_KEY = "moneymaxMybankSnapshotV16829";
-const MYBANK_PROFILE_ID_KEY = "moneymaxCurrentProfileV159";
 let mybankPreviousSnapshotV16829 = null;
 let mybankPickerDraft = [];
-let mybankFavoriteCache = {profile:null,set:null};
 
 function mybankMeta(code){ return MYBANK_CURRENCY_META.find(x=>x.code===code) || { code, name:code, flag:'un' }; }
 function mybankFlagUrl(code){ return `https://flagcdn.com/w40/${mybankMeta(code).flag}.png`; }
@@ -2874,64 +2728,21 @@ function mybankTime(iso){
   if(!iso) return "-";
   try{return new Date(iso).toLocaleString("ko-KR",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});}catch(e){return "-";}
 }
-function mybankCurrentProfile(){ return localStorage.getItem(MYBANK_PROFILE_ID_KEY) || "남대문점"; }
-function mybankScopedKey(base, profile=mybankCurrentProfile()){ return `${base}::${encodeURIComponent(profile)}`; }
-function mybankLegacyProfileValue(base){
-  const profile=mybankCurrentProfile();
-  try{
-    const profiles=JSON.parse(localStorage.getItem("moneymaxProfilesV159")||"{}");
-    const v=profiles?.[profile]?.data?.[base];
-    if(v!==undefined && v!==null) return v;
-  }catch(e){}
-  return localStorage.getItem(base);
-}
-function mybankReadScopedRaw(base){
-  const key=mybankScopedKey(base);
-  let raw=localStorage.getItem(key);
-  if(raw!==null) return raw;
-  raw=mybankLegacyProfileValue(base);
-  if(raw!==null && raw!==undefined){
-    try{localStorage.setItem(key,typeof raw==="string"?raw:JSON.stringify(raw));}catch(e){}
-    return typeof raw==="string"?raw:JSON.stringify(raw);
-  }
-  return null;
-}
 function getMybankMonitorSelection(){
-  try{const arr=JSON.parse(mybankReadScopedRaw(MYBANK_MONITOR_KEY)||"[]");return Array.isArray(arr)?arr:[]}catch(e){return []}
+  try{const arr=JSON.parse(localStorage.getItem(MYBANK_MONITOR_KEY)||"[]");return Array.isArray(arr)?arr:[]}catch(e){return []}
 }
-function setMybankMonitorSelection(arr){
-  try{localStorage.setItem(mybankScopedKey(MYBANK_MONITOR_KEY),JSON.stringify([...new Set(arr)].slice(0,6)))}catch(e){}
-}
+function setMybankMonitorSelection(arr){localStorage.setItem(MYBANK_MONITOR_KEY,JSON.stringify([...new Set(arr)].slice(0,6)))}
 function getMybankFavoriteOffices(){
-  const profile=mybankCurrentProfile();
-  if(mybankFavoriteCache.profile===profile && mybankFavoriteCache.set) return mybankFavoriteCache.set;
-  let set;
-  try{set=new Set(JSON.parse(mybankReadScopedRaw(MYBANK_FAVORITES_KEY)||"[]"))}catch(e){set=new Set()}
-  mybankFavoriteCache={profile,set};
-  return set;
+  try{return new Set(JSON.parse(localStorage.getItem(MYBANK_FAVORITES_KEY)||"[]"))}catch(e){return new Set()}
 }
-function setMybankFavoriteOffices(set){
-  mybankFavoriteCache={profile:mybankCurrentProfile(),set};
-  try{localStorage.setItem(mybankScopedKey(MYBANK_FAVORITES_KEY),JSON.stringify([...set]))}catch(e){}
-}
+function setMybankFavoriteOffices(set){localStorage.setItem(MYBANK_FAVORITES_KEY, JSON.stringify([...set]))}
 function isMybankFavoriteOffice(name){return getMybankFavoriteOffices().has(name)}
-function patchMybankFavoriteUI(name,fav){
-  const safe=encodeURIComponent(name);
-  document.querySelectorAll(`.compact-row[data-office="${safe}"]`).forEach(row=>{
-    row.classList.toggle("favorite",fav);
-    const star=row.querySelector(".compact-office-star");
-    if(star){star.classList.toggle("on",fav);star.textContent=fav?"★":"☆";}
-  });
-  renderCompactMonitors();
-  const picker=document.getElementById("mybankPicker");
-  if(picker && !picker.hidden) renderMybankPicker();
-}
 function toggleMybankOfficeFavorite(name){
   const favs=getMybankFavoriteOffices();
-  const next=!favs.has(name);
-  if(next) favs.add(name); else favs.delete(name);
+  if(favs.has(name)) favs.delete(name); else favs.add(name);
   setMybankFavoriteOffices(favs);
-  patchMybankFavoriteUI(name,next);
+  if(mybankStateV16824.data) renderMybank(mybankStateV16824.data);
+  renderMybankPicker();
 }
 function allMybankOffices(){
   const data=mybankStateV16824.data;if(!data?.currencies)return [];
@@ -2945,10 +2756,8 @@ function allMybankOffices(){
   });
 }
 function findOfficeRate(rows,name){return rows?.find(r=>r.name===name)||null}
-
 function renderMybankCardScaffold(){
   const holder=document.getElementById('compactCurrencyGrid'); if(!holder) return;
-  if(holder.dataset.scaffoldReady==="1" && holder.querySelectorAll('[data-mybank-card]').length===MYBANK_CURRENCIES_UI.length) return;
   holder.innerHTML = MYBANK_CURRENCIES_UI.map(code=>`
     <article class="compact-currency-card" data-mybank-card="${code}">
       <div class="compact-card-head">
@@ -2957,31 +2766,28 @@ function renderMybankCardScaffold(){
           <span class="flag-fallback">${mybankFlagFallback(code)}</span>
           <b>${code}</b><span class="name">${mybankLabel(code)}</span>
         </div>
-        <div class="compact-head-right">
-          <span class="mood-badge balance">균형</span>
-          <span class="header-base-rate">기준 <strong>-</strong></span>
-        </div>
+        <div class="compact-head-right"><span class="mood-badge balance">균형</span><span class="updated">최근 변동일 -</span></div>
       </div>
+      <div class="compact-base">기준환율 <strong>-</strong></div>
       <div class="compact-book">
         <div class="compact-side sell-book">
-          <div class="compact-side-head"><b>매각</b><span class="cluster"></span></div>
+          <div class="compact-side-head"><b>매각</b><span>외화 공급</span></div>
           <div class="compact-list"><div class="compact-empty">불러오는 중</div></div>
         </div>
         <div class="compact-side buy-book">
-          <div class="compact-side-head"><b>매입</b><span class="cluster"></span></div>
+          <div class="compact-side-head"><b>매입</b><span>외화 수요</span></div>
           <div class="compact-list"><div class="compact-empty">불러오는 중</div></div>
         </div>
       </div>
       <div class="compact-card-foot">
-        <div class="sell-foot" style="width:50%"><span class="foot-main"><strong>-곳</strong></span><span class="foot-sub">-</span></div>
-        <div class="buy-foot" style="width:50%"><span class="foot-main"><strong>-곳</strong></span><span class="foot-sub">-</span></div>
+        <div class="sell-foot" style="width:50%"><strong>-곳</strong><span>(-)</span></div>
+        <div class="buy-foot" style="width:50%"><strong>-곳</strong><span>(-)</span></div>
       </div>
     </article>`).join('');
-  holder.dataset.scaffoldReady="1";
 }
 
 function getMybankSnapshot(){
-  try{return JSON.parse(mybankReadScopedRaw(MYBANK_SNAPSHOT_KEY)||"null")}catch(e){return null}
+  try{return JSON.parse(localStorage.getItem(MYBANK_SNAPSHOT_KEY)||"null")}catch(e){return null}
 }
 function makeMybankSnapshot(data){
   const currencies={};
@@ -2989,17 +2795,17 @@ function makeMybankSnapshot(data){
     currencies[c.currency]={
       supplyCount:Number(c.supplyCount||0), demandCount:Number(c.demandCount||0),
       supply:Object.fromEntries((c.supply||[]).map(r=>[r.name,Number(r.rate)])),
-      demand:Object.fromEntries((c.demand||[]).map(r=>[r.name,Number(r.rate)]))
+      demand:Object.fromEntries((c.demand||[]).map(r=>[r.name,Number(r.rate)])),
+      supplyRows:(c.supply||[]).map(r=>({name:r.name,rate:Number(r.rate),date:r.date||null})),
+      demandRows:(c.demand||[]).map(r=>({name:r.name,rate:Number(r.rate),date:r.date||null})),
+      latestDate:c.latestDate||null,
+      baseRate:Number.isFinite(Number(c.baseRate))?Number(c.baseRate):null
     };
   }
   return {savedAt:Date.now(), currencies};
 }
-function saveMybankSnapshotDeferred(data){
-  const key=mybankScopedKey(MYBANK_SNAPSHOT_KEY);
-  const run=()=>{
-    try{localStorage.setItem(key,JSON.stringify(makeMybankSnapshot(data)))}catch(e){}
-  };
-  if("requestIdleCallback" in window) requestIdleCallback(run,{timeout:1600}); else setTimeout(run,20);
+function saveMybankSnapshot(data){
+  try{localStorage.setItem(MYBANK_SNAPSHOT_KEY,JSON.stringify(makeMybankSnapshot(data)))}catch(e){}
 }
 function mybankPreviousRate(code,side,name){return mybankPreviousSnapshotV16829?.currencies?.[code]?.[side]?.[name]}
 function mybankCountDelta(code,side,current){
@@ -3007,7 +2813,12 @@ function mybankCountDelta(code,side,current){
   if(!Number.isFinite(prev)) return null;
   return Number(current||0)-prev;
 }
-function mybankDeltaHtml(){return "";}
+function mybankDeltaHtml(delta){
+  if(delta==null) return "";
+  if(delta>0) return `<span class="compact-delta up">▲${delta}</span>`;
+  if(delta<0) return `<span class="compact-delta down">▼${Math.abs(delta)}</span>`;
+  return `<span class="compact-delta flat">±0</span>`;
+}
 function mybankPriceCluster(rows){
   if(!rows?.length) return null;
   const map=new Map();
@@ -3018,15 +2829,41 @@ function mybankIsStaleRow(row,latestDate){
   if(!row?.date || !latestDate) return false;
   return String(row.date).replace(/\./g,"-") < String(latestDate).replace(/\./g,"-");
 }
-function renderCompactRows(rows,code,side,latestDate,favs){
+function mybankApplySnapshotFallback(data){
+  const snap=getMybankSnapshot();
+  if(!snap?.currencies || !data?.currencies) return data;
+  return {
+    ...data,
+    currencies:(data.currencies||[]).map(c=>{
+      const prev=snap.currencies?.[c.currency];
+      const missing = !!c?.error || ((Number(c?.supplyCount||0)+Number(c?.demandCount||0))===0 && (!c?.supply?.length && !c?.demand?.length));
+      const hasPrev = !!(prev && ((prev.supplyRows?.length||0) || (prev.demandRows?.length||0)));
+      if(!missing || !hasPrev) return c;
+      return {
+        ...c,
+        error:null,
+        fallback:true,
+        fallbackSource:'last-successful-snapshot',
+        latestDate:c.latestDate || prev.latestDate || null,
+        baseRate:Number.isFinite(Number(c.baseRate)) ? c.baseRate : prev.baseRate,
+        supply:(prev.supplyRows||[]).map(r=>({name:r.name,rate:Number(r.rate),date:r.date||prev.latestDate||null})),
+        demand:(prev.demandRows||[]).map(r=>({name:r.name,rate:Number(r.rate),date:r.date||prev.latestDate||null})),
+        supplyCount:Number(prev.supplyCount||0),
+        demandCount:Number(prev.demandCount||0)
+      };
+    })
+  };
+}
+
+function renderCompactRows(rows,code,side,latestDate){
   if(!rows?.length)return `<div class="compact-empty">등록 없음</div>`;
-  return rows.map(r=>{
-    const fav=favs.has(r.name);
+  return rows.map((r,i)=>{
+    const fav=isMybankFavoriteOffice(r.name);
     const prev=mybankPreviousRate(code,side,r.name);
     const changed=Number.isFinite(Number(prev)) && Number(prev)!==Number(r.rate);
     const stale=mybankIsStaleRow(r,latestDate);
     const safe=encodeURIComponent(r.name);
-    return `<div class="compact-row ${fav?"favorite":""} ${changed?"changed":""} ${stale?"stale":""}" data-office="${safe}" title="${String(r.name).replace(/"/g,"&quot;")}${stale?' · 오래된 업데이트':''}">
+    return `<div class="compact-row ${fav?"favorite":""} ${changed?"changed":""} ${stale?"stale":""}" title="${String(r.name).replace(/"/g,"&quot;")}${stale?' · 오래된 업데이트':''}">
       <span class="rate">${mybankFmt(r.rate)}</span>
       <span class="compact-office-wrap">
         <span class="office">${r.name}</span>
@@ -3035,43 +2872,48 @@ function renderCompactRows(rows,code,side,latestDate,favs){
     </div>`;
   }).join("");
 }
-function renderCompactCurrencyCards(data,codes=MYBANK_CURRENCIES_UI){
+function renderCompactCurrencyCards(data){
   renderMybankCardScaffold();
-  const currencyMap=new Map((data?.currencies||[]).map(c=>[c.currency,c]));
-  const favs=getMybankFavoriteOffices();
-  for(const code of codes){
+  for(const code of MYBANK_CURRENCIES_UI){
     const card=document.querySelector(`[data-mybank-card="${code}"]`);if(!card)continue;
-    const c=currencyMap.get(code); if(!c) continue;
-    const baseStrong=card.querySelector(".header-base-rate strong");
-    if(baseStrong) baseStrong.textContent=mybankFmt(c?.baseRate);
+    const c=data.currencies?.find(x=>x.currency===code);
+    card.querySelector(".updated").textContent=`최근 변동일 ${c?.latestDate||"-"}`;
+    const baseStrong=card.querySelector(".compact-base strong");
+    baseStrong.textContent=mybankFmt(c?.baseRate);
     const lists=card.querySelectorAll(".compact-list");
-    if(c?.error){
-      lists[0].innerHTML=`<div class="compact-empty">수집 실패</div>`;
-      lists[1].innerHTML=`<div class="compact-empty">수집 실패</div>`;
-    }else{
-      lists[0].innerHTML=renderCompactRows(c?.supply||[],code,"supply",c?.latestDate,favs);
-      lists[1].innerHTML=renderCompactRows(c?.demand||[],code,"demand",c?.latestDate,favs);
+    if(c?.error){lists[0].innerHTML=`<div class="compact-empty">수집 실패</div>`;lists[1].innerHTML=`<div class="compact-empty">수집 실패</div>`}
+    else{
+      lists[0].innerHTML=renderCompactRows(c?.supply||[],code,"supply",c?.latestDate);
+      lists[1].innerHTML=renderCompactRows(c?.demand||[],code,"demand",c?.latestDate);
     }
     const sideHeads=card.querySelectorAll(".compact-side-head");
     const supplyCluster=mybankPriceCluster(c?.supply||[]), demandCluster=mybankPriceCluster(c?.demand||[]);
-    if(sideHeads[0]) sideHeads[0].innerHTML=`<b>매각</b><span class="cluster">${supplyCluster?`${mybankFmt(supplyCluster.rate)} · ${supplyCluster.count}곳`:""}</span>`;
-    if(sideHeads[1]) sideHeads[1].innerHTML=`<b>매입</b><span class="cluster">${demandCluster?`${mybankFmt(demandCluster.rate)} · ${demandCluster.count}곳`:""}</span>`;
+    if(sideHeads[0]) sideHeads[0].innerHTML=`<b>매각</b><span class="cluster">${supplyCluster?`밀집 ${mybankFmt(supplyCluster.rate)} · ${supplyCluster.count}곳`:"외화 공급"}</span>`;
+    if(sideHeads[1]) sideHeads[1].innerHTML=`<b>매입</b><span class="cluster">${demandCluster?`밀집 ${mybankFmt(demandCluster.rate)} · ${demandCluster.count}곳`:"외화 수요"}</span>`;
     const sf=card.querySelector(".sell-foot"),bf=card.querySelector(".buy-foot");
-    const supplyCount=Number(c?.supplyCount||0), demandCount=Number(c?.demandCount||0);
+    const supplyCount=Number(c?.supplyCount||0);
+    const demandCount=Number(c?.demandCount||0);
     const totalCount=supplyCount+demandCount;
     const supplyPct=totalCount>0 ? (supplyCount/totalCount*100) : 50;
     const demandPct=totalCount>0 ? (demandCount/totalCount*100) : 50;
-    sf.style.width=`${supplyPct}%`; bf.style.width=`${demandPct}%`;
+
+    sf.style.width=`${supplyPct}%`;
+    bf.style.width=`${demandPct}%`;
     sf.title=`매각 ${supplyCount}곳 · 전체 ${totalCount}곳 중 ${supplyPct.toFixed(1)}%`;
     bf.title=`매입 ${demandCount}곳 · 전체 ${totalCount}곳 중 ${demandPct.toFixed(1)}%`;
-    sf.innerHTML=`<span class="foot-main"><strong>매각 ${supplyCount}곳</strong></span><span class="foot-sub">${supplyPct.toFixed(0)}%</span>`;
-    bf.innerHTML=`<span class="foot-main"><strong>매입 ${demandCount}곳</strong></span><span class="foot-sub">${demandPct.toFixed(0)}%</span>`;
+
+    const supplyDelta=mybankCountDelta(code,"supply",supplyCount);
+    const demandDelta=mybankCountDelta(code,"demand",demandCount);
+    sf.innerHTML=`<span class="foot-main"><strong>매각 ${supplyCount}곳</strong>${mybankDeltaHtml(supplyDelta)}</span><span class="foot-sub">${supplyPct.toFixed(0)}% · ${mybankFmt(c?.supply?.[0]?.rate)}</span>`;
+    bf.innerHTML=`<span class="foot-main"><strong>매입 ${demandCount}곳</strong>${mybankDeltaHtml(demandDelta)}</span><span class="foot-sub">${demandPct.toFixed(0)}% · ${mybankFmt(c?.demand?.[0]?.rate)}</span>`;
+
     const mood=card.querySelector(".mood-badge");
     if(mood){
       let label="균형", cls="balance";
       if(demandPct>=60){label="매입 우세";cls="demand";}
       else if(supplyPct>=60){label="매각 우세";cls="supply";}
-      mood.textContent=label; mood.className=`mood-badge ${cls}`;
+      mood.textContent=label;
+      mood.className=`mood-badge ${cls}`;
     }
   }
 }
@@ -3082,13 +2924,20 @@ function renderCompactMonitors(){
   const data=mybankStateV16824.data;
   holder.innerHTML=selected.map(name=>{
     const fav=isMybankFavoriteOffice(name);
-    return `<div class="compact-monitor-card">
+    return `
+    <div class="compact-monitor-card">
       <div class="compact-monitor-title"><div class="title-wrap">${fav?'<span class="mini-star">★</span>':''}<b>${name}</b></div><button type="button" onclick="removeMybankMonitor(${JSON.stringify(name).replace(/"/g,"&quot;")})">×</button></div>
       <div class="compact-monitor-grid">
       ${MYBANK_MONITOR_CODES.map(code=>{
         const c=data?.currencies?.find(x=>x.currency===code),s=findOfficeRate(c?.supply,name),d=findOfficeRate(c?.demand,name);
-        return `<div class="compact-monitor-cell"><b>${code}</b><span class="${s?"sell":"missing"}"><em>매각</em>${s?mybankFmt(s.rate):"-"}</span><span class="${d?"buy":"missing"}"><em>매입</em>${d?mybankFmt(d.rate):"-"}</span></div>`;
-      }).join("")}</div></div>`;
+        return `<div class="compact-monitor-cell">
+          <b>${code}</b>
+          <span class="${s?"sell":"missing"}"><em>매각</em>${s?mybankFmt(s.rate):"-"}</span>
+          <span class="${d?"buy":"missing"}"><em>매입</em>${d?mybankFmt(d.rate):"-"}</span>
+        </div>`;
+      }).join("")}
+      </div>
+    </div>`;
   }).join("");
 }
 function removeMybankMonitor(name){setMybankMonitorSelection(getMybankMonitorSelection().filter(x=>x!==name));renderCompactMonitors()}
@@ -3103,10 +2952,14 @@ function renderMybankPicker(){
   const holder=document.getElementById("mybankPickerList");if(!holder)return;
   const q=(document.getElementById("mybankPickerSearch")?.value||"").trim().toLowerCase();
   const offices=allMybankOffices().filter(n=>!q||n.toLowerCase().includes(q));
-  const favs=getMybankFavoriteOffices();
   holder.innerHTML=offices.length?offices.map(name=>{
-    const checked=mybankPickerDraft.includes(name), fav=favs.has(name), safe=encodeURIComponent(name);
-    return `<label class="mybank-picker-item ${fav?'favorite':''}"><span class="picker-left"><input type="checkbox" ${checked?"checked":""} onchange="toggleMybankPickerOffice(decodeURIComponent('${safe}'),this.checked)"><span class="picker-name">${name}</span></span><button type="button" class="picker-star ${fav?'on':''}" onclick="event.preventDefault();event.stopPropagation();toggleMybankOfficeFavorite(decodeURIComponent('${safe}'))">${fav?'★':'☆'}</button></label>`;
+    const checked=mybankPickerDraft.includes(name);
+    const fav=isMybankFavoriteOffice(name);
+    const safe=encodeURIComponent(name);
+    return `<label class="mybank-picker-item ${fav?'favorite':''}">
+      <span class="picker-left"><input type="checkbox" ${checked?"checked":""} onchange="toggleMybankPickerOffice(decodeURIComponent('${safe}'),this.checked)"><span class="picker-name">${name}</span></span>
+      <button type="button" class="picker-star ${fav?'on':''}" onclick="event.preventDefault();event.stopPropagation();toggleMybankOfficeFavorite(decodeURIComponent('${safe}'))" title="중요 환전소 표시">${fav?'★':'☆'}</button>
+    </label>`;
   }).join(""):`<div class="compact-empty" style="height:180px">검색 결과 없음</div>`;
   const count=document.getElementById("mybankPickerCount");if(count)count.textContent=`${mybankPickerDraft.length} / 6 선택`;
 }
@@ -3116,106 +2969,45 @@ function toggleMybankPickerOffice(name,on){
   renderMybankPicker();
 }
 function saveMybankMonitorSelection(){setMybankMonitorSelection(mybankPickerDraft);closeMybankMonitorPicker();renderCompactMonitors()}
-
-function mergeMybankData(base,chunk){
-  const map=new Map((base?.currencies||[]).map(c=>[c.currency,c]));
-  for(const c of chunk?.currencies||[]) map.set(c.currency,c);
-  return {
-    ...(base||{}),
-    ...(chunk||{}),
-    currencies:MYBANK_CURRENCIES_UI.map(code=>map.get(code)).filter(Boolean),
-    collectedAt:chunk?.collectedAt || base?.collectedAt || new Date().toISOString()
-  };
-}
-function getMybankSessionCache(){
-  try{
-    const v=JSON.parse(sessionStorage.getItem(MYBANK_SESSION_CACHE_KEY)||"null");
-    if(v?.data && Number.isFinite(Number(v.loadedAt))) return v;
-  }catch(e){}
-  return null;
-}
-function saveMybankSessionCache(data,loadedAt,complete){
-  const run=()=>{try{sessionStorage.setItem(MYBANK_SESSION_CACHE_KEY,JSON.stringify({data,loadedAt,complete}))}catch(e){}};
-  if("requestIdleCallback" in window) requestIdleCallback(run,{timeout:1000}); else setTimeout(run,0);
-}
-function renderMybank(data,codes=MYBANK_CURRENCIES_UI){
-  renderCompactCurrencyCards(data,codes);
-  if(codes.some(c=>MYBANK_MONITOR_CODES.includes(c))) renderCompactMonitors();
-  const updated=document.getElementById("mybankUpdatedText");if(updated)updated.textContent=`최근 갱신 ${mybankTime(data.collectedAt)}`;
-  mybankStateV16824.rendered=true;
-}
-async function fetchMybankChunk(codes,force=false){
-  const qs=new URLSearchParams({currencies:codes.join(",")});
-  if(force) qs.set("force","1");
-  const res=await fetch(`/api/mybank?${qs.toString()}`);
-  return moneymaxJson(res,"/api/mybank");
-}
-function scheduleMybankSecondary(force=false){
-  if(mybankStateV16824.secondaryLoading || !MYBANK_SECONDARY_CODES.length) return;
-  const run=()=>loadMybankSecondary(force);
-  if("requestIdleCallback" in window) requestIdleCallback(run,{timeout:700}); else setTimeout(run,120);
-}
-async function loadMybankSecondary(force=false){
-  if(mybankStateV16824.secondaryLoading) return;
-  mybankStateV16824.secondaryLoading=true;
-  try{
-    const chunk=await fetchMybankChunk(MYBANK_SECONDARY_CODES,force);
-    const merged=mergeMybankData(mybankStateV16824.data,chunk);
-    mybankStateV16824.data=merged;
-    mybankStateV16824.complete=true;
-    renderMybank(merged,MYBANK_SECONDARY_CODES);
-    saveMybankSessionCache(merged,mybankStateV16824.loadedAt,true);
-    saveMybankSnapshotDeferred(merged);
-  }catch(e){
-    console.warn("MyBank secondary load error",e);
-  }finally{
-    mybankStateV16824.secondaryLoading=false;
-  }
-}
+function renderMybank(data){renderCompactCurrencyCards(data);renderCompactMonitors();const updated=document.getElementById("mybankUpdatedText");if(updated)updated.textContent=`최근 갱신 ${mybankTime(data.collectedAt)}`}
 async function loadMybank(force=false){
-  if(mybankStateV16824.loading) return;
-
-  // Show session-cached market data immediately after profile/page reload.
-  if(mybankStateV16824.data && !mybankStateV16824.rendered){
-    renderMybank(mybankStateV16824.data,mybankStateV16824.data.currencies?.map(c=>c.currency)||MYBANK_CURRENCIES_UI);
-  }
-
-  const fresh=mybankStateV16824.loaded && Date.now()-mybankStateV16824.loadedAt<MYBANK_CLIENT_CACHE_MS;
-  if(!force && fresh){
-    if(!mybankStateV16824.complete) scheduleMybankSecondary(false);
-    return;
-  }
-
+  if(mybankStateV16824.loading)return;
+  if(!force&&mybankStateV16824.loaded&&Date.now()-mybankStateV16824.loadedAt<MYBANK_CLIENT_CACHE_MS)return;
   mybankStateV16824.loading=true;
-  mybankPreviousSnapshotV16829=getMybankSnapshot();
   try{
-    const primary=await fetchMybankChunk(MYBANK_PRIMARY_CODES,force);
-    const merged=mergeMybankData(mybankStateV16824.data,primary);
-    const now=Date.now();
-    mybankStateV16824.data=merged;
-    mybankStateV16824.loaded=true;
-    mybankStateV16824.loadedAt=now;
-    mybankStateV16824.complete=false;
-    renderMybank(merged,MYBANK_PRIMARY_CODES);
-    saveMybankSessionCache(merged,now,false);
-    scheduleMybankSecondary(force);
+    const res=await fetch(`/api/mybank?t=${force?Date.now():""}`);
+    const raw=await moneymaxJson(res,"/api/mybank");
+    const data=mybankApplySnapshotFallback(raw);
+    mybankPreviousSnapshotV16829=getMybankSnapshot();
+    mybankStateV16824={loading:false,loaded:true,loadedAt:Date.now(),data};
+    renderMybank(data);
+    saveMybankSnapshot(data);
   }catch(e){
     console.error("MyBank load error",e);
-    const updated=document.getElementById("mybankUpdatedText");if(updated)updated.textContent="마이뱅크 수집 실패";
-  }finally{
     mybankStateV16824.loading=false;
+    const snap=getMybankSnapshot();
+    if(snap?.currencies){
+      const fallbackData={success:true, provider:"MyBank", baseRateProvider:"Investing.com", collectedAt:new Date().toISOString(), currencies:Object.entries(snap.currencies).map(([currency,v])=>({
+        currency,
+        baseRate:v.baseRate,
+        latestDate:v.latestDate,
+        supply:(v.supplyRows||[]).map(r=>({name:r.name,rate:Number(r.rate),date:r.date||v.latestDate||null})),
+        demand:(v.demandRows||[]).map(r=>({name:r.name,rate:Number(r.rate),date:r.date||v.latestDate||null})),
+        supplyCount:Number(v.supplyCount||0),
+        demandCount:Number(v.demandCount||0),
+        fallback:true,
+        fallbackSource:'last-successful-snapshot'
+      }))};
+      mybankPreviousSnapshotV16829=snap;
+      mybankStateV16824={loading:false,loaded:true,loadedAt:Date.now(),data:fallbackData};
+      renderMybank(fallbackData);
+      const updated=document.getElementById("mybankUpdatedText");if(updated)updated.textContent="마이뱅크 임시 데이터 표시";
+      return;
+    }
+    const updated=document.getElementById("mybankUpdatedText");if(updated)updated.textContent="마이뱅크 수집 실패";
   }
 }
-
 renderMybankCardScaffold();
-mybankPreviousSnapshotV16829=getMybankSnapshot();
-const mybankSessionCacheV16837=getMybankSessionCache();
-if(mybankSessionCacheV16837){
-  mybankStateV16824.data=mybankSessionCacheV16837.data;
-  mybankStateV16824.loaded=true;
-  mybankStateV16824.loadedAt=Number(mybankSessionCacheV16837.loadedAt)||0;
-  mybankStateV16824.complete=!!mybankSessionCacheV16837.complete;
-}
 
 
 /* V16.8.21 MONEYBOX / MYBANK workspace switching */
@@ -4548,66 +4340,11 @@ setInterval(polishThemeSettingsV1582, 1500);
   const PROFILE_KEY="moneymaxProfilesV159";
   const CURRENT_KEY="moneymaxCurrentProfileV159";
   const DEFAULT_PROFILES={"남대문점":{icon:"🏢",data:{}},"명동점":{icon:"🏢",data:{}},"명동 2호점":{icon:"🏢",data:{}},"강남점":{icon:"🏢",data:{}}};
-  const STATE_KEYS=[
-    "moneymaxSelectedBranches",
-    "moneyboxFavorites",
-    "favoriteBranches",
-    "moneymaxIndicators",
-    "moneymaxCharts",
-    "moneymaxAdminSettings",
-    "moneymaxThemeMode",
-    "theme"
-  ];
-  const LEGACY_MYBANK_PROFILE_KEYS=[
-    "moneymaxMybankMonitorsV16824",
-    "moneymaxMybankOfficeFavoritesV16828",
-    "moneymaxMybankSnapshotV16829"
-  ];
+  const STATE_KEYS=["moneymaxSelectedBranches","moneyboxFavorites","favoriteBranches","moneymaxIndicators","moneymaxCharts","moneymaxAdminSettings","moneymaxThemeMode","theme"];
   function readJSON(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f));}catch(e){return f;}}
   function writeJSON(k,v){localStorage.setItem(k,JSON.stringify(v));}
   function parseMaybe(v,f){try{return typeof v==="string"?JSON.parse(v):v}catch(e){return f}}
-  function migrateLegacyMybankProfileData(p){
-    let changed=false;
-    Object.entries(p||{}).forEach(([name,profile])=>{
-      const d=profile?.data||{};
-      LEGACY_MYBANK_PROFILE_KEYS.forEach(k=>{
-        if(d[k]===undefined || d[k]===null) return;
-        const scoped=`${k}::${encodeURIComponent(name)}`;
-        if(localStorage.getItem(scoped)===null){
-          try{localStorage.setItem(scoped,typeof d[k]==="string"?d[k]:JSON.stringify(d[k]))}catch(e){}
-        }
-        delete d[k];
-        changed=true;
-      });
-    });
-
-    // v16.8.36 also left one global copy. Preserve it only for the
-    // currently active profile, then remove it so new profiles cannot
-    // accidentally inherit another branch's MyBank setup.
-    const active=localStorage.getItem(CURRENT_KEY) || Object.keys(p||{})[0] || "남대문점";
-    LEGACY_MYBANK_PROFILE_KEYS.forEach(k=>{
-      const raw=localStorage.getItem(k);
-      if(raw===null) return;
-      const scoped=`${k}::${encodeURIComponent(active)}`;
-      if(localStorage.getItem(scoped)===null){
-        try{localStorage.setItem(scoped,raw)}catch(e){}
-      }
-      localStorage.removeItem(k);
-    });
-    return changed;
-  }
-  function profiles(){
-    let p=readJSON(PROFILE_KEY,{}); if(!p||typeof p!=="object")p={};
-    let changed=false;
-    Object.entries(DEFAULT_PROFILES).forEach(([n,v])=>{if(!p[n]){p[n]={icon:v.icon,data:{}};changed=true;}});
-    Object.keys(p).forEach(n=>{
-      if(p[n].icon==null){p[n].icon="🏢";changed=true;}
-      if(!p[n].data){p[n].data={};changed=true;}
-    });
-    if(migrateLegacyMybankProfileData(p)) changed=true;
-    if(changed) writeJSON(PROFILE_KEY,p);
-    return p;
-  }
+  function profiles(){let p=readJSON(PROFILE_KEY,{}); if(!p||typeof p!=="object")p={}; p={...DEFAULT_PROFILES,...p}; Object.keys(p).forEach(n=>{p[n].icon??="🏢";p[n].data??={};}); writeJSON(PROFILE_KEY,p); return p;}
   function currentName(){const p=profiles(); let c=localStorage.getItem(CURRENT_KEY); if(!c||!p[c]){c=Object.keys(p)[0];localStorage.setItem(CURRENT_KEY,c)} return c;}
   function pdata(){const p=profiles(); const c=currentName(); p[c].data??={}; return p[c].data;}
   function readBranches(){const d=pdata(); const raw=d.moneymaxSelectedBranches??localStorage.getItem("moneymaxSelectedBranches"); const arr=parseMaybe(raw,[]); return Array.isArray(arr)?arr:[];}
@@ -4624,104 +4361,13 @@ setInterval(polishThemeSettingsV1582, 1500);
     try{favoriteBranches=new Set(readFavorites());}catch(e){}
   }
   function saveCurrentProfile(){
-    const p=profiles();
-    const c=currentName();
-    if(!p[c]) return;
-    p[c].data??={};
-    const d=p[c].data;
-
     let b=[]; try{b=[...selectedBranches];}catch(e){b=readBranches()}
     let f=[]; try{f=[...favoriteBranches];}catch(e){f=readFavorites()}
-
-    d.moneymaxSelectedBranches=JSON.stringify(b);
-    d.moneyboxFavorites=JSON.stringify(f);
-    d.favoriteBranches=JSON.stringify(f);
-
-    const ind={};
-    document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>ind[i.dataset.indicator]=i.checked);
-    d.moneymaxIndicators=JSON.stringify(ind);
-
-    const charts={};
-    document.querySelectorAll("#chartSideList input[data-chart]").forEach(i=>charts[i.dataset.chart]=i.checked);
-    d.moneymaxCharts=JSON.stringify(charts);
-
-    STATE_KEYS.forEach(k=>{
-      const v=localStorage.getItem(k);
-      if(v!==null) d[k]=v;
-      else delete d[k];
-    });
-
-    writeJSON(PROFILE_KEY,p);
+    const ind={}; document.querySelectorAll("#indicatorSideList input[data-indicator]").forEach(i=>ind[i.dataset.indicator]=i.checked);
+    saveState({branches:b,favorites:f,indicators:ind});
+    const p=profiles(); const c=currentName(); STATE_KEYS.forEach(k=>{const v=localStorage.getItem(k); if(v!==null)p[c].data[k]=v}); writeJSON(PROFILE_KEY,p);
   }
-  function applyProfile(n){
-    const p=profiles();
-    if(!p[n] || n===currentName()){
-      document.getElementById("profileMenu")?.classList.remove("show");
-      return;
-    }
-
-    // Persist the profile we are leaving once, then switch state in place.
-    saveCurrentProfile();
-
-    const freshProfiles=profiles();
-    const d=freshProfiles[n]?.data||{};
-    localStorage.setItem(CURRENT_KEY,n);
-
-    // Only profile-scoped MONEYMAX settings need to be swapped.
-    // Remove missing keys first so the previous branch cannot leak into the next.
-    STATE_KEYS.forEach(k=>{
-      if(Object.prototype.hasOwnProperty.call(d,k) && d[k]!==null){
-        localStorage.setItem(k,d[k]);
-      }else{
-        localStorage.removeItem(k);
-      }
-    });
-
-    // Update runtime state without reloading the document.
-    syncRuntime();
-
-    if(typeof restoreIndicatorSettingsV13==="function") restoreIndicatorSettingsV13();
-    else if(typeof window.restoreIndicatorSettings==="function") window.restoreIndicatorSettings();
-
-    if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13();
-    else if(typeof applyIndicatorVisibility==="function") applyIndicatorVisibility();
-
-    if(typeof restoreChartSettingsV13==="function") restoreChartSettingsV13();
-    if(typeof applyChartVisibilityV13==="function") applyChartVisibilityV13();
-    else if(typeof applyChartVisibility==="function") applyChartVisibility();
-
-    if(typeof applyThemeModeV1582==="function"){
-      applyThemeModeV1582(localStorage.getItem("moneymaxThemeMode") || localStorage.getItem("theme") || "light");
-      if(typeof syncThemeRadiosV1582==="function") syncThemeRadiosV1582();
-    }
-
-    if(typeof applyAdminSettings==="function") applyAdminSettings();
-
-    // MONEYBOX rankings depend on selected branches/favorites, so redraw once.
-    if(typeof renderBranchList==="function") renderBranchList();
-    if(typeof render==="function") render();
-
-    // Market data itself is shared between profiles. Reuse it; only reapply
-    // the target profile's MyBank favorites/monitor selection when needed.
-    try{
-      if(typeof mybankFavoriteCache!=="undefined") mybankFavoriteCache={profile:null,set:null};
-      if(typeof getMybankSnapshot==="function") mybankPreviousSnapshotV16829=getMybankSnapshot();
-
-      const mybankView=document.getElementById("mybankView");
-      if(typeof mybankStateV16824!=="undefined"){
-        mybankStateV16824.rendered=false;
-        if(mybankView && !mybankView.hidden && mybankStateV16824.data && typeof renderMybank==="function"){
-          renderMybank(
-            mybankStateV16824.data,
-            mybankStateV16824.data.currencies?.map(c=>c.currency)||MYBANK_CURRENCIES_UI
-          );
-        }
-      }
-    }catch(e){console.warn("profile MyBank repaint skipped",e)}
-
-    renderProfile();
-    document.getElementById("profileMenu")?.classList.remove("show");
-  }
+  function applyProfile(n){const p=profiles(); if(!p[n])return; saveCurrentProfile(); localStorage.setItem(CURRENT_KEY,n); const d=p[n].data||{}; Object.keys(d).forEach(k=>localStorage.setItem(k,d[k])); location.reload();}
   function branchRegion(name){if(name==="잠실"||name==="잠실역"||name==="종로")return"서울";const seoul=["명동","남대문","명동2","제일환전","강남","잠실","잠실역","종로","강남신사","광장시장","동대문","마포","서울역","성수","여의도","연남","용산","이태원","인사동","충무로","홍대","안국"];const metro=["부평","송도","수원","안양","평택","인천","일산","분당"]; if(seoul.includes(name))return"서울"; if(metro.includes(name))return"경기·인천"; return"지방";}
   window.renderBranchList=function(){syncRuntime(); const list=document.getElementById("branchList"); if(!list)return; const search=document.getElementById("branchSearch"); const favOnlyEl=document.getElementById("favoriteOnly"); const query=(search?.value||"").trim(); const favOnly=!!favOnlyEl?.checked; let bs=allBranches(); if(query)bs=bs.filter(b=>clean(b).includes(query)); if(favOnly)bs=bs.filter(b=>favoriteBranches.has(b));
     const regions={"서울":[],"경기·인천":[],"지방":[]}; bs.forEach(branch=>{const checked=!selectedBranches.has("__NONE__")&&(selectedBranches.size===0||selectedBranches.has(branch)); const fav=favoriteBranches.has(branch); const type=rows.find(r=>r.branch===branch)?.type; const html=`<label class="branch-item ${checked?'on':''}"><input type="checkbox" value="${branch}" ${checked?'checked':''}><span>${clean(branch)}${type==="external"?'<span class="external-tag">외부</span>':''}</span><span class="star ${fav?'on':''}" data-branch-star="${branch}">★</span></label>`; {
@@ -4750,7 +4396,7 @@ setInterval(polishThemeSettingsV1582, 1500);
   function addProfile(){const input=document.getElementById("profileNameInput"); const name=(input?.value||"").trim(); if(!name)return; const p=profiles(); if(p[name]){alert("이미 있는 프로필 이름입니다.");return} saveCurrentProfile(); p[name]={icon:"🏢",data:{}}; writeJSON(PROFILE_KEY,p); localStorage.setItem(CURRENT_KEY,name); location.reload();}
   function delProfile(name){const p=profiles(); if(Object.keys(p).length<=1){alert("프로필은 최소 1개가 필요합니다.");return} if(!confirm(`${name} 프로필을 삭제할까요?`))return; delete p[name]; writeJSON(PROFILE_KEY,p); if(currentName()===name)localStorage.setItem(CURRENT_KEY,Object.keys(p)[0]); location.reload();}
   function renProfile(name){const next=prompt("새 프로필 이름",name); if(!next||!next.trim())return; const p=profiles(); const clean=next.trim(); if(p[clean]){alert("이미 있는 프로필 이름입니다.");return} p[clean]=p[name]; delete p[name]; writeJSON(PROFILE_KEY,p); if(currentName()===name)localStorage.setItem(CURRENT_KEY,clean); renderProfile();}
-  function wire(){if(window.__mmStablefix1663)return; window.__mmStablefix1663=true; syncRuntime(); renderProfile(); document.addEventListener("click",e=>{const star=e.target.closest("[data-branch-star],#branchList .star"); if(star){const b=star.getAttribute("data-branch-star")||star.closest(".branch-item")?.querySelector("input")?.value; if(b){window.toggleFavorite(e,b);return}} const row=e.target.closest("#branchList .branch-item"); if(row&&!e.target.matches("input")&&!e.target.closest(".star")){const input=row.querySelector("input[type=checkbox]"); if(input){e.preventDefault(); input.checked=!input.checked; window.onBranchToggle(); return}} const pb=e.target.closest("#profileSelectorBtn"); if(pb){e.preventDefault();e.stopPropagation();renderProfile();document.getElementById("profileMenu")?.classList.toggle("show");return} if(!e.target.closest("#profileSelectorWrap"))document.getElementById("profileMenu")?.classList.remove("show"); const sw=e.target.closest("[data-mm-profile-switch]"); if(sw){e.preventDefault();applyProfile(sw.getAttribute("data-mm-profile-switch"));return} if(e.target.closest("[data-mm-profile-new]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(true);return} if(e.target.closest("[data-mm-profile-manage]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(false);return} const del=e.target.closest("[data-mm-profile-delete]"); if(del){e.preventDefault();if(!del.disabled)delProfile(del.getAttribute("data-mm-profile-delete"));return} const ren=e.target.closest("[data-mm-profile-rename]"); if(ren){e.preventDefault();renProfile(ren.getAttribute("data-mm-profile-rename"));return} if(e.target.closest("#profileAddBtn")){e.preventDefault();addProfile();return} if(e.target.closest("#profileManageClose")||e.target.closest("#profileManageBg")){e.preventDefault();closeManage();return}},true); document.addEventListener("change",e=>{if(e.target.closest("#branchList input[type=checkbox]")){window.onBranchToggle();return} if(e.target.closest("#indicatorSideList input[data-indicator]")){
+  function wire(){if(window.__mmStablefix1663)return; window.__mmStablefix1663=true; syncRuntime(); renderProfile(); document.addEventListener("click",e=>{const star=e.target.closest("[data-branch-star],#branchList .star"); if(star){const b=star.getAttribute("data-branch-star")||star.closest(".branch-item")?.querySelector("input")?.value; if(b){window.toggleFavorite(e,b);return}} const row=e.target.closest("#branchList .branch-item"); if(row&&!e.target.matches("input")&&!e.target.closest(".star")){const input=row.querySelector("input[type=checkbox]"); if(input){e.preventDefault(); input.checked=!input.checked; window.onBranchToggle(); return}} const pb=e.target.closest("#profileSelectorBtn"); if(pb){e.preventDefault();e.stopPropagation();saveCurrentProfile();renderProfile();document.getElementById("profileMenu")?.classList.toggle("show");return} if(!e.target.closest("#profileSelectorWrap"))document.getElementById("profileMenu")?.classList.remove("show"); const sw=e.target.closest("[data-mm-profile-switch]"); if(sw){e.preventDefault();applyProfile(sw.getAttribute("data-mm-profile-switch"));return} if(e.target.closest("[data-mm-profile-new]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(true);return} if(e.target.closest("[data-mm-profile-manage]")){e.preventDefault();document.getElementById("profileMenu")?.classList.remove("show");openManage(false);return} const del=e.target.closest("[data-mm-profile-delete]"); if(del){e.preventDefault();if(!del.disabled)delProfile(del.getAttribute("data-mm-profile-delete"));return} const ren=e.target.closest("[data-mm-profile-rename]"); if(ren){e.preventDefault();renProfile(ren.getAttribute("data-mm-profile-rename"));return} if(e.target.closest("#profileAddBtn")){e.preventDefault();addProfile();return} if(e.target.closest("#profileManageClose")||e.target.closest("#profileManageBg")){e.preventDefault();closeManage();return}},true); document.addEventListener("change",e=>{if(e.target.closest("#branchList input[type=checkbox]")){window.onBranchToggle();return} if(e.target.closest("#indicatorSideList input[data-indicator]")){
     window.saveIndicatorSettings();
     if(typeof applyIndicatorVisibilityV13==="function") applyIndicatorVisibilityV13();
     else if(typeof applyIndicatorVisibility==="function") applyIndicatorVisibility();
