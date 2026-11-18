@@ -1,26 +1,4 @@
-# Dependencies
 node_modules/
-
-# Cloudflare / Wrangler local files
 .wrangler/
 .dev.vars
-
-# Environment files
-.env
-.env.*
-!.env.example
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# OS files
 .DS_Store
-Thumbs.db
-
-# Editor / temp
-.vscode/
-.idea/
-*.tmp
